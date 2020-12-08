@@ -1,0 +1,30 @@
+{
+  "id": "2248361",
+  "name": "小说编辑器",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "4586578",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e967",
+      "unicode_decimal": 59751
+    },
+    {
+      "icon_id": "827984",
+      "name": "心",
+      "font_class": "xin",
+      "unicode": "e6af",
+      "unicode_decimal": 59055
+    },
+    {
+      "icon_id": "5755903",
+      "name": "right",
+      "font_class": "right",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    }
+  ]
+}
