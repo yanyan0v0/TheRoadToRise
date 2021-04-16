@@ -6,12 +6,12 @@
         <i class="iconfont icon-right"></i>
       </button>
     </div>
-    <div v-else class="home-note-container full">
-      <ul>
+    <div v-else class="home-note-container full" contenteditable>
+      <!-- <ul>
         <li v-for="index in maxLis" :key="index">
-          <input type="text" class="full">
+          <input :index="index" type="text" class="full" @keyup.enter="handleEnterClick(index)">
         </li>
-      </ul>
+      </ul> -->
       <div v-show="showTip" @click="setCommonWord" class="home-word-tip">
         <i class="iconfont icon-xin"></i>
         设为常用词
@@ -84,6 +84,9 @@ export default {
       } else {
         console.log(this.selectedWord)
       }
+    },
+    handleEnterClick(index) {
+      document.querySelector(`input[index='${index + 1}']`).focus()
     }
   }
 }
@@ -100,7 +103,12 @@ export default {
     font-size: 18px;
   }
   .home-note-container{
+    outline: none;
     overflow-y: auto;
+    &>div{
+        border-bottom: 1px solid #eee;
+
+    }
     ul{
       padding: 10px 0;
       li{

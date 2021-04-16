@@ -2,14 +2,17 @@
   <div v-show="loginType" class="login-dialog-mask">
     <div class="login-dialog">
       <i class="iconfont icon-close" @click="hideLogin"></i>
-      <div v-show="loginType === 1" class="login-dialog-content">
+      <div v-if="loginType === 1" class="login-dialog-content">
         <p class="login-title">您还未登录</p>
         <p class="login-tips">(请先登录/注册再进行操作)</p>
         <button class="login-btn" @click="toLogin">登录</button>
         <a class="register-a" @click="toRegister">注册</a>
       </div>
-      <div v-show="loginType === 2" class="login-dialog-content">
-        <y-form label-width="80px">
+      <div v-else class="login-dialog-content">
+        <div class="text-center">
+          <img src="../assets/logo.png" class="login-logo">
+        </div>
+        <y-form v-show="loginType === 2" label-width="80px">
           <y-form-item label="用户名">
             <y-input type="text"></y-input>
           </y-form-item>
@@ -18,18 +21,20 @@
           </y-form-item>
           <div class="text-center">
             <y-button color="primary" @click="login">登录</y-button>
+            <y-button color="primary" shape="text" @click="toRegister">注册</y-button>
           </div>
         </y-form>
-      </div>
-      <div v-show="loginType === 3" class="login-dialog-content">
-        <y-form label-width="80px">
+        <y-form v-show="loginType === 3" label-width="80px">
           <y-form-item label="用户名">
             <y-input type="text"></y-input>
           </y-form-item>
           <y-form-item label="密码">
             <y-input type="text"></y-input>
           </y-form-item>
-          <y-button color="primary" @click="register">注册</y-button>
+          <div class="text-center">
+            <y-button color="primary" @click="register">注册</y-button>
+            <y-button color="primary" shape="text" @click="toLogin">登录</y-button>
+          </div>
         </y-form>
       </div>
     </div>
@@ -54,13 +59,13 @@ export default {
       this.$store.commit('setLoginType', 3)
     },
     login() {
-      this.$store.commit('user', {
+      this.$store.commit('setUser', {
         name: 'yanyan'
       })
       this.hideLogin()
     },
     register() {
-      this.$store.commit('user', {
+      this.$store.commit('setUser', {
         name: 'yanyan'
       })
       this.hideLogin()
@@ -119,6 +124,9 @@ export default {
         width: 100%;
         color: #03A9F4;
         text-align: center;
+      }
+      .login-logo{
+        width: 100px;
       }
     }
   }

@@ -6,7 +6,7 @@
         <li>首页</li>
       </ul>
       <div class="avatar" v-if="isLogined">
-        <img src="https://dazi.91xjr.com/static/web/images/headPhoto/boy/119.jpg" alt="" srcset="">
+        <img src="./assets/logo.png" alt="" srcset="">
         <div class="avatar-right">
           <p class="nickname">yanyan</p>
           <span class="level">lv 1</span>
