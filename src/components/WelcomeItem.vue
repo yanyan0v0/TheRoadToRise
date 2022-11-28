@@ -12,15 +12,16 @@
   </div>
 </template>
 
-<style scoped>
+<style lang="less" scoped>
 .item {
   margin-top: 2rem;
   display: flex;
-}
 
-.details {
-  flex: 1;
-  margin-left: 1rem;
+  .details {
+    flex: 1;
+    margin-left: 1rem;
+    color: red;
+  }
 }
 
 i {
