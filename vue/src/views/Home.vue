@@ -17,8 +17,8 @@
               <span>1人在读</span>
             </div>
             <div class="book-chapter">
-              <span>最近更新：{{ chapterList[chapterList.length - 1] }} </span>
-              <span class="book-chapter__time">2021-03-21 20:22</span>
+              <span>最近更新：{{ newestChapter.name }} </span>
+              <span class="book-chapter__time">{{ newestChapter.time }}</span>
             </div>
           </div>
           <Button type="warning" shape="circle">开始阅读</Button>
@@ -45,8 +45,17 @@
         <div class="section-header">目录·{{ chapterList.length }}章</div>
         <div class="section-content">
           <Row class="chapter-container">
-            <Col class="chapter" v-for="chapter in chapterList" :key="chapter" :xs="24" :sm="24" :md="12" :lg="6">
-            {{ chapter }}
+            <Col
+              class="chapter"
+              v-for="chapter in chapterList"
+              :key="chapter.id"
+              :sm="24"
+              :md="12"
+              :lg="6"
+            >
+              <RouterLink :to="'/chapter/' + chapter.id">{{
+                chapter.name
+              }}</RouterLink>
             </Col>
           </Row>
         </div>
@@ -55,8 +64,16 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive } from 'vue'
-const chapterList = reactive(['第1章 开始', '第2章 结束', '第3章 再来'])
+import { computed, reactive } from 'vue'
+const chapterList = reactive([
+  {
+    id: 1,
+    name: '第1章 开始',
+    time: '2020/12/01 15:56',
+  },
+])
+
+const newestChapter = computed(() => chapterList[chapterList.length - 1])
 </script>
 <style lang="less" scoped>
 .container {
