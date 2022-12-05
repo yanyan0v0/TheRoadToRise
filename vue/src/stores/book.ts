@@ -1,25 +1,13 @@
-import { ref, computed, reactive } from 'vue'
+import { getCurrentInstance, type ComponentInternalInstance } from 'vue'
 import { defineStore } from 'pinia'
-import BOOK_LIST from '@/assets/book/book.json'
-import CHAPTER_LIST from '@/assets/book/chapter.json'
-console.log(BOOK_LIST, CHAPTER_LIST)
+import URL from '@/utils/url'
+import type { DefaultResponse } from 'env'
 
 export const bookStore = defineStore('book', () => {
-  const bookList = reactive(BOOK_LIST)
-  const chapterList = reactive(CHAPTER_LIST)
-  bookList.forEach((book) => {
-    let count = 0
-    chapterList.forEach((chapter) => {
-      if (book.id === chapter.bookId) {
-        count += chapter.wordCount
-      }
-    })
-    book.wordCount = count
-  })
+  const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
-  function getBookById(bookId: number) {
-    return bookList.some((book) => book.id === bookId) || null
+  async function getBookById(bookId: number | string): Promise<DefaultResponse> {
+    return (await proxy?.$axios.get(URL.getBookById(bookId))) as DefaultResponse
   }
-
-  return { bookList, getBookById }
+  return { getBookById }
 })

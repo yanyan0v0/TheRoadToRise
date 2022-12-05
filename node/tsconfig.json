@@ -1,5 +1,6 @@
 {
   "extends": "@eggjs/tsconfig",
+  "include": ["typings/*"],
   "exclude": [
     "app/public",
     "app/views",

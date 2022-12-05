@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="container">
     <div class="header">
@@ -28,9 +29,7 @@
       <div class="book-author">
         <img class="author-avatar" src="@/assets/imgs/default-avatar.png" />
         <p class="author-name">笔先声</p>
-        <p class="author-desc">
-          我叫笔先声，我是网络作家，希望我们一路相伴，不离不弃。
-        </p>
+        <p class="author-desc">我叫笔先声，我是网络作家，希望我们一路相伴，不离不弃。</p>
       </div>
     </div>
     <div class="content">
@@ -45,17 +44,8 @@
         <div class="section-header">目录·{{ chapterList.length }}章</div>
         <div class="section-content">
           <Row class="chapter-container">
-            <Col
-              class="chapter"
-              v-for="chapter in chapterList"
-              :key="chapter.id"
-              :sm="24"
-              :md="12"
-              :lg="6"
-            >
-              <RouterLink :to="'/chapter/' + chapter.id">{{
-                chapter.name
-              }}</RouterLink>
+            <Col class="chapter" v-for="chapter in chapterList" :key="chapter.id" :sm="24" :md="12" :lg="6">
+              <RouterLink :to="'/chapter/' + chapter.id">{{ chapter.name }}</RouterLink>
             </Col>
           </Row>
         </div>
