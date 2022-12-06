@@ -1,7 +1,8 @@
+import { EggApplication } from 'egg';
 import init from './app/utils/init';
 
 class AppBootHook {
-  app: any;
+  app: EggApplication;
   constructor(app) {
     this.app = app;
   }
@@ -20,7 +21,7 @@ class AppBootHook {
 
   // 应用已经启动完毕，可以用于做一些初始化工作。
   async didReady() {
-    await init(this.app.config);
+    await init(this.app);
   }
 
   // Server 已经启动成功，可以开始导入流量，处理外部请求。

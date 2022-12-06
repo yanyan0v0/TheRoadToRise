@@ -19,4 +19,11 @@ declare module 'egg' {
     authorId?: number;
     description?: string;
   }
+
+  declare interface Author {
+    id?: number;
+    name?: string;
+    introduce?: string;
+    gender?: string;
+  }
 }

@@ -1,3 +1,6 @@
 {
-  "extends": "eslint-config-egg/typescript"
+  "extends": "eslint-config-egg/typescript",
+  "rules": {
+    "array-bracket-spacing": "off"
+  }
 }

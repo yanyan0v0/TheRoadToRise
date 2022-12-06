@@ -10,7 +10,12 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/chapter/:id',
+      path: '/book/:bookId',
+      name: 'book',
+      component: () => import('@/views/Book.vue'),
+    },
+    {
+      path: '/book/:bookId/chapter/:chapterId',
       name: 'chapter',
       component: () => import('@/views/Chapter.vue'),
     },

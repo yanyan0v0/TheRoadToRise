@@ -10,8 +10,8 @@ export const chapterStore = defineStore('chapter', () => {
     return (await proxy?.$axios.get(URL.getChapterListByBookId(bookId))) as DefaultResponse
   }
 
-  async function getChapterById(chapterId: number | string): Promise<DefaultResponse> {
-    return (await proxy?.$axios.get(URL.getChapterById(chapterId))) as DefaultResponse
+  async function getChapterById(bookId: number | string, chapterId: number | string): Promise<DefaultResponse> {
+    return (await proxy?.$axios.get(URL.getChapterById(bookId, chapterId))) as DefaultResponse
   }
   return { getChapterById, getChapterListByBookId }
 })

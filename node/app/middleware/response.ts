@@ -2,7 +2,7 @@ import ERROR from '../utils/error';
 
 export default () => {
   return async function responseDataAndTime(ctx, next) {
-    ctx.error = (code = 'SYSTEM_ERROR', msg = '请求错误', data = {}) => {
+    ctx.error = ({ code = 'SYSTEM_ERROR', msg = '请求错误', data = {} }) => {
       ctx.status = 500;
       ctx.body = {
         code: ERROR[code] || ERROR.SYSTEM_ERROR,

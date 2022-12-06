@@ -9,16 +9,16 @@ export default (appInfo: EggAppInfo) => {
   config.keys = appInfo.name + '_1669892819273_2733';
 
   // add your egg config in here
-  config.middleware = [ 'response' ];
+  config.middleware = ['response'];
 
   // 存放章节文件的目录
   config.txtPath = path.join(__dirname, '../app/assets/chapter');
 
-  // 存放章节json文件的目录
-  config.chapterJsonPath = path.join(
-    __dirname,
-    '../app/assets/book/chapter.json',
-  );
+  // 章节txt文件目录名称
+  config.chapterTxtName = 'txt';
+
+  // 章节json文件名称
+  config.chapterJsonName = 'chapter.json';
 
   // 解决本地请求跨域问题
   config.security = {
@@ -26,11 +26,19 @@ export default (appInfo: EggAppInfo) => {
       enable: false,
       ignoreJSON: true,
     },
-    domainWhiteList: [ 'http://localhost:5173' ],
+    domainWhiteList: ['http://localhost:5173'],
   };
   config.cors = {
     origin: '*',
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
+  };
+
+  // 渲染模板
+  config.view = {
+    defaultViewEngine: 'nunjucks',
+    mapping: {
+      '.html': 'nunjucks',
+    },
   };
 
   // the return config will combines to EggAppConfig
