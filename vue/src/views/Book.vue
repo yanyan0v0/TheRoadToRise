@@ -7,9 +7,9 @@
         <div class="book-info">
           <div>
             <div class="book-title">{{ book.name }}</div>
-            <Tag color="cyan">{{ bookStateName }}</Tag>
+            <Tag class="book-state" color="cyan">{{ bookStateName }}</Tag>
             <div class="book-type">
-              <Tag type="border" v-for="type in book.type" :key="type">{{ type }}</Tag>
+              <Tag type="border" v-for="typeName in book.type" :key="typeName">{{ typeName }}</Tag>
             </div>
             <div class="book-count">
               <span class="book-count__word">{{ bookWordCount }}</span>
@@ -63,6 +63,7 @@ import { computed, getCurrentInstance, reactive, type ComponentInternalInstance 
 import { chapterStore as chapterStoreInstance } from '@/stores/chapter'
 import { bookStore as bookStoreInstance } from '@/stores/book'
 import { authorStore as authorStoreInstance } from '@/stores/author'
+import { BOOK_STATE } from '@/utils/enum'
 import type { Author, Book, Chapter } from 'env'
 const chapterStore = chapterStoreInstance()
 const bookStore = bookStoreInstance()
@@ -72,12 +73,6 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance
 let book: Book = reactive({})
 let author: Author = reactive({})
 let chapterList: Chapter[] = reactive([])
-
-const bookState = {
-  UNPUBLIC: 0,
-  UPDATING: 1,
-  FINISHED: 2,
-}
 
 try {
   let res = await bookStore.getBookById(proxy?.$route.params.bookId as string)
@@ -98,9 +93,9 @@ const newestChapter = computed(() => chapterList[chapterList.length - 1])
 const bookWordCount = computed(() => ((book.wordCount || 0) / 10000).toFixed(2))
 const bookStateName = computed(() => {
   switch (book.state) {
-    case bookState.FINISHED:
+    case BOOK_STATE.FINISHED:
       return '已完结'
-    case bookState.UPDATING:
+    case BOOK_STATE.UPDATING:
       return '更新中'
     default:
       return '未发布'
@@ -112,9 +107,9 @@ const bookStateName = computed(() => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  box-sizing: content-box;
   background-color: #f6f6f6;
   overflow-y: hidden;
+  padding-top: 74px;
 
   .header {
     display: flex;
@@ -149,6 +144,10 @@ const bookStateName = computed(() => {
         line-height: 32px;
         font-size: 24px;
         font-weight: 500;
+      }
+
+      &-state {
+        vertical-align: bottom;
       }
 
       &-count {
@@ -236,6 +235,13 @@ const bookStateName = computed(() => {
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
+        .chapter {
+          line-height: 32px;
+          font-size: 14px;
+          & > a {
+            color: rgba(0, 0, 0, 0.9);
+          }
+        }
       }
     }
   }

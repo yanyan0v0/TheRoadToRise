@@ -8,6 +8,9 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+      meta: {
+        title: '首页',
+      },
     },
     {
       path: '/book/:bookId',
@@ -17,7 +20,25 @@ const router = createRouter({
     {
       path: '/book/:bookId/chapter/:chapterId',
       name: 'chapter',
+      meta: {
+        hideHeader: true,
+      },
       component: () => import('@/views/Chapter.vue'),
+    },
+    {
+      path: '/author',
+      name: 'author',
+      component: () => import('@/views/Author.vue'),
+      meta: {
+        title: '作家专区',
+      },
+      children: [
+        {
+          path: '/author/book',
+          name: 'authorBook',
+          component: () => import('@/components/BookEdit.vue'),
+        },
+      ],
     },
   ],
 })
