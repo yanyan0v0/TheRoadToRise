@@ -16,6 +16,7 @@
     </header>
     <Suspense>
       <RouterView />
+      <template #fallback> Loading... </template>
     </Suspense>
   </div>
 </template>
