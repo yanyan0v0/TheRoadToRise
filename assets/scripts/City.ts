@@ -10,24 +10,31 @@ import {
   Vec3,
 } from "cc";
 const { ccclass, property } = _decorator;
-import Line01 from "./config/line_mock/Line01";
+import City01 from "./config/city_mock/City01";
+import CityEvent from "./config/random/CityEvent";
 const cardSpriteFrameMap = new Map();
 
-@ccclass("Line")
-export class Line extends Component {
+@ccclass("City")
+export class City extends Component {
   @property(Node)
-  lineNode: Node = null;
+  cityNode: Node = null;
   start() {
     // 给每个节点添加单色精灵
-    Line01.forEach((item) => {
+    City01.forEach((item) => {
       const node = new Node(item.name);
       node.setPosition(new Vec3(item.position.x, item.position.y, 0));
       // 给node设置大小
-      node.addComponent(UITransform).setContentSize(100, 100);
+      node.addComponent(UITransform).setContentSize(200, 200);
       // 给node添加点击事件
       node.on(Node.EventType.TOUCH_END, () => {
-        // 控制卡牌的显示与隐藏
-        const cardContainer = this.lineNode.children.find(
+        // 判断是否发生随机事件
+        const isRandom = Math.random() > 0.5;
+        if (isRandom) {
+          // 发生随机事件 从CityEvent中随机获取一个事件
+          const randomEvent = CityEvent[item.type][Math.floor(Math.random() * CityEvent[item.type].length)];
+        }
+        // 控制事件页面的显示与隐藏
+        const cardContainer = this.cityNode.children.find(
           (item) => item.name === "CardContainer",
         );
         if (cardContainer) {
@@ -67,35 +74,12 @@ export class Line extends Component {
             }
             card.children.forEach((label) => {
               switch (label.name) {
-                case "Name":
-                  label.getComponent(Label).string = item.name;
-                  break;
-                case "Limit":
-                  // limit转为字符串 字段名 > 字段值
-                  const limit = Object.keys(item.limit)
-                    .map((key) => {
-                      return `${key}>${item.limit[key]}`;
-                    })
-                    .join("\n");
-                  label.getComponent(Label).string = limit;
-                  break;
-                case "Success":
-                  const success = Object.keys(item.success)
-                    .map((key) => {
-                      return `${key}+${item.success[key]}`;
-                    })
-                    .join("\n");
-                  label.getComponent(Label).string = success;
-                  break;
-                case "Description":
-                  label.getComponent(Label).string = item.description;
-                  break;
               }
             });
           }
         }
       });
-      this.lineNode.addChild(node);
+      this.cityNode.addChild(node);
     });
   }
 
