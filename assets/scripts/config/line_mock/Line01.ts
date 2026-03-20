@@ -18,16 +18,16 @@ export default [
       生命力: -5,
     },
     description: "该地物产丰富，尤其铁矿最甚，因此催生出众多铁匠。",
-    buff: [
+    effect: [
       {
         name: "铁匠铺.武器.耐久",
         description: "铁匠铺武器耐久额外",
-        effect: 10
+        value: 10
       },
       {
         name: "铁匠铺.武器.伤害",
         description: "铁匠铺武器伤害额外",
-        effect: 10
+        value: 10
       },
     ],
   },
@@ -50,16 +50,16 @@ export default [
       生命力: -10,
     },
     description: "该地聚集了众多医馆，是世人的疗伤圣地。",
-    buff: [
+    effect: [
       {
         name: "医馆.生命力",
         description: "医馆治疗生命力额外",
-        effect: 10,
+        value: 10,
       },
       {
         name: "医馆.体质",
         description: "医馆治疗体质额外",
-        effect: 10,
+        value: 10,
       },
     ],
   },
@@ -106,11 +106,11 @@ export default [
         },
       ]
     },
-    debuff: [
+    effect: [
       {
         name: "体力",
         description: "体力",
-        effect: 1,
+        value: 1,
       },
     ],
   },
@@ -154,16 +154,16 @@ export default [
       生命力: -10,
     },
     description: "该地崇尚武艺，是众多侠客的聚集地。",
-    buff: [
+    effect: [
       {
         name: "武馆.武力",
         description: "武馆武力额外",
-        effect: 10
+        value: 10
       },
       {
         name: "武馆.体质",
         description: "武馆体质额外",
-        effect: 10
+        value: 10
       },
     ],
   },
