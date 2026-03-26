@@ -5,6 +5,7 @@
   /* Add your custom configuration here. */
   "compilerOptions": {
     "strict": false,
-    "lib": ["es2016", "dom"]
+    "lib": ["es2016", "dom"],
+    "types": ["minigame-api-typings", "@douyin-microapp/typings"]
   }
 }
