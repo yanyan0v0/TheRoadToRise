@@ -31,18 +31,22 @@ mouse_filter = 2
 color = Color(0.12, 0.14, 0.15, 1)
 
 [node name="BattleArea" type="Control" parent="." unique_id=1709318584]
-anchors_preset = 0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_top = 40.0
-offset_right = 1920.0
-offset_bottom = 680.0
+offset_bottom = -240.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
 [node name="PlayerArea" type="Control" parent="BattleArea" unique_id=1471331929]
-anchors_preset = 0
-offset_left = 150.0
-offset_top = 80.0
-offset_right = 400.0
-offset_bottom = 500.0
+layout_mode = 1
+anchor_left = 0.08
+anchor_top = 0.1
+anchor_right = 0.25
+anchor_bottom = 0.85
 
 [node name="PlayerSprite" type="ColorRect" parent="BattleArea/PlayerArea" unique_id=2120837675]
 layout_mode = 0
@@ -110,11 +114,12 @@ offset_right = 150.0
 offset_bottom = 315.0
 
 [node name="EnemyArea" type="HBoxContainer" parent="BattleArea" unique_id=2051454872]
-layout_mode = 0
-offset_left = 1050.0
-offset_top = 80.0
-offset_right = 1770.0
-offset_bottom = 500.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.55
+anchor_top = 0.1
+anchor_right = 0.92
+anchor_bottom = 0.85
 theme_override_constants/separation = 20
 alignment = 1
 
@@ -131,11 +136,12 @@ script = ExtResource("2")
 
 [node name="EndTurnButton" type="Button" parent="." unique_id=1282178120]
 z_index = 10
-layout_mode = 0
-offset_left = 1650.0
-offset_top = 650.0
-offset_right = 1850.0
-offset_bottom = 700.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.85
+anchor_top = 0.7
+anchor_right = 0.95
+anchor_bottom = 0.78
 theme_override_font_sizes/font_size = 18
 text = "结束回合"
 

@@ -259,10 +259,10 @@ static func _mark_reachable(nodes: Array, start_node: MapNode) -> void:
 				node.reachable = true
 				break
 
-## 计算节点位置
+## 计算节点位置（使用比例坐标 0.0~1.0，渲染时再乘以实际容器尺寸）
 static func _calculate_positions(nodes: Array, total_layers: int) -> void:
-	var map_width := 1100.0
-	var map_height := 600.0
+	var map_width := 1.0
+	var map_height := 1.0
 	var layer_spacing := map_width / float(total_layers)
 	
 	# 按层分组
@@ -281,6 +281,6 @@ static func _calculate_positions(nodes: Array, total_layers: int) -> void:
 		for i in range(count):
 			var node: MapNode = layer_nodes[i]
 			node.position = Vector2(
-				90.0 + layer_idx * layer_spacing,
+				0.05 + layer_idx * layer_spacing,
 				col_spacing * (i + 1)
 			)

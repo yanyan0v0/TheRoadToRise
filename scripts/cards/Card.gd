@@ -156,8 +156,8 @@ func _gui_input(event: InputEvent) -> void:
 					card_drag_ended.emit(self)
 					# 清除敌人选中状态
 					_clear_drag_enemy_hover()
-					# 检查是否拖到了目标区域（向上拖拽超过阈值）
-					if global_position.y - original_position.y < DRAG_THRESHOLD_Y:
+					# 检查卡牌是否完全拖出手牌区域
+					if _is_card_outside_hand_area():
 						card_played.emit(self, null)
 					else:
 						# 回到原位
@@ -291,6 +291,17 @@ func _get_star_display() -> String:
 		2: return "★★☆"
 		3: return "★★★"
 	return "★☆☆"
+
+## 判断卡牌是否完全拖出了手牌区域
+func _is_card_outside_hand_area() -> bool:
+	var hand_area := get_parent()
+	if hand_area == null or not hand_area is Control:
+		# 无法获取手牌区域，回退到旧逻辑
+		return global_position.y - original_position.y < DRAG_THRESHOLD_Y
+	# 卡牌底部边缘在手牌区域顶部之上，才算完全拖出
+	var card_bottom: int = global_position.y + size.y * scale.y
+	var hand_area_top: int = hand_area.global_position.y
+	return card_bottom < hand_area_top + 100
 
 ## 获取战斗场景引用
 func _get_battle_scene() -> Node:

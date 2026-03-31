@@ -121,9 +121,12 @@ func _build_hud() -> void:
 	top_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_hud_container.add_child(top_bar)
 	
-	# HP
+	# HP（含章节名）
 	_hp_label = Label.new()
-	_hp_label.text = "HP: %d/%d" % [GameManager.current_hp, GameManager.max_hp]
+	var _init_chapter_name := ""
+	if GameManager.current_chapter < GameManager.CHAPTER_NAMES.size():
+		_init_chapter_name = GameManager.CHAPTER_NAMES[GameManager.current_chapter]
+	_hp_label.text = "%s  HP: %d/%d" % [_init_chapter_name, GameManager.current_hp, GameManager.max_hp]
 	_hp_label.add_theme_font_size_override("font_size", 14)
 	_hp_label.add_theme_color_override("font_color", Color("FF6B6B"))
 	_hp_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -214,7 +217,10 @@ func _refresh_all() -> void:
 ## 更新HP显示
 func _update_hp_display() -> void:
 	if _hp_label:
-		_hp_label.text = "HP: %d/%d" % [GameManager.current_hp, GameManager.max_hp]
+		var chapter_name := ""
+		if GameManager.current_chapter < GameManager.CHAPTER_NAMES.size():
+			chapter_name = GameManager.CHAPTER_NAMES[GameManager.current_chapter]
+		_hp_label.text = "%s  HP: %d/%d" % [chapter_name, GameManager.current_hp, GameManager.max_hp]
 
 ## 更新金币显示
 func _update_gold_display() -> void:

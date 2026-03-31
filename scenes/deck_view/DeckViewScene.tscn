@@ -21,10 +21,12 @@ grow_vertical = 2
 color = Color(0.1, 0.1, 0.1, 1)
 
 [node name="TopBar" type="HBoxContainer" parent="." unique_id=297159988]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 0
+anchor_right = 1.0
 offset_left = 10.0
 offset_top = 70.0
-offset_right = 1910.0
+offset_right = -10.0
 offset_bottom = 105.0
 theme_override_constants/separation = 15
 
@@ -68,11 +70,14 @@ theme_override_font_sizes/font_size = 13
 text = "关闭"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=508005630]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = 10.0
 offset_top = 115.0
-offset_right = 1910.0
-offset_bottom = 1070.0
+offset_right = -10.0
+offset_bottom = -10.0
 
 [node name="CardGrid" type="GridContainer" parent="ScrollContainer" unique_id=1203792342]
 layout_mode = 2

@@ -29,7 +29,14 @@ func _ready() -> void:
 	else:
 		map_data = _deserialize_map(GameManager.current_map_data)
 	
+	# 等待布局完成后再渲染
+	await get_tree().process_frame
 	_render_map()
+
+## 窗口大小变化时重新渲染地图
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED and map_data and not map_data.is_empty():
+		_render_map()
 
 ## 渲染地图
 func _render_map() -> void:
@@ -61,7 +68,10 @@ func _create_node_button(node: MapGenerator.MapNode) -> void:
 	var button := Button.new()
 	button.custom_minimum_size = Vector2(60, 60)
 	button.size = Vector2(60, 60)
-	button.position = node.position - Vector2(30, 30)
+	# 将比例坐标转换为实际像素坐标
+	var container_size := map_container.size
+	var actual_pos := Vector2(node.position.x * container_size.x, node.position.y * container_size.y)
+	button.position = actual_pos - Vector2(30, 30)
 	
 	# 设置图标文字
 	var icon_text: String = MapGenerator.NODE_ICONS.get(node.node_type, "?")
@@ -92,8 +102,12 @@ func _create_node_button(node: MapGenerator.MapNode) -> void:
 ## 绘制连接线
 func _draw_connection_line(from_pos: Vector2, to_pos: Vector2) -> void:
 	var line := Line2D.new()
-	line.add_point(from_pos)
-	line.add_point(to_pos)
+	# 将比例坐标转换为实际像素坐标
+	var container_size := map_container.size
+	var actual_from := Vector2(from_pos.x * container_size.x, from_pos.y * container_size.y)
+	var actual_to := Vector2(to_pos.x * container_size.x, to_pos.y * container_size.y)
+	line.add_point(actual_from)
+	line.add_point(actual_to)
 	line.width = 2.0
 	line.default_color = Color(0.4, 0.4, 0.4, 0.6)
 	lines_container.add_child(line)
@@ -290,5 +304,3 @@ func _deserialize_map(data: Dictionary) -> Dictionary:
 	
 	deserialized["nodes"] = nodes
 	return deserialized
-
-

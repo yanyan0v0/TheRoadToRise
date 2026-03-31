@@ -40,9 +40,14 @@ var battle_manager: Node = null
 @onready var intent_value_label: Label = $IntentValueLabel
 @onready var status_bar: HBoxContainer = $StatusBar
 
+## 意图气泡框
+var _intent_tooltip: PanelContainer = null
+
 func _ready() -> void:
 	status_manager = StatusEffectManager.new()
 	add_child(status_manager)
+	# 为意图图标设置hover事件
+	_setup_intent_hover()
 
 ## 初始化敌人
 func setup(data: Dictionary, p_battle_manager: Node) -> void:
@@ -398,6 +403,125 @@ func _update_intent_display() -> void:
 		_:
 			intent_icon.text = "❓"
 			intent_value_label.text = ""
+
+## 设置意图图标的hover事件
+func _setup_intent_hover() -> void:
+	if intent_icon == null:
+		return
+	intent_icon.mouse_filter = Control.MOUSE_FILTER_STOP
+	intent_icon.mouse_entered.connect(_on_intent_hover_enter)
+	intent_icon.mouse_exited.connect(_on_intent_hover_exit)
+	if intent_value_label:
+		intent_value_label.mouse_filter = Control.MOUSE_FILTER_STOP
+		intent_value_label.mouse_entered.connect(_on_intent_hover_enter)
+		intent_value_label.mouse_exited.connect(_on_intent_hover_exit)
+
+## 获取意图的详细描述文本
+func _get_intent_description() -> String:
+	var intent_type: String = current_intent.get("type", "")
+	var value: int = current_intent.get("value", 0)
+	var desc: String = current_intent.get("description", "")
+	
+	match intent_type:
+		"attack":
+			var total := value + strength
+			return "攻击\n造成 %d 点伤害" % total
+		"heavy_attack":
+			var total := value + strength
+			return "重击\n造成 %d 点伤害" % total
+		"defend":
+			return "防御\n获得 %d 点护甲" % value
+		"buff":
+			var buff_type: String = current_intent.get("status_type", "增益")
+			var stacks: int = current_intent.get("stacks", 1)
+			if desc != "":
+				return "增益\n%s" % desc
+			return "增益\n%s +%d" % [buff_type, stacks]
+		"debuff":
+			var debuff_type: String = current_intent.get("status_type", "减益")
+			var stacks: int = current_intent.get("stacks", 1)
+			if desc != "":
+				return "减益\n%s" % desc
+			return "减益\n对你施加 %s %d层" % [debuff_type, stacks]
+		"special":
+			if desc != "":
+				return "特殊技能\n%s" % desc
+			return "特殊技能\n未知效果"
+		"summon":
+			return "召唤\n召唤援军"
+		"heal":
+			return "治疗\n恢复 %d 点生命" % value
+		_:
+			return "未知意图"
+
+## 意图hover进入
+func _on_intent_hover_enter() -> void:
+	_show_intent_tooltip()
+
+## 意图hover离开
+func _on_intent_hover_exit() -> void:
+	_hide_intent_tooltip()
+
+## 显示意图气泡框
+func _show_intent_tooltip() -> void:
+	_hide_intent_tooltip()
+	
+	var text := _get_intent_description()
+	
+	_intent_tooltip = PanelContainer.new()
+	_intent_tooltip.z_index = 200
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.1, 0.1, 0.15, 0.95)
+	style.border_color = Color(0.5, 0.5, 0.5, 0.8)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(4)
+	style.set_content_margin_all(8)
+	_intent_tooltip.add_theme_stylebox_override("panel", style)
+	
+	var label := Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", 12)
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	label.custom_minimum_size = Vector2(150, 0)
+	_intent_tooltip.add_child(label)
+	
+	# 添加到场景根节点以避免被裁剪
+	var battle_scene := get_tree().current_scene
+	if battle_scene:
+		battle_scene.add_child(_intent_tooltip)
+	else:
+		add_child(_intent_tooltip)
+	
+	# 等一帧计算尺寸后定位
+	await get_tree().process_frame
+	if _intent_tooltip == null or not is_instance_valid(_intent_tooltip):
+		return
+	
+	var tooltip_size := _intent_tooltip.size
+	var icon_global_pos := intent_icon.global_position
+	# 默认显示在意图图标上方
+	var pos_x := icon_global_pos.x - tooltip_size.x / 2.0 + intent_icon.size.x / 2.0
+	var pos_y := icon_global_pos.y - tooltip_size.y - 8
+	
+	# 上方超出屏幕则显示在下方
+	if pos_y < 0:
+		pos_y = icon_global_pos.y + intent_icon.size.y + 8
+	
+	# 左右边界检查
+	var screen_size := get_viewport_rect().size
+	if pos_x < 4:
+		pos_x = 4
+	if pos_x + tooltip_size.x > screen_size.x:
+		pos_x = screen_size.x - tooltip_size.x - 4
+	
+	_intent_tooltip.global_position = Vector2(pos_x, pos_y)
+
+## 隐藏意图气泡框
+func _hide_intent_tooltip() -> void:
+	if _intent_tooltip != null and is_instance_valid(_intent_tooltip):
+		_intent_tooltip.queue_free()
+		_intent_tooltip = null
 
 ## 更新状态效果显示
 func _update_status_display() -> void:
