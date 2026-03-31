@@ -1,0 +1,816 @@
+{
+  "cards": [
+    {
+      "card_id": "attack",
+      "card_name": "攻击",
+      "card_type": "attack",
+      "rarity": "common",
+      "energy_cost": 1,
+      "description": "对敌人造成6点伤害。",
+      "character_exclusive": "all",
+      "effects": [{"type": "damage", "value": 6, "target": "enemy"}],
+      "upgraded_effects": [{"type": "damage", "value": 9, "target": "enemy"}],
+      "star_2_effects": [{"type": "damage", "value": 9, "target": "enemy"}],
+      "star_3_effects": [{"type": "damage", "value": 12, "target": "enemy"}, {"type": "mana", "value": 1, "target": "self", "condition": "enemy_killed"}],
+      "star_2_description": "对敌人造成9点伤害。",
+      "star_3_description": "对敌人造成12点伤害，击杀返还1法力。"
+    },
+    {
+      "card_id": "defend",
+      "card_name": "防御",
+      "card_type": "skill",
+      "rarity": "common",
+      "energy_cost": 1,
+      "description": "获得6点护甲。",
+      "character_exclusive": "all",
+      "effects": [{"type": "armor", "value": 6, "target": "self"}],
+      "upgraded_effects": [{"type": "armor", "value": 9, "target": "self"}],
+      "star_2_effects": [{"type": "armor", "value": 9, "target": "self"}],
+      "star_3_effects": [{"type": "armor", "value": 12, "target": "self"}, {"type": "status", "status_type": "thorns", "value": 1, "target": "self"}],
+      "star_2_description": "获得9点护甲。",
+      "star_3_description": "获得12点护甲，获得1层荆棘。"
+    },
+    {
+      "card_id": "heavy_strike",
+      "card_name": "重击",
+      "card_type": "attack",
+      "rarity": "common",
+      "energy_cost": 2,
+      "description": "对敌人造成12点伤害。",
+      "character_exclusive": "all",
+      "effects": [{"type": "damage", "value": 12, "target": "enemy"}],
+      "upgraded_effects": [{"type": "damage", "value": 18, "target": "enemy"}],
+      "star_2_effects": [{"type": "damage", "value": 18, "target": "enemy"}],
+      "star_3_effects": [{"type": "damage", "value": 24, "target": "enemy"}, {"type": "status", "status_type": "vulnerable", "value": 1, "target": "enemy"}],
+      "star_2_description": "对敌人造成18点伤害。",
+      "star_3_description": "对敌人造成24点伤害，施加1层易伤。"
+    },
+    {
+      "card_id": "double_strike",
+      "card_name": "连击",
+      "card_type": "attack",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "对敌人造成2次4点伤害。",
+      "character_exclusive": "all",
+      "effects": [{"type": "damage", "value": 4, "target": "enemy", "times": 2}],
+      "upgraded_effects": [{"type": "damage", "value": 6, "target": "enemy", "times": 2}],
+      "star_2_effects": [{"type": "damage", "value": 6, "target": "enemy", "times": 2}],
+      "star_3_effects": [{"type": "damage", "value": 8, "target": "enemy", "times": 2}, {"type": "draw", "value": 1, "target": "self"}],
+      "star_2_description": "对敌人造成2次6点伤害。",
+      "star_3_description": "对敌人造成2次8点伤害，抽1张牌。"
+    },
+    {
+      "card_id": "iron_wall",
+      "card_name": "铁壁",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 2,
+      "description": "获得12点护甲。",
+      "character_exclusive": "all",
+      "effects": [{"type": "armor", "value": 12, "target": "self"}],
+      "upgraded_effects": [{"type": "armor", "value": 18, "target": "self"}]
+    },
+    {
+      "card_id": "meditation",
+      "card_name": "冥想",
+      "card_type": "skill",
+      "rarity": "common",
+      "energy_cost": 1,
+      "description": "抽2张牌。",
+      "character_exclusive": "all",
+      "effects": [{"type": "draw", "value": 2, "target": "self"}],
+      "upgraded_effects": [{"type": "draw", "value": 3, "target": "self"}],
+      "star_2_effects": [{"type": "draw", "value": 3, "target": "self"}],
+      "star_3_effects": [{"type": "draw", "value": 3, "target": "self"}, {"type": "mana", "value": 1, "target": "self"}],
+      "star_2_description": "抽3张牌。",
+      "star_3_description": "抽3张牌，获得1点法力。"
+    },
+    {
+      "card_id": "flame_strike",
+      "card_name": "烈焰斩",
+      "card_type": "attack",
+      "rarity": "uncommon",
+      "energy_cost": 2,
+      "description": "对敌人造成8点伤害，施加2层灼烧。",
+      "character_exclusive": "all",
+      "effects": [
+        {"type": "damage", "value": 8, "target": "enemy"},
+        {"type": "status", "status_type": "burn", "value": 2, "target": "enemy"}
+      ],
+      "upgraded_effects": [
+        {"type": "damage", "value": 12, "target": "enemy"},
+        {"type": "status", "status_type": "burn", "value": 3, "target": "enemy"}
+      ]
+    },
+    {
+      "card_id": "heal_prayer",
+      "card_name": "祈愈",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "恢复5点生命值。",
+      "character_exclusive": "all",
+      "effects": [{"type": "heal", "value": 5, "target": "self"}],
+      "upgraded_effects": [{"type": "heal", "value": 8, "target": "self"}]
+    },
+    {
+      "card_id": "weaken_curse",
+      "card_name": "弱化诅咒",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "对敌人施加2层易伤。",
+      "character_exclusive": "all",
+      "effects": [{"type": "status", "status_type": "vulnerable", "value": 2, "target": "enemy"}],
+      "upgraded_effects": [{"type": "status", "status_type": "vulnerable", "value": 3, "target": "enemy"}]
+    },
+    {
+      "card_id": "power_surge",
+      "card_name": "力量涌动",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 1,
+      "description": "获得2点力量。",
+      "character_exclusive": "all",
+      "effects": [{"type": "strength", "value": 2, "target": "self"}],
+      "upgraded_effects": [{"type": "strength", "value": 3, "target": "self"}],
+      "star_2_effects": [{"type": "strength", "value": 3, "target": "self"}],
+      "star_3_effects": [{"type": "strength", "value": 4, "target": "self"}, {"type": "armor", "value": 5, "target": "self"}],
+      "star_2_description": "获得3点力量。",
+      "star_3_description": "获得4点力量，获得5点护甲。"
+    },
+    {
+      "card_id": "whirlwind",
+      "card_name": "旋风斩",
+      "card_type": "attack",
+      "rarity": "rare",
+      "energy_cost": 2,
+      "description": "对所有敌人造成8点伤害。",
+      "character_exclusive": "all",
+      "effects": [{"type": "damage", "value": 8, "target": "all_enemies"}],
+      "upgraded_effects": [{"type": "damage", "value": 12, "target": "all_enemies"}],
+      "star_2_effects": [{"type": "damage", "value": 12, "target": "all_enemies"}],
+      "star_3_effects": [{"type": "damage", "value": 16, "target": "all_enemies"}, {"type": "status", "status_type": "vulnerable", "value": 1, "target": "all_enemies"}],
+      "star_2_description": "对所有敌人造成12点伤害。",
+      "star_3_description": "对所有敌人造成16点伤害，施加1层易伤。"
+    },
+    {
+      "card_id": "golden_body",
+      "card_name": "金身护体",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 2,
+      "description": "获得金身状态（下次受到的伤害降至1）。",
+      "character_exclusive": "all",
+      "effects": [{"type": "status", "status_type": "golden_body", "value": 1, "target": "self"}],
+      "upgraded_effects": [{"type": "status", "status_type": "golden_body", "value": 1, "target": "self"}, {"type": "armor", "value": 5, "target": "self"}]
+    },
+    {
+      "card_id": "energy_burst",
+      "card_name": "法力迸发",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 0,
+      "description": "获得2点法力，抽1张牌。",
+      "character_exclusive": "all",
+      "effects": [
+        {"type": "mana", "value": 2, "target": "self"},
+        {"type": "draw", "value": 1, "target": "self"}
+      ],
+      "upgraded_effects": [
+        {"type": "mana", "value": 2, "target": "self"},
+        {"type": "draw", "value": 2, "target": "self"}
+      ]
+    },
+    {
+      "card_id": "thorns",
+      "card_name": "荆棘之甲",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "获得3层反甲。",
+      "character_exclusive": "all",
+      "effects": [{"type": "status", "status_type": "thorns", "value": 3, "target": "self"}],
+      "upgraded_effects": [{"type": "status", "status_type": "thorns", "value": 5, "target": "self"}]
+    },
+    {
+      "card_id": "swift_strike",
+      "card_name": "迅捷一击",
+      "card_type": "attack",
+      "rarity": "common",
+      "energy_cost": 0,
+      "description": "对敌人造成3点伤害。",
+      "character_exclusive": "all",
+      "effects": [{"type": "damage", "value": 3, "target": "enemy"}],
+      "upgraded_effects": [{"type": "damage", "value": 5, "target": "enemy"}]
+    },
+    {
+      "card_id": "armor_break",
+      "card_name": "破甲击",
+      "card_type": "attack",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "对敌人造成5点伤害，移除敌人所有护甲。",
+      "character_exclusive": "all",
+      "effects": [
+        {"type": "remove_armor", "target": "enemy"},
+        {"type": "damage", "value": 5, "target": "enemy"}
+      ],
+      "upgraded_effects": [
+        {"type": "remove_armor", "target": "enemy"},
+        {"type": "damage", "value": 8, "target": "enemy"}
+      ]
+    },
+    {
+      "card_id": "regeneration",
+      "card_name": "再生",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 1,
+      "description": "获得3层治愈（每层每回合恢复1点生命）。",
+      "character_exclusive": "all",
+      "effects": [{"type": "status", "status_type": "regeneration", "value": 3, "target": "self"}],
+      "upgraded_effects": [{"type": "status", "status_type": "regeneration", "value": 5, "target": "self"}]
+    },
+    {
+      "card_id": "seal_strike",
+      "card_name": "封印之击",
+      "card_type": "attack",
+      "rarity": "rare",
+      "energy_cost": 2,
+      "description": "对敌人造成10点伤害，施加1层封印。",
+      "character_exclusive": "all",
+      "effects": [
+        {"type": "damage", "value": 10, "target": "enemy"},
+        {"type": "status", "status_type": "seal", "value": 1, "target": "enemy"}
+      ],
+      "upgraded_effects": [
+        {"type": "damage", "value": 15, "target": "enemy"},
+        {"type": "status", "status_type": "seal", "value": 1, "target": "enemy"}
+      ]
+    },
+    {
+      "card_id": "agility",
+      "card_name": "敏捷身法",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "获得1层敏捷（法力消耗-1）。",
+      "character_exclusive": "all",
+      "effects": [{"type": "status", "status_type": "agility", "value": 1, "target": "self"}],
+      "upgraded_effects": [{"type": "status", "status_type": "agility", "value": 2, "target": "self"}]
+    },
+    {
+      "card_id": "overcharge",
+      "card_name": "充盈",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 0,
+      "description": "获得1层充盈（下回合法力+1）。",
+      "character_exclusive": "all",
+      "effects": [{"type": "status", "status_type": "overcharge", "value": 1, "target": "self"}],
+      "upgraded_effects": [{"type": "status", "status_type": "overcharge", "value": 2, "target": "self"}]
+    },
+    {
+      "card_id": "gun_ji",
+      "card_name": "棍击",
+      "card_type": "attack",
+      "rarity": "common",
+      "energy_cost": 1,
+      "description": "对敌人造成7点伤害，若自身生命值低于50%，则改为12点伤害。",
+      "character_exclusive": "sun_wukong",
+      "effects": [{"type": "damage", "value": 7, "target": "enemy", "condition": "hp_below_50", "bonus_value": 12}],
+      "upgraded_effects": [{"type": "damage", "value": 10, "target": "enemy", "condition": "hp_below_50", "bonus_value": 18}]
+    },
+    {
+      "card_id": "gun_fan",
+      "card_name": "棍反",
+      "card_type": "skill",
+      "rarity": "common",
+      "energy_cost": 1,
+      "description": "获得7点护甲，若敌人的意图是攻击，则伤害-7。",
+      "character_exclusive": "sun_wukong",
+      "effects": [
+        {"type": "armor", "value": 7, "target": "self"},
+        {"type": "damage_reduction", "value": 7, "condition": "enemy_intent_attack"}
+      ],
+      "upgraded_effects": [
+        {"type": "armor", "value": 10, "target": "self"},
+        {"type": "damage_reduction", "value": 10, "condition": "enemy_intent_attack"}
+      ]
+    },
+    {
+      "card_id": "huo_yan_jin_jing",
+      "card_name": "火眼金睛",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 0,
+      "description": "看破敌人破绽，敌人易伤+3层。",
+      "character_exclusive": "sun_wukong",
+      "effects": [{"type": "status", "status_type": "vulnerable", "value": 3, "target": "enemy"}],
+      "upgraded_effects": [{"type": "status", "status_type": "vulnerable", "value": 5, "target": "enemy"}],
+      "star_2_effects": [{"type": "status", "status_type": "vulnerable", "value": 4, "target": "enemy"}],
+      "star_3_effects": [{"type": "status", "status_type": "vulnerable", "value": 5, "target": "enemy"}, {"type": "draw", "value": 1, "target": "self"}],
+      "star_2_description": "看破敌人破绽，敌人易伤+4层。",
+      "star_3_description": "看破敌人破绽，敌人易伤+5层，抽1张牌。"
+    },
+    {
+      "card_id": "zhan_yi",
+      "card_name": "战意",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 0,
+      "description": "失去3点生命，获得2点法力。",
+      "character_exclusive": "sun_wukong",
+      "effects": [
+        {"type": "self_damage", "value": 3, "target": "self"},
+        {"type": "mana", "value": 2, "target": "self"}
+      ],
+      "upgraded_effects": [
+        {"type": "self_damage", "value": 2, "target": "self"},
+        {"type": "mana", "value": 2, "target": "self"}
+      ]
+    },
+    {
+      "card_id": "ding",
+      "card_name": "定",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 3,
+      "description": "敌人本回合无法攻击。",
+      "character_exclusive": "sun_wukong",
+      "effects": [{"type": "status", "status_type": "stun", "value": 1, "target": "enemy"}],
+      "upgraded_effects": [{"type": "status", "status_type": "stun", "value": 1, "target": "all_enemies"}]
+    },
+    {
+      "card_id": "qi_shi_er_bian",
+      "card_name": "七十二变",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 1,
+      "description": "随机获得3张临时卡牌加入手牌。",
+      "character_exclusive": "sun_wukong",
+      "effects": [{"type": "generate_random_cards", "value": 3, "target": "self"}],
+      "upgraded_effects": [{"type": "generate_random_cards", "value": 4, "target": "self"}]
+    },
+    {
+      "card_id": "jin_gu_bang",
+      "card_name": "如意金箍棒",
+      "card_type": "attack",
+      "rarity": "rare",
+      "energy_cost": 2,
+      "description": "对敌人造成15点伤害，每有1点力量额外+3伤害。",
+      "character_exclusive": "sun_wukong",
+      "effects": [{"type": "damage", "value": 15, "target": "enemy", "strength_bonus": 3}],
+      "upgraded_effects": [{"type": "damage", "value": 20, "target": "enemy", "strength_bonus": 4}]
+    },
+    {
+      "card_id": "da_nao_tian_gong",
+      "card_name": "大闹天宫",
+      "card_type": "ultimate",
+      "rarity": "legendary",
+      "energy_cost": 6,
+      "description": "每损失10点生命值力量+1，耗能-1、易伤+1。极致增伤。",
+      "character_exclusive": "sun_wukong",
+      "effects": [{"type": "special", "special_id": "da_nao_tian_gong", "target": "self"}],
+      "upgraded_effects": [{"type": "special", "special_id": "da_nao_tian_gong_plus", "target": "self"}]
+    },
+    {
+      "card_id": "meng_zhuang",
+      "card_name": "猛撞",
+      "card_type": "attack",
+      "rarity": "common",
+      "energy_cost": 0,
+      "stamina_cost": 2,
+      "description": "对敌人造成6点伤害，若敌人没有护甲，则再造成3点伤害、敌人易伤+1。",
+      "character_exclusive": "zhu_bajie",
+      "effects": [
+        {"type": "damage", "value": 6, "target": "enemy"},
+        {"type": "damage", "value": 3, "target": "enemy", "condition": "enemy_no_armor"},
+        {"type": "status", "status_type": "vulnerable", "value": 1, "target": "enemy", "condition": "enemy_no_armor"}
+      ],
+      "upgraded_effects": [
+        {"type": "damage", "value": 9, "target": "enemy"},
+        {"type": "damage", "value": 5, "target": "enemy", "condition": "enemy_no_armor"},
+        {"type": "status", "status_type": "vulnerable", "value": 2, "target": "enemy", "condition": "enemy_no_armor"}
+      ]
+    },
+    {
+      "card_id": "tan_shi",
+      "card_name": "贪食",
+      "card_type": "skill",
+      "rarity": "common",
+      "energy_cost": 1,
+      "description": "获得2点体力。",
+      "character_exclusive": "zhu_bajie",
+      "effects": [{"type": "stamina", "value": 2, "target": "self"}],
+      "upgraded_effects": [{"type": "stamina", "value": 3, "target": "self"}]
+    },
+    {
+      "card_id": "yi_xue_huan_li",
+      "card_name": "以血换力",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 3,
+      "description": "对敌人造成30点伤害，若敌人死亡则回复1法力、1体力。",
+      "character_exclusive": "zhu_bajie",
+      "effects": [
+        {"type": "damage", "value": 30, "target": "enemy"},
+        {"type": "mana", "value": 1, "target": "self", "condition": "enemy_killed"},
+        {"type": "stamina", "value": 1, "target": "self", "condition": "enemy_killed"}
+      ],
+      "upgraded_effects": [
+        {"type": "damage", "value": 40, "target": "enemy"},
+        {"type": "mana", "value": 2, "target": "self", "condition": "enemy_killed"},
+        {"type": "stamina", "value": 2, "target": "self", "condition": "enemy_killed"}
+      ]
+    },
+    {
+      "card_id": "jiu_chi_ba",
+      "card_name": "九齿钉耙",
+      "card_type": "attack",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "stamina_cost": 1,
+      "description": "对敌人造成9次1点伤害。",
+      "character_exclusive": "zhu_bajie",
+      "effects": [{"type": "damage", "value": 1, "target": "enemy", "times": 9}],
+      "upgraded_effects": [{"type": "damage", "value": 2, "target": "enemy", "times": 9}]
+    },
+    {
+      "card_id": "fan_fu",
+      "card_name": "翻覆",
+      "card_type": "attack",
+      "rarity": "uncommon",
+      "energy_cost": 0,
+      "stamina_cost": 3,
+      "description": "对敌人造成15点伤害。",
+      "character_exclusive": "zhu_bajie",
+      "effects": [{"type": "damage", "value": 15, "target": "enemy"}],
+      "upgraded_effects": [{"type": "damage", "value": 22, "target": "enemy"}]
+    },
+    {
+      "card_id": "rou_dun",
+      "card_name": "肉盾",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "获得等同于当前体力值×3的护甲。",
+      "character_exclusive": "zhu_bajie",
+      "effects": [{"type": "armor_from_stamina", "multiplier": 3, "target": "self"}],
+      "upgraded_effects": [{"type": "armor_from_stamina", "multiplier": 4, "target": "self"}]
+    },
+    {
+      "card_id": "tian_peng_ni_ming",
+      "card_name": "天蓬逆命",
+      "card_type": "ultimate",
+      "rarity": "legendary",
+      "energy_cost": 6,
+      "stamina_cost": 6,
+      "description": "消耗自身50%当前生命，回复等量法力体力。极限自残爆发。",
+      "character_exclusive": "zhu_bajie",
+      "effects": [{"type": "special", "special_id": "tian_peng_ni_ming", "target": "self"}],
+      "upgraded_effects": [{"type": "special", "special_id": "tian_peng_ni_ming_plus", "target": "self"}]
+    },
+    {
+      "card_id": "heng_sao",
+      "card_name": "横扫",
+      "card_type": "attack",
+      "rarity": "common",
+      "energy_cost": 1,
+      "description": "对敌人造成6点伤害，若自身有护甲，则再造成3点伤害。",
+      "character_exclusive": "sha_wujing",
+      "effects": [
+        {"type": "damage", "value": 6, "target": "enemy"},
+        {"type": "damage", "value": 3, "target": "enemy", "condition": "self_has_armor"}
+      ],
+      "upgraded_effects": [
+        {"type": "damage", "value": 9, "target": "enemy"},
+        {"type": "damage", "value": 5, "target": "enemy", "condition": "self_has_armor"}
+      ]
+    },
+    {
+      "card_id": "tong_qiang_tie_bi",
+      "card_name": "铜墙铁壁",
+      "card_type": "skill",
+      "rarity": "common",
+      "energy_cost": 1,
+      "description": "获得8点护甲。",
+      "character_exclusive": "sha_wujing",
+      "effects": [{"type": "armor", "value": 8, "target": "self"}],
+      "upgraded_effects": [{"type": "armor", "value": 12, "target": "self"}]
+    },
+    {
+      "card_id": "fan_ji_zi_tai",
+      "card_name": "反击姿态",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 0,
+      "description": "本回合每次受到伤害，立即对攻击者造成等量反击。",
+      "character_exclusive": "sha_wujing",
+      "effects": [{"type": "status", "status_type": "counter", "value": 1, "target": "self"}],
+      "upgraded_effects": [{"type": "status", "status_type": "counter", "value": 1, "target": "self"}, {"type": "armor", "value": 5, "target": "self"}]
+    },
+    {
+      "card_id": "jian_ren",
+      "card_name": "坚忍",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "获得5点护甲，若护甲值超过20，额外获得5点护甲。",
+      "character_exclusive": "sha_wujing",
+      "effects": [
+        {"type": "armor", "value": 5, "target": "self"},
+        {"type": "armor", "value": 5, "target": "self", "condition": "armor_above_20"}
+      ],
+      "upgraded_effects": [
+        {"type": "armor", "value": 8, "target": "self"},
+        {"type": "armor", "value": 8, "target": "self", "condition": "armor_above_20"}
+      ]
+    },
+    {
+      "card_id": "tie_sha_zhang",
+      "card_name": "铁砂掌",
+      "card_type": "attack",
+      "rarity": "uncommon",
+      "energy_cost": 2,
+      "description": "对敌人造成等同于当前护甲值的伤害。",
+      "character_exclusive": "sha_wujing",
+      "effects": [{"type": "damage_from_armor", "target": "enemy"}],
+      "upgraded_effects": [{"type": "damage_from_armor", "target": "enemy", "bonus": 5}]
+    },
+    {
+      "card_id": "bu_dong_ru_shan",
+      "card_name": "不动如山",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 2,
+      "description": "本回合受到的所有伤害减半。获得10点护甲。",
+      "character_exclusive": "sha_wujing",
+      "effects": [
+        {"type": "status", "status_type": "damage_halve", "value": 1, "target": "self"},
+        {"type": "armor", "value": 10, "target": "self"}
+      ],
+      "upgraded_effects": [
+        {"type": "status", "status_type": "damage_halve", "value": 1, "target": "self"},
+        {"type": "armor", "value": 15, "target": "self"}
+      ]
+    },
+    {
+      "card_id": "juan_lian_tian_wei",
+      "card_name": "卷帘天威",
+      "card_type": "ultimate",
+      "rarity": "legendary",
+      "energy_cost": 6,
+      "description": "获得自身当前生命值的护甲，并对所有敌人造成等同于护甲值的伤害。",
+      "character_exclusive": "sha_wujing",
+      "effects": [{"type": "special", "special_id": "juan_lian_tian_wei", "target": "self"}],
+      "upgraded_effects": [{"type": "special", "special_id": "juan_lian_tian_wei_plus", "target": "self"}]
+    },
+    {
+      "card_id": "bai_long_ta",
+      "card_name": "白龙踏",
+      "card_type": "attack",
+      "rarity": "common",
+      "energy_cost": 1,
+      "description": "对所有敌人造成6点伤害。",
+      "character_exclusive": "tang_seng",
+      "effects": [{"type": "damage", "value": 6, "target": "all_enemies"}],
+      "upgraded_effects": [{"type": "damage", "value": 9, "target": "all_enemies"}]
+    },
+    {
+      "card_id": "bai_long_ben",
+      "card_name": "白龙奔",
+      "card_type": "skill",
+      "rarity": "common",
+      "energy_cost": 1,
+      "description": "所有敌人伤害-6（本回合）。",
+      "character_exclusive": "tang_seng",
+      "effects": [{"type": "status", "status_type": "weaken", "value": 6, "target": "all_enemies"}],
+      "upgraded_effects": [{"type": "status", "status_type": "weaken", "value": 9, "target": "all_enemies"}]
+    },
+    {
+      "card_id": "hua_yuan",
+      "card_name": "化缘",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 0,
+      "description": "抽1张牌，获得1点法力。",
+      "character_exclusive": "tang_seng",
+      "effects": [
+        {"type": "draw", "value": 1, "target": "self"},
+        {"type": "mana", "value": 1, "target": "self"}
+      ],
+      "upgraded_effects": [
+        {"type": "draw", "value": 2, "target": "self"},
+        {"type": "mana", "value": 1, "target": "self"}
+      ]
+    },
+    {
+      "card_id": "hu_wei",
+      "card_name": "护卫",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "白龙马血量+6。",
+      "character_exclusive": "tang_seng",
+      "effects": [{"type": "bailongma_heal", "value": 6, "target": "self"}],
+      "upgraded_effects": [{"type": "bailongma_heal", "value": 10, "target": "self"}]
+    },
+    {
+      "card_id": "jin_chan_tuo_qiao",
+      "card_name": "金蝉脱壳",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 1,
+      "description": "获得金身状态，抽2张牌。",
+      "character_exclusive": "tang_seng",
+      "effects": [
+        {"type": "status", "status_type": "golden_body", "value": 1, "target": "self"},
+        {"type": "draw", "value": 2, "target": "self"}
+      ],
+      "upgraded_effects": [
+        {"type": "status", "status_type": "golden_body", "value": 1, "target": "self"},
+        {"type": "draw", "value": 3, "target": "self"}
+      ]
+    },
+    {
+      "card_id": "ci_bei",
+      "card_name": "慈悲",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 2,
+      "description": "恢复10点生命值，获得3层治愈。",
+      "character_exclusive": "tang_seng",
+      "effects": [
+        {"type": "heal", "value": 10, "target": "self"},
+        {"type": "status", "status_type": "regeneration", "value": 3, "target": "self"}
+      ],
+      "upgraded_effects": [
+        {"type": "heal", "value": 15, "target": "self"},
+        {"type": "status", "status_type": "regeneration", "value": 5, "target": "self"}
+      ]
+    },
+    {
+      "card_id": "bai_long_nu",
+      "card_name": "白龙怒",
+      "card_type": "attack",
+      "rarity": "rare",
+      "energy_cost": 2,
+      "description": "白龙马对所有敌人造成等同于白龙马血量的伤害。",
+      "character_exclusive": "tang_seng",
+      "effects": [{"type": "bailongma_attack", "target": "all_enemies"}],
+      "upgraded_effects": [{"type": "bailongma_attack", "target": "all_enemies", "bonus": 5}]
+    },
+    {
+      "card_id": "a_mi_tuo_fo",
+      "card_name": "阿弥陀佛",
+      "card_type": "ultimate",
+      "rarity": "legendary",
+      "energy_cost": 6,
+      "description": "恢复自身30%血量。强力的保命技能。",
+      "character_exclusive": "tang_seng",
+      "effects": [{"type": "heal_percent", "value": 30, "target": "self"}],
+      "upgraded_effects": [{"type": "heal_percent", "value": 50, "target": "self"}]
+    },
+    {
+      "card_id": "poison_blade",
+      "card_name": "毒刃",
+      "card_type": "attack",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "对敌人造成4点伤害，施加3层灼烧。",
+      "character_exclusive": "all",
+      "effects": [
+        {"type": "damage", "value": 4, "target": "enemy"},
+        {"type": "status", "status_type": "burn", "value": 3, "target": "enemy"}
+      ],
+      "upgraded_effects": [
+        {"type": "damage", "value": 6, "target": "enemy"},
+        {"type": "status", "status_type": "burn", "value": 5, "target": "enemy"}
+      ]
+    },
+    {
+      "card_id": "blood_pact",
+      "card_name": "血契",
+      "card_type": "skill",
+      "rarity": "rare",
+      "energy_cost": 0,
+      "description": "失去5点生命，抽3张牌。",
+      "character_exclusive": "all",
+      "effects": [
+        {"type": "self_damage", "value": 5, "target": "self"},
+        {"type": "draw", "value": 3, "target": "self"}
+      ],
+      "upgraded_effects": [
+        {"type": "self_damage", "value": 3, "target": "self"},
+        {"type": "draw", "value": 3, "target": "self"}
+      ]
+    },
+    {
+      "card_id": "thunder_strike",
+      "card_name": "雷击",
+      "card_type": "attack",
+      "rarity": "rare",
+      "energy_cost": 3,
+      "description": "对敌人造成20点伤害。",
+      "character_exclusive": "all",
+      "effects": [{"type": "damage", "value": 20, "target": "enemy"}],
+      "upgraded_effects": [{"type": "damage", "value": 30, "target": "enemy"}]
+    },
+    {
+      "card_id": "cloud_step",
+      "card_name": "腾云步",
+      "card_type": "skill",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "获得6点护甲，抽1张牌。",
+      "character_exclusive": "all",
+      "effects": [
+        {"type": "armor", "value": 6, "target": "self"},
+        {"type": "draw", "value": 1, "target": "self"}
+      ],
+      "upgraded_effects": [
+        {"type": "armor", "value": 9, "target": "self"},
+        {"type": "draw", "value": 1, "target": "self"}
+      ]
+    },
+    {
+      "card_id": "spirit_generic",
+      "card_name": "妖灵·小妖",
+      "card_type": "spirit",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "召唤妖灵攻击敌人，造成8点伤害。使用后消失。",
+      "effects": [{"type": "damage", "value": 8, "target": "enemy"}, {"type": "exhaust"}],
+      "star_2_effects": [{"type": "damage", "value": 12, "target": "enemy"}, {"type": "exhaust"}],
+      "star_2_description": "召唤妖灵攻击敌人，造成12点伤害。使用后消失。",
+      "star_3_effects": [{"type": "damage", "value": 16, "target": "enemy"}, {"type": "exhaust"}],
+      "star_3_description": "召唤妖灵攻击敌人，造成16点伤害。使用后消失。"
+    },
+    {
+      "card_id": "spirit_meng_hu",
+      "card_name": "妖灵·猛虎",
+      "card_type": "spirit",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "召唤猛虎攻击敌人，造成12点伤害。使用后消失。",
+      "effects": [{"type": "damage", "value": 12, "target": "enemy"}, {"type": "exhaust"}],
+      "star_2_effects": [{"type": "damage", "value": 18, "target": "enemy"}, {"type": "exhaust"}],
+      "star_2_description": "召唤猛虎攻击敌人，造成18点伤害。使用后消失。",
+      "star_3_effects": [{"type": "damage", "value": 24, "target": "enemy"}, {"type": "exhaust"}],
+      "star_3_description": "召唤猛虎攻击敌人，造成24点伤害。使用后消失。"
+    },
+    {
+      "card_id": "spirit_hu_xian",
+      "card_name": "妖灵·狐仙",
+      "card_type": "spirit",
+      "rarity": "rare",
+      "energy_cost": 1,
+      "description": "召唤狐仙，对敌人施加2层易伤和2层虚弱。使用后消失。",
+      "effects": [
+        {"type": "status", "status_type": "vulnerable", "value": 2, "target": "enemy"},
+        {"type": "status", "status_type": "weak", "value": 2, "target": "enemy"},
+        {"type": "exhaust"}
+      ],
+      "star_2_effects": [
+        {"type": "status", "status_type": "vulnerable", "value": 3, "target": "enemy"},
+        {"type": "status", "status_type": "weak", "value": 3, "target": "enemy"},
+        {"type": "exhaust"}
+      ],
+      "star_2_description": "召唤狐仙，对敌人施加3层易伤和3层虚弱。使用后消失。",
+      "star_3_effects": [
+        {"type": "status", "status_type": "vulnerable", "value": 4, "target": "enemy"},
+        {"type": "status", "status_type": "weak", "value": 4, "target": "enemy"},
+        {"type": "exhaust"}
+      ],
+      "star_3_description": "召唤狐仙，对敌人施加4层易伤和4层虚弱。使用后消失。"
+    },
+    {
+      "card_id": "spirit_zhu_si",
+      "card_name": "妖灵·蛛丝",
+      "card_type": "spirit",
+      "rarity": "uncommon",
+      "energy_cost": 1,
+      "description": "召唤蛛丝妖灵，获得6点护甲并抽1张牌。使用后消失。",
+      "effects": [
+        {"type": "armor", "value": 6, "target": "self"},
+        {"type": "draw", "value": 1},
+        {"type": "exhaust"}
+      ],
+      "star_2_effects": [
+        {"type": "armor", "value": 9, "target": "self"},
+        {"type": "draw", "value": 1},
+        {"type": "exhaust"}
+      ],
+      "star_2_description": "召唤蛛丝妖灵，获得9点护甲并抽1张牌。使用后消失。",
+      "star_3_effects": [
+        {"type": "armor", "value": 12, "target": "self"},
+        {"type": "draw", "value": 2},
+        {"type": "exhaust"}
+      ],
+      "star_3_description": "召唤蛛丝妖灵，获得12点护甲并抽2张牌。使用后消失。"
+    }
+  ]
+}

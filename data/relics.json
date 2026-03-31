@@ -1,0 +1,145 @@
+{
+  "relics": [
+    {
+      "relic_id": "jin_gu_quan",
+      "relic_name": "紧箍圈",
+      "rarity": "common",
+      "trigger_type": "on_battle_start",
+      "description": "战斗开始时，若法力≥3，抽1张牌。",
+      "effects": [{"type": "draw", "value": 1, "condition": "mana_gte_3"}],
+      "star_2_effects": [{"type": "draw", "value": 2, "condition": "mana_gte_3"}],
+      "star_2_description": "战斗开始时，若法力≥3，抽2张牌。",
+      "star_3_effects": [{"type": "draw", "value": 2, "condition": "mana_gte_2"}],
+      "star_3_description": "战斗开始时，若法力≥2，抽2张牌。"
+    },
+    {
+      "relic_id": "ba_jiao_shan",
+      "relic_name": "芭蕉扇",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "攻击时有20%概率造成双倍伤害。",
+      "effects": [{"type": "double_damage", "chance": 0.2}],
+      "star_2_effects": [{"type": "double_damage", "chance": 0.3}],
+      "star_2_description": "攻击时有30%概率造成双倍伤害。",
+      "star_3_effects": [{"type": "double_damage", "chance": 0.4}],
+      "star_3_description": "攻击时有40%概率造成双倍伤害。"
+    },
+    {
+      "relic_id": "guan_yin_yu_ping",
+      "relic_name": "观音玉瓶",
+      "rarity": "rare",
+      "trigger_type": "on_fatal_damage",
+      "description": "首次受到致命伤害时，保留1点生命。每场战斗限一次。",
+      "effects": [{"type": "prevent_death", "value": 1, "once_per_battle": true}],
+      "star_2_effects": [{"type": "prevent_death", "value": 1, "once_per_battle": true}, {"type": "heal", "value": 10}],
+      "star_2_description": "首次受到致命伤害时，保留1点生命并恢复10点生命。每场战斗限一次。",
+      "star_3_effects": [{"type": "prevent_death", "value": 1, "once_per_battle": true}, {"type": "heal", "value": 20}, {"type": "armor", "value": 10}],
+      "star_3_description": "首次受到致命伤害时，保留1点生命，恢复20点生命并获得10点护甲。每场战斗限一次。"
+    },
+    {
+      "relic_id": "feng_huo_lun",
+      "relic_name": "风火轮",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "每次攻击有20%概率多触发一次。",
+      "effects": [{"type": "extra_attack", "chance": 0.2}],
+      "star_2_effects": [{"type": "extra_attack", "chance": 0.3}],
+      "star_2_description": "每次攻击有30%概率多触发一次。",
+      "star_3_effects": [{"type": "extra_attack", "chance": 0.4}],
+      "star_3_description": "每次攻击有40%概率多触发一次。"
+    },
+    {
+      "relic_id": "zhen_yao_ta",
+      "relic_name": "镇妖塔",
+      "rarity": "legendary",
+      "trigger_type": "on_battle_start",
+      "description": "战斗开始获得10点护甲，每击败一个敌人+3。",
+      "effects": [
+        {"type": "armor", "value": 10, "trigger": "battle_start"},
+        {"type": "armor", "value": 3, "trigger": "on_kill"}
+      ],
+      "star_2_effects": [
+        {"type": "armor", "value": 15, "trigger": "battle_start"},
+        {"type": "armor", "value": 5, "trigger": "on_kill"}
+      ],
+      "star_2_description": "战斗开始获得15点护甲，每击败一个敌人+5。",
+      "star_3_effects": [
+        {"type": "armor", "value": 20, "trigger": "battle_start"},
+        {"type": "armor", "value": 8, "trigger": "on_kill"}
+      ],
+      "star_3_description": "战斗开始获得20点护甲，每击败一个敌人+8。"
+    },
+    {
+      "relic_id": "ru_yi_huan",
+      "relic_name": "如意环",
+      "rarity": "common",
+      "trigger_type": "on_turn_start",
+      "description": "每回合开始时获得1点护甲。",
+      "effects": [{"type": "armor", "value": 1}],
+      "star_2_effects": [{"type": "armor", "value": 2}],
+      "star_2_description": "每回合开始时获得2点护甲。",
+      "star_3_effects": [{"type": "armor", "value": 3}],
+      "star_3_description": "每回合开始时获得3点护甲。"
+    },
+    {
+      "relic_id": "bi_huo_zhao",
+      "relic_name": "避火罩",
+      "rarity": "uncommon",
+      "trigger_type": "passive",
+      "description": "灼烧伤害减半。",
+      "effects": [{"type": "burn_reduction", "value": 0.5}],
+      "star_2_effects": [{"type": "burn_reduction", "value": 0.7}],
+      "star_2_description": "灼烧伤害减少70%。",
+      "star_3_effects": [{"type": "burn_reduction", "value": 1.0}],
+      "star_3_description": "免疫灼烧伤害。"
+    },
+    {
+      "relic_id": "ding_hai_shen_zhen",
+      "relic_name": "定海神针",
+      "rarity": "legendary",
+      "trigger_type": "on_turn_start",
+      "description": "每回合开始时获得1点力量。",
+      "effects": [{"type": "strength", "value": 1}],
+      "star_2_effects": [{"type": "strength", "value": 1}, {"type": "armor", "value": 2}],
+      "star_2_description": "每回合开始时获得1点力量和2点护甲。",
+      "star_3_effects": [{"type": "strength", "value": 2}, {"type": "armor", "value": 3}],
+      "star_3_description": "每回合开始时获得2点力量和3点护甲。"
+    },
+    {
+      "relic_id": "jin_lan_jia_sha",
+      "relic_name": "锦斓袈裟",
+      "rarity": "rare",
+      "trigger_type": "on_battle_start",
+      "description": "战斗开始时获得3层治愈。",
+      "effects": [{"type": "status", "status_type": "regeneration", "value": 3}],
+      "star_2_effects": [{"type": "status", "status_type": "regeneration", "value": 5}],
+      "star_2_description": "战斗开始时获得5层治愈。",
+      "star_3_effects": [{"type": "status", "status_type": "regeneration", "value": 5}, {"type": "armor", "value": 5}],
+      "star_3_description": "战斗开始时获得5层治愈和5点护甲。"
+    },
+    {
+      "relic_id": "zi_jin_bo",
+      "relic_name": "紫金钵",
+      "rarity": "uncommon",
+      "trigger_type": "on_battle_start",
+      "description": "战斗开始时获得1点额外法力。",
+      "effects": [{"type": "mana", "value": 1}],
+      "star_2_effects": [{"type": "mana", "value": 1}, {"type": "draw", "value": 1}],
+      "star_2_description": "战斗开始时获得1点额外法力和抽1张牌。",
+      "star_3_effects": [{"type": "mana", "value": 2}, {"type": "draw", "value": 1}],
+      "star_3_description": "战斗开始时获得2点额外法力和抽1张牌。"
+    },
+    {
+      "relic_id": "lian_dan_ping",
+      "relic_name": "炼丹瓶",
+      "rarity": "rare",
+      "trigger_type": "passive",
+      "description": "丹药携带上限+3（从3提升至6）。",
+      "effects": [{"type": "consumable_capacity", "value": 3}],
+      "star_2_effects": [{"type": "consumable_capacity", "value": 3}, {"type": "pill_quality_bonus", "value": 0.1}],
+      "star_2_description": "丹药携带上限+3，炼丹时稀有品质概率+10%。",
+      "star_3_effects": [{"type": "consumable_capacity", "value": 3}, {"type": "pill_quality_bonus", "value": 0.2}],
+      "star_3_description": "丹药携带上限+3，炼丹时稀有品质概率+20%。"
+    }
+  ]
+}

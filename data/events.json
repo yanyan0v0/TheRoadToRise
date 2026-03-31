@@ -1,0 +1,155 @@
+{
+  "events": [
+    {
+      "event_id": "mysterious_shrine",
+      "event_name": "神秘祠堂",
+      "description": "你在路边发现了一座古老的祠堂，香火缭绕。",
+      "options": [
+        {
+          "text": "进入祈祷",
+          "results": [
+            {"type": "heal", "value": 15, "chance": 0.6, "description": "你感到一股暖流涌遍全身，恢复了15点生命。"},
+            {"type": "damage", "value": 10, "chance": 0.4, "description": "祠堂中的邪灵袭击了你，失去10点生命。"}
+          ]
+        },
+        {
+          "text": "搜索祠堂",
+          "results": [
+            {"type": "gold", "value": 30, "chance": 0.5, "description": "你找到了一些供品，获得30金币。"},
+            {"type": "card", "rarity": "rare", "chance": 0.3, "description": "你发现了一张古老的法术卷轴。"},
+            {"type": "nothing", "chance": 0.2, "description": "祠堂空无一物。"}
+          ]
+        },
+        {
+          "text": "离开",
+          "results": [
+            {"type": "nothing", "chance": 1.0, "description": "你选择继续赶路。"}
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": "wandering_monk",
+      "event_name": "云游僧人",
+      "description": "一位云游僧人拦住了你的去路，他手持一个破旧的钵盂。",
+      "options": [
+        {
+          "text": "施舍金币（-20金币）",
+          "cost": {"type": "gold", "value": 20},
+          "results": [
+            {"type": "relic", "chance": 0.5, "description": "僧人感激地赠予你一件法宝。"},
+            {"type": "heal", "value": 20, "chance": 0.5, "description": "僧人为你诵经祈福，恢复20点生命。"}
+          ]
+        },
+        {
+          "text": "与他交谈",
+          "results": [
+            {"type": "card_upgrade", "chance": 0.6, "description": "僧人传授了你一些心得，可以升级一张卡牌。"},
+            {"type": "nothing", "chance": 0.4, "description": "僧人只是微笑着点了点头。"}
+          ]
+        },
+        {
+          "text": "无视他",
+          "results": [
+            {"type": "nothing", "chance": 1.0, "description": "你匆匆走过，僧人叹了口气。"}
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": "treasure_chest",
+      "event_name": "宝箱",
+      "description": "路边有一个精致的宝箱，上面刻着奇怪的符文。",
+      "options": [
+        {
+          "text": "打开宝箱",
+          "results": [
+            {"type": "gold", "value": 50, "chance": 0.4, "description": "宝箱中装满了金币！获得50金币。"},
+            {"type": "relic", "chance": 0.2, "description": "宝箱中有一件法宝！"},
+            {"type": "damage", "value": 15, "chance": 0.2, "description": "宝箱是个陷阱！受到15点伤害。"},
+            {"type": "card", "rarity": "uncommon", "chance": 0.2, "description": "宝箱中有一张卡牌。"}
+          ]
+        },
+        {
+          "text": "小心检查后打开",
+          "results": [
+            {"type": "gold", "value": 30, "chance": 0.6, "description": "你小心翼翼地打开宝箱，获得30金币。"},
+            {"type": "card", "rarity": "common", "chance": 0.4, "description": "宝箱中有一张普通卡牌。"}
+          ]
+        },
+        {
+          "text": "离开",
+          "results": [
+            {"type": "nothing", "chance": 1.0, "description": "你决定不冒险，继续前行。"}
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": "hot_spring",
+      "event_name": "温泉",
+      "description": "你发现了一处隐秘的温泉，泉水散发着淡淡的灵气。",
+      "options": [
+        {
+          "text": "泡温泉休息",
+          "results": [
+            {"type": "heal_percent", "value": 20, "chance": 1.0, "description": "温泉的灵气让你恢复了20%的生命值。"}
+          ]
+        },
+        {
+          "text": "收集泉水",
+          "results": [
+            {"type": "consumable", "consumable_id": "hui_chun_dan", "chance": 1.0, "description": "你收集了一瓶泉水，获得回春丹。"}
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": "gambling_demon",
+      "event_name": "赌鬼妖",
+      "description": "一个嬉皮笑脸的小妖拦住你，邀请你玩一个赌博游戏。",
+      "options": [
+        {
+          "text": "赌一把（-30金币）",
+          "cost": {"type": "gold", "value": 30},
+          "results": [
+            {"type": "gold", "value": 100, "chance": 0.4, "description": "你赢了！获得100金币。"},
+            {"type": "nothing", "chance": 0.6, "description": "你输了，金币打了水漂。"}
+          ]
+        },
+        {
+          "text": "拒绝",
+          "results": [
+            {"type": "nothing", "chance": 1.0, "description": "你拒绝了小妖的邀请。"}
+          ]
+        }
+      ]
+    },
+    {
+      "event_id": "immortal_guide",
+      "event_name": "仙人指路",
+      "description": "一位白发仙人出现在你面前，他手持拂尘，仙气飘飘。",
+      "options": [
+        {
+          "text": "请求指点卡牌融合",
+          "results": [
+            {"type": "card_fusion", "chance": 1.0, "description": "仙人施展法术，帮你融合了一组卡牌！（自动融合一组可融合的卡牌）"}
+          ]
+        },
+        {
+          "text": "请求赐予力量",
+          "results": [
+            {"type": "card", "rarity": "rare", "chance": 0.6, "description": "仙人赐予你一张稀有卡牌。"},
+            {"type": "card", "rarity": "uncommon", "chance": 0.4, "description": "仙人赐予你一张优秀卡牌。"}
+          ]
+        },
+        {
+          "text": "请求治愈",
+          "results": [
+            {"type": "heal_percent", "value": 30, "chance": 1.0, "description": "仙人为你疗伤，恢复30%生命值。"}
+          ]
+        }
+      ]
+    }
+  ]
+}

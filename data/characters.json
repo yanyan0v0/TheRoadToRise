@@ -1,0 +1,61 @@
+{
+  "characters": [
+    {
+      "character_id": "sun_wukong",
+      "character_name": "齐天大圣",
+      "max_hp": 70,
+      "mana": 3,
+      "stamina": 0,
+      "gold": 50,
+      "passive_id": "battle_end_heal",
+      "passive_name": "不灭金身",
+      "passive_description": "每次战斗结束回复5点生命",
+      "unlock_condition": "none",
+      "unlock_achievement": "",
+      "starter_deck": ["attack", "attack", "attack", "attack", "defend", "defend", "defend", "defend", "gun_ji", "huo_yan_jin_jing"]
+    },
+    {
+      "character_id": "zhu_bajie",
+      "character_name": "天蓬元帅",
+      "max_hp": 85,
+      "mana": 3,
+      "stamina": 3,
+      "gold": 50,
+      "passive_id": "battle_start_stamina",
+      "passive_name": "天蓬体魄",
+      "passive_description": "每次战斗开始恢复3点体力，卡牌池新增需要体力才能打出的卡牌",
+      "unlock_condition": "achievement",
+      "unlock_achievement": "first_play",
+      "starter_deck": ["attack", "attack", "attack", "attack", "defend", "defend", "defend", "defend", "meng_zhuang", "tan_shi"]
+    },
+    {
+      "character_id": "sha_wujing",
+      "character_name": "卷帘大将",
+      "max_hp": 75,
+      "mana": 3,
+      "stamina": 0,
+      "gold": 50,
+      "passive_id": "hp_armor",
+      "passive_name": "铁壁金刚",
+      "passive_description": "每10点生命护甲+1",
+      "unlock_condition": "achievement",
+      "unlock_achievement": "floor_18",
+      "starter_deck": ["attack", "attack", "attack", "attack", "defend", "defend", "defend", "defend", "heng_sao", "tong_qiang_tie_bi"]
+    },
+    {
+      "character_id": "tang_seng",
+      "character_name": "大唐圣僧",
+      "max_hp": 65,
+      "mana": 3,
+      "stamina": 0,
+      "gold": 50,
+      "passive_id": "bailongma_bond",
+      "passive_name": "白龙马羁绊",
+      "passive_description": "与坐骑白龙马形成羁绊，白龙马每1点血量造成伤害+1、防御+1",
+      "bailongma_hp": 10,
+      "unlock_condition": "achievement",
+      "unlock_achievement": "clear_game",
+      "starter_deck": ["attack", "attack", "attack", "attack", "defend", "defend", "defend", "defend", "bai_long_ta", "bai_long_ben"]
+    }
+  ]
+}

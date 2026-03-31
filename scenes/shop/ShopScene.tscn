@@ -1,0 +1,84 @@
+[gd_scene format=3 uid="uid://cshop001"]
+
+[ext_resource type="Script" uid="uid://cbuudkf4sndv5" path="res://scenes/shop/ShopScene.gd" id="1"]
+
+[node name="ShopScene" type="Control" unique_id=458099270]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="." unique_id=15491685]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12, 0.1, 0.08, 1)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=260247160]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 45.0
+offset_right = 1910.0
+offset_bottom = 1010.0
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer" unique_id=1019982561]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 20
+
+[node name="CardSection" type="VBoxContainer" parent="ScrollContainer/VBox" unique_id=206328735]
+layout_mode = 2
+
+[node name="SectionLabel" type="Label" parent="ScrollContainer/VBox/CardSection" unique_id=537024927]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "— 卡牌 —"
+horizontal_alignment = 1
+
+[node name="CardContainer" type="HBoxContainer" parent="ScrollContainer/VBox/CardSection" unique_id=2057198552]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="RelicSection" type="VBoxContainer" parent="ScrollContainer/VBox" unique_id=479307285]
+layout_mode = 2
+
+[node name="SectionLabel" type="Label" parent="ScrollContainer/VBox/RelicSection" unique_id=994489656]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "— 法宝 —"
+horizontal_alignment = 1
+
+[node name="RelicContainer" type="HBoxContainer" parent="ScrollContainer/VBox/RelicSection" unique_id=1168753519]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="ConsumableSection" type="VBoxContainer" parent="ScrollContainer/VBox" unique_id=1600987722]
+layout_mode = 2
+
+[node name="SectionLabel" type="Label" parent="ScrollContainer/VBox/ConsumableSection" unique_id=1651892194]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "— 消耗品 —"
+horizontal_alignment = 1
+
+[node name="ConsumableContainer" type="HBoxContainer" parent="ScrollContainer/VBox/ConsumableSection" unique_id=1025624771]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="LeaveButton" type="Button" parent="." unique_id=792964382]
+layout_mode = 0
+offset_left = 810.0
+offset_top = 1020.0
+offset_right = 1110.0
+offset_bottom = 1060.0
+theme_override_font_sizes/font_size = 18
+text = "离开商店"

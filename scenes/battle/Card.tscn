@@ -1,0 +1,151 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccard001"]
+
+[ext_resource type="Script" path="res://scripts/cards/Card.gd" id="1"]
+
+[node name="Card" type="Control"]
+custom_minimum_size = Vector2(180, 270)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 180.0
+offset_bottom = 270.0
+script = ExtResource("1")
+
+[node name="Border" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = -3.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.12, 0.12, 0.12, 1)
+
+[node name="RarityIndicator" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 150.0
+offset_top = 5.0
+offset_right = 175.0
+offset_bottom = 20.0
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="TitleArea" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 5.0
+offset_right = 175.0
+offset_bottom = 40.0
+mouse_filter = 2
+color = Color(0.25, 0.2, 0.15, 1)
+
+[node name="TitleLabel" type="Label" parent="TitleArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "卡牌名称"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
+
+[node name="CostCircle" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 38.0
+offset_bottom = 38.0
+z_index = 5
+mouse_filter = 2
+color = Color(0.1, 0.15, 0.2, 1)
+
+[node name="CostLabel" type="Label" parent="CostCircle"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.454902, 0.811765, 0.890196, 1)
+
+[node name="ArtworkArea" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 45.0
+offset_right = 170.0
+offset_bottom = 165.0
+mouse_filter = 2
+color = Color(0.3, 0.2, 0.2, 1)
+
+[node name="ArtworkLabel" type="Label" parent="ArtworkArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "插画"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 0.5)
+
+[node name="TypeLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 168.0
+offset_right = 175.0
+offset_bottom = 185.0
+mouse_filter = 2
+text = "[攻击]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+
+[node name="DescriptionArea" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 188.0
+offset_right = 175.0
+offset_bottom = 265.0
+mouse_filter = 2
+color = Color(0.08, 0.08, 0.08, 1)
+
+[node name="DescriptionLabel" type="RichTextLabel" parent="DescriptionArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 3.0
+offset_right = -5.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "卡牌效果描述"
+fit_content = true
+theme_override_font_sizes/normal_font_size = 11

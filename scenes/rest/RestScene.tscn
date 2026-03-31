@@ -1,0 +1,81 @@
+[gd_scene load_steps=2 format=3 uid="uid://crest001"]
+
+[ext_resource type="Script" path="res://scenes/rest/RestScene.gd" id="1"]
+
+[node name="RestScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.1, 0.06, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/VBox"]
+layout_mode = 2
+text = "🔥 篝火休息"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
+
+[node name="DescLabel" type="Label" parent="CenterContainer/VBox"]
+layout_mode = 2
+text = "在篝火旁休息，选择一项恩赐"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+
+[node name="HPLabel" type="Label" parent="CenterContainer/VBox"]
+layout_mode = 2
+text = "当前生命: 70/70"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+
+[node name="HealAmountLabel" type="Label" parent="CenterContainer/VBox"]
+layout_mode = 2
+text = "恢复 21 点生命值 (30%)"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0, 0.721569, 0.580392, 1)
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(0, 20)
+
+[node name="HealButton" type="Button" parent="CenterContainer/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 60)
+text = "🩹 恢复生命"
+theme_override_font_sizes/font_size = 20
+
+[node name="EnlightenButton" type="Button" parent="CenterContainer/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 60)
+text = "🧘 悟道 (消耗10劫数升星)"
+theme_override_font_sizes/font_size = 20
+
+[node name="FuseButton" type="Button" parent="CenterContainer/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 60)
+text = "🔮 融合卡牌/法宝"
+theme_override_font_sizes/font_size = 20

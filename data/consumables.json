@@ -1,0 +1,88 @@
+{
+  "consumables": [
+    {
+      "consumable_id": "hui_chun_dan",
+      "consumable_name": "回春丹",
+      "description": "恢复15点生命值。",
+      "price": 30,
+      "quality": "normal",
+      "use_scene": "anytime",
+      "effects": [{"type": "heal", "value": 15}]
+    },
+    {
+      "consumable_id": "tie_gu_dan",
+      "consumable_name": "铁骨丹",
+      "description": "本场战斗获得8点护甲。",
+      "price": 30,
+      "quality": "normal",
+      "use_scene": "battle",
+      "effects": [{"type": "armor", "value": 8, "target": "self"}]
+    },
+    {
+      "consumable_id": "qing_xin_dan",
+      "consumable_name": "清心丹",
+      "description": "移除所有负面状态。",
+      "price": 35,
+      "quality": "normal",
+      "use_scene": "anytime",
+      "effects": [{"type": "remove_debuffs"}]
+    },
+    {
+      "consumable_id": "ju_qi_dan",
+      "consumable_name": "聚气丹",
+      "description": "本回合法力+2。",
+      "price": 50,
+      "quality": "rare",
+      "use_scene": "battle",
+      "effects": [{"type": "mana", "value": 2}]
+    },
+    {
+      "consumable_id": "po_jun_dan",
+      "consumable_name": "破军丹",
+      "description": "本场战斗力量+3。",
+      "price": 50,
+      "quality": "rare",
+      "use_scene": "battle",
+      "effects": [{"type": "strength", "value": 3}]
+    },
+    {
+      "consumable_id": "jin_chuang_dan",
+      "consumable_name": "金创丹",
+      "description": "恢复30点生命值。",
+      "price": 55,
+      "quality": "rare",
+      "use_scene": "anytime",
+      "effects": [{"type": "heal", "value": 30}]
+    },
+    {
+      "consumable_id": "jiu_zhuan_jin_dan",
+      "consumable_name": "九转金丹",
+      "description": "恢复全部生命值。",
+      "price": 80,
+      "quality": "legendary",
+      "use_scene": "anytime",
+      "effects": [{"type": "heal_percent", "value": 100}]
+    },
+    {
+      "consumable_id": "da_li_jin_gang_dan",
+      "consumable_name": "大力金刚丹",
+      "description": "本场战斗力量+5，护甲+10。",
+      "price": 80,
+      "quality": "legendary",
+      "use_scene": "battle",
+      "effects": [
+        {"type": "strength", "value": 5},
+        {"type": "armor", "value": 10, "target": "self"}
+      ]
+    },
+    {
+      "consumable_id": "tai_yi_zi_jin_dan",
+      "consumable_name": "太乙紫金丹",
+      "description": "死亡时自动使用，恢复50%生命值。",
+      "price": 90,
+      "quality": "legendary",
+      "use_scene": "passive",
+      "effects": [{"type": "revive", "value": 50}]
+    }
+  ]
+}

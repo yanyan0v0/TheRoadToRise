@@ -1,0 +1,474 @@
+{
+  "enemies": [
+    {
+      "enemy_id": "xiao_yao",
+      "enemy_name": "小妖",
+      "enemy_type": "normal",
+      "max_hp": 25,
+      "base_armor": 0,
+      "description": "普通的小妖怪，实力低下。",
+      "intent_pattern": [
+        {"type": "attack", "value": 6},
+        {"type": "attack", "value": 6},
+        {"type": "defend", "value": 5}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 5, "gold_max": 15}
+    },
+    {
+      "enemy_id": "lang_jing",
+      "enemy_name": "狼精",
+      "enemy_type": "normal",
+      "max_hp": 35,
+      "base_armor": 0,
+      "description": "凶猛的狼精，攻击力较高。",
+      "intent_pattern": [
+        {"type": "attack", "value": 8},
+        {"type": "attack", "value": 10},
+        {"type": "defend", "value": 6},
+        {"type": "attack", "value": 8}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 8, "gold_max": 20}
+    },
+    {
+      "enemy_id": "shu_guai",
+      "enemy_name": "树怪",
+      "enemy_type": "normal",
+      "max_hp": 40,
+      "base_armor": 5,
+      "description": "古老的树妖，防御力较高。",
+      "intent_pattern": [
+        {"type": "defend", "value": 8},
+        {"type": "attack", "value": 7},
+        {"type": "defend", "value": 8},
+        {"type": "attack", "value": 12}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 10, "gold_max": 20}
+    },
+    {
+      "enemy_id": "meng_hu_jing",
+      "enemy_name": "猛虎精",
+      "enemy_type": "normal",
+      "max_hp": 30,
+      "base_armor": 0,
+      "description": "两界山的猛虎精，攻击凶猛。",
+      "intent_pattern": [
+        {"type": "attack", "value": 10},
+        {"type": "attack", "value": 7},
+        {"type": "heavy_attack", "value": 15}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 8, "gold_max": 18}
+    },
+    {
+      "enemy_id": "xiong_pi_guai",
+      "enemy_name": "熊罴怪",
+      "enemy_type": "normal",
+      "max_hp": 45,
+      "base_armor": 3,
+      "description": "五行山的熊罴怪，体格壮硕。",
+      "intent_pattern": [
+        {"type": "defend", "value": 10},
+        {"type": "attack", "value": 9},
+        {"type": "attack", "value": 12},
+        {"type": "defend", "value": 8}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 10, "gold_max": 22}
+    },
+    {
+      "enemy_id": "zhu_yao",
+      "enemy_name": "猪妖",
+      "enemy_type": "normal",
+      "max_hp": 38,
+      "base_armor": 0,
+      "description": "高老庄的猪妖，贪吃好斗。",
+      "intent_pattern": [
+        {"type": "attack", "value": 8},
+        {"type": "buff", "value": 3},
+        {"type": "heavy_attack", "value": 14}
+      ],
+      "skills": [
+        {"skill_id": "eat", "name": "暴食", "intent_type": "buff", "effects": [{"type": "heal", "value": 5}]}
+      ],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 10, "gold_max": 20}
+    },
+    {
+      "enemy_id": "hu_yao",
+      "enemy_name": "狐妖",
+      "enemy_type": "normal",
+      "max_hp": 28,
+      "base_armor": 0,
+      "description": "狡猾的狐妖，善于施加负面状态。",
+      "intent_pattern": [
+        {"type": "debuff", "value": 2},
+        {"type": "attack", "value": 8},
+        {"type": "debuff", "value": 3},
+        {"type": "attack", "value": 10}
+      ],
+      "skills": [
+        {"skill_id": "charm", "name": "魅惑", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]}
+      ],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 8, "gold_max": 18}
+    },
+    {
+      "enemy_id": "huan_ying",
+      "enemy_name": "幻影",
+      "enemy_type": "normal",
+      "max_hp": 15,
+      "base_armor": 0,
+      "description": "白骨夫人召唤的幻影，虚弱但数量多。",
+      "intent_pattern": [
+        {"type": "attack", "value": 5},
+        {"type": "attack", "value": 5}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 3, "gold_max": 8}
+    },
+    {
+      "enemy_id": "hu_xian_feng",
+      "enemy_name": "虎先锋",
+      "enemy_type": "elite",
+      "max_hp": 70,
+      "base_armor": 5,
+      "description": "虎先锋，凶猛的精英敌人，攻防兼备。",
+      "intent_pattern": [
+        {"type": "attack", "value": 12},
+        {"type": "defend", "value": 10},
+        {"type": "heavy_attack", "value": 18},
+        {"type": "attack", "value": 12},
+        {"type": "buff", "value": 0}
+      ],
+      "skills": [
+        {"skill_id": "roar", "name": "虎啸", "intent_type": "buff", "effects": [{"type": "strength", "value": 2}]},
+        {"skill_id": "pounce", "name": "猛扑", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 18, "target": "player"}]}
+      ],
+      "phase_thresholds": [
+        {"threshold": 0.5, "phase": 2, "description": "虎先锋进入狂暴状态", "buff": {"type": "strength", "value": 3}}
+      ],
+      "drops": {"gold_min": 20, "gold_max": 40, "relic_chance": 0.3}
+    },
+    {
+      "enemy_id": "hong_hai_er",
+      "enemy_name": "红孩儿",
+      "enemy_type": "elite",
+      "max_hp": 80,
+      "base_armor": 0,
+      "description": "红孩儿，善用三昧真火。",
+      "intent_pattern": [
+        {"type": "attack", "value": 10},
+        {"type": "special", "value": 0},
+        {"type": "heavy_attack", "value": 20},
+        {"type": "defend", "value": 8}
+      ],
+      "skills": [
+        {"skill_id": "true_fire", "name": "三昧真火", "intent_type": "special", "effects": [{"type": "status", "status_type": "burn", "value": 5, "target": "player"}]},
+        {"skill_id": "fire_spear", "name": "火尖枪", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 20, "target": "player"}]}
+      ],
+      "phase_thresholds": [
+        {"threshold": 0.4, "phase": 2, "description": "红孩儿释放真火护体", "buff": {"type": "thorns", "value": 3}}
+      ],
+      "drops": {"gold_min": 25, "gold_max": 45, "relic_chance": 0.4}
+    },
+    {
+      "enemy_id": "bai_gu_fu_ren",
+      "enemy_name": "白骨夫人",
+      "enemy_type": "boss",
+      "max_hp": 150,
+      "base_armor": 0,
+      "description": "白骨岭的BOSS，善于幻术和召唤。",
+      "intent_pattern": [
+        {"type": "attack", "value": 12},
+        {"type": "special", "value": 0},
+        {"type": "attack", "value": 15},
+        {"type": "debuff", "value": 0},
+        {"type": "heavy_attack", "value": 20}
+      ],
+      "skills": [
+        {"skill_id": "hua_pi", "name": "画皮", "intent_type": "special", "effects": [{"type": "summon", "enemy_id": "huan_ying"}]},
+        {"skill_id": "she_hun", "name": "摄魂", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "vulnerable", "value": 3, "target": "player"}]},
+        {"skill_id": "bai_gu_zhua", "name": "白骨爪", "intent_type": "attack", "effects": [{"type": "damage", "value": 12, "target": "player"}]},
+        {"skill_id": "gu_lao", "name": "骨牢", "intent_type": "special", "effects": [{"type": "seal_card", "value": 1, "target": "player"}]},
+        {"skill_id": "gu_ci_zhen", "name": "骨刺阵", "intent_type": "attack", "effects": [{"type": "damage", "value": 5, "target": "player", "scaling": true}]},
+        {"skill_id": "duo_she", "name": "夺舍", "intent_type": "special", "effects": [{"type": "heal_percent", "value": 10, "condition": "has_summons"}]},
+        {"skill_id": "bai_gu_sen_sen", "name": "白骨森森", "intent_type": "buff", "effects": [{"type": "strength_percent", "value": 30}]},
+        {"skill_id": "nie_pan", "name": "涅槃", "intent_type": "special", "effects": [{"type": "revive", "value": 25}]}
+      ],
+      "phase_thresholds": [
+        {
+          "threshold": 0.5,
+          "phase": 2,
+          "description": "白骨夫人显露真身",
+          "new_skills": ["gu_lao", "gu_ci_zhen", "duo_she"],
+          "intent_pattern": [
+            {"type": "special", "value": 0, "skill_id": "gu_lao"},
+            {"type": "attack", "value": 15},
+            {"type": "special", "value": 0, "skill_id": "duo_she"},
+            {"type": "heavy_attack", "value": 22}
+          ]
+        },
+        {
+          "threshold": 0.25,
+          "phase": 3,
+          "description": "白骨精最终形态",
+          "new_skills": ["bai_gu_sen_sen", "nie_pan"],
+          "intent_pattern": [
+            {"type": "buff", "value": 0, "skill_id": "bai_gu_sen_sen"},
+            {"type": "heavy_attack", "value": 25},
+            {"type": "attack", "value": 18},
+            {"type": "special", "value": 0, "skill_id": "hua_pi"}
+          ]
+        }
+      ],
+      "drops": {"gold_min": 50, "gold_max": 80, "relic_chance": 1.0, "card_rarity_min": "rare"}
+    },
+    {
+      "enemy_id": "huang_pao_guai",
+      "enemy_name": "黄袍怪",
+      "enemy_type": "boss",
+      "max_hp": 180,
+      "base_armor": 5,
+      "description": "第二章BOSS，奎木狼下凡，攻防兼备。",
+      "intent_pattern": [
+        {"type": "attack", "value": 14},
+        {"type": "defend", "value": 12},
+        {"type": "special", "value": 0},
+        {"type": "heavy_attack", "value": 22}
+      ],
+      "skills": [
+        {"skill_id": "star_light", "name": "星光斩", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 22, "target": "player"}]},
+        {"skill_id": "transform", "name": "变化术", "intent_type": "special", "effects": [{"type": "strength", "value": 3}, {"type": "armor", "value": 10}]}
+      ],
+      "phase_thresholds": [
+        {"threshold": 0.5, "phase": 2, "description": "黄袍怪显露星君真身", "buff": {"type": "strength", "value": 5}}
+      ],
+      "drops": {"gold_min": 60, "gold_max": 100, "relic_chance": 1.0, "card_rarity_min": "rare"}
+    },
+    {
+      "enemy_id": "niu_mo_wang",
+      "enemy_name": "牛魔王",
+      "enemy_type": "boss",
+      "max_hp": 220,
+      "base_armor": 10,
+      "description": "第三章BOSS，大力牛魔王，力大无穷。",
+      "intent_pattern": [
+        {"type": "attack", "value": 16},
+        {"type": "heavy_attack", "value": 25},
+        {"type": "defend", "value": 15},
+        {"type": "attack", "value": 18},
+        {"type": "special", "value": 0}
+      ],
+      "skills": [
+        {"skill_id": "bull_charge", "name": "蛮牛冲撞", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 25, "target": "player"}, {"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]},
+        {"skill_id": "iron_fan", "name": "铁扇", "intent_type": "special", "effects": [{"type": "armor", "value": 20}, {"type": "strength", "value": 2}]}
+      ],
+      "phase_thresholds": [
+        {"threshold": 0.5, "phase": 2, "description": "牛魔王变身巨牛", "buff": {"type": "max_hp_increase", "value": 50}},
+        {"threshold": 0.25, "phase": 3, "description": "牛魔王狂暴", "buff": {"type": "strength", "value": 8}}
+      ],
+      "drops": {"gold_min": 80, "gold_max": 120, "relic_chance": 1.0, "card_rarity_min": "legendary"}
+    },
+    {
+      "enemy_id": "ru_lai_hua_shen",
+      "enemy_name": "如来化身",
+      "enemy_type": "boss",
+      "max_hp": 300,
+      "base_armor": 15,
+      "description": "最终BOSS，如来化身，考验取经人的最终试炼。",
+      "intent_pattern": [
+        {"type": "attack", "value": 18},
+        {"type": "special", "value": 0},
+        {"type": "heavy_attack", "value": 30},
+        {"type": "defend", "value": 20},
+        {"type": "special", "value": 0},
+        {"type": "attack", "value": 22}
+      ],
+      "skills": [
+        {"skill_id": "wu_zhi_shan", "name": "五指山", "intent_type": "special", "effects": [{"type": "status", "status_type": "seal", "value": 2, "target": "player"}, {"type": "damage", "value": 15, "target": "player"}]},
+        {"skill_id": "fo_guang", "name": "佛光普照", "intent_type": "special", "effects": [{"type": "heal", "value": 30}, {"type": "armor", "value": 20}]},
+        {"skill_id": "tian_jiang", "name": "天降神罚", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 30, "target": "player"}, {"type": "status", "status_type": "burn", "value": 5, "target": "player"}]}
+      ],
+      "phase_thresholds": [
+        {"threshold": 0.6, "phase": 2, "description": "如来化身展现真力", "buff": {"type": "strength", "value": 5}},
+        {"threshold": 0.3, "phase": 3, "description": "如来化身最终考验", "buff": {"type": "strength", "value": 10, "armor": 30}}
+      ],
+      "drops": {"gold_min": 100, "gold_max": 200, "relic_chance": 1.0, "card_rarity_min": "legendary"}
+    },
+    {
+      "enemy_id": "zhi_zhu_jing",
+      "enemy_name": "蜘蛛精",
+      "enemy_type": "elite",
+      "max_hp": 65,
+      "base_armor": 0,
+      "description": "盘丝洞的蜘蛛精，善于施加减速和封印。",
+      "intent_pattern": [
+        {"type": "debuff", "value": 0},
+        {"type": "attack", "value": 10},
+        {"type": "attack", "value": 12},
+        {"type": "special", "value": 0}
+      ],
+      "skills": [
+        {"skill_id": "web", "name": "蛛网缠绕", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "slow", "value": 1, "target": "player"}]},
+        {"skill_id": "poison_bite", "name": "毒牙", "intent_type": "special", "effects": [{"type": "damage", "value": 8, "target": "player"}, {"type": "status", "status_type": "burn", "value": 3, "target": "player"}]}
+      ],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 20, "gold_max": 35, "relic_chance": 0.3}
+    },
+    {
+      "enemy_id": "she_yao",
+      "enemy_name": "蛇妖",
+      "enemy_type": "normal",
+      "max_hp": 32,
+      "base_armor": 0,
+      "description": "阴险的蛇妖，擅长施毒。",
+      "intent_pattern": [
+        {"type": "attack", "value": 5},
+        {"type": "debuff", "value": 0, "status_type": "burn", "stacks": 3},
+        {"type": "attack", "value": 9},
+        {"type": "attack", "value": 7}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 8, "gold_max": 16}
+    },
+    {
+      "enemy_id": "gui_zu",
+      "enemy_name": "鬼卒",
+      "enemy_type": "normal",
+      "max_hp": 20,
+      "base_armor": 0,
+      "description": "地府逃出的鬼卒，攻击迅猛但脆弱。",
+      "intent_pattern": [
+        {"type": "attack", "value": 9},
+        {"type": "attack", "value": 9},
+        {"type": "heavy_attack", "value": 14}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 5, "gold_max": 12}
+    },
+    {
+      "enemy_id": "shi_ren_hua",
+      "enemy_name": "食人花",
+      "enemy_type": "normal",
+      "max_hp": 22,
+      "base_armor": 0,
+      "description": "深山中的食人花，会吸取生命。",
+      "intent_pattern": [
+        {"type": "attack", "value": 6},
+        {"type": "heal", "value": 5},
+        {"type": "attack", "value": 8},
+        {"type": "attack", "value": 6}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 5, "gold_max": 14}
+    },
+    {
+      "enemy_id": "shan_fei",
+      "enemy_name": "山匪",
+      "enemy_type": "normal",
+      "max_hp": 28,
+      "base_armor": 2,
+      "description": "拦路打劫的山匪，有些许护甲。",
+      "intent_pattern": [
+        {"type": "attack", "value": 7},
+        {"type": "defend", "value": 5},
+        {"type": "attack", "value": 10},
+        {"type": "attack", "value": 7}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 12, "gold_max": 25}
+    },
+    {
+      "enemy_id": "feng_yao",
+      "enemy_name": "蜂妖",
+      "enemy_type": "normal",
+      "max_hp": 18,
+      "base_armor": 0,
+      "description": "成群结队的蜂妖，攻击频繁。",
+      "intent_pattern": [
+        {"type": "attack", "value": 4},
+        {"type": "attack", "value": 4},
+        {"type": "attack", "value": 6},
+        {"type": "debuff", "value": 0, "status_type": "burn", "stacks": 2}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 4, "gold_max": 10}
+    },
+    {
+      "enemy_id": "shi_shi",
+      "enemy_name": "石狮",
+      "enemy_type": "normal",
+      "max_hp": 50,
+      "base_armor": 8,
+      "description": "石化的狮子精，防御极高但攻击缓慢。",
+      "intent_pattern": [
+        {"type": "defend", "value": 12},
+        {"type": "defend", "value": 8},
+        {"type": "heavy_attack", "value": 18},
+        {"type": "defend", "value": 10}
+      ],
+      "skills": [],
+      "phase_thresholds": [],
+      "drops": {"gold_min": 12, "gold_max": 22}
+    },
+    {
+      "enemy_id": "hei_xiong_jing",
+      "enemy_name": "黑熊精",
+      "enemy_type": "elite",
+      "max_hp": 75,
+      "base_armor": 5,
+      "description": "黑风山的黑熊精，力大无穷。",
+      "intent_pattern": [
+        {"type": "attack", "value": 11},
+        {"type": "defend", "value": 12},
+        {"type": "heavy_attack", "value": 20},
+        {"type": "buff", "value": 0},
+        {"type": "attack", "value": 14}
+      ],
+      "skills": [
+        {"skill_id": "bear_slam", "name": "熊掌拍", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 20, "target": "player"}]},
+        {"skill_id": "roar", "name": "怒吼", "intent_type": "buff", "effects": [{"type": "strength", "value": 2}]}
+      ],
+      "phase_thresholds": [
+        {"threshold": 0.4, "phase": 2, "description": "黑熊精狂暴", "buff": {"type": "strength", "value": 3}}
+      ],
+      "drops": {"gold_min": 22, "gold_max": 40, "relic_chance": 0.35}
+    },
+    {
+      "enemy_id": "jin_jiao",
+      "enemy_name": "金角大王",
+      "enemy_type": "elite",
+      "max_hp": 85,
+      "base_armor": 3,
+      "description": "平顶山的金角大王，持有紫金红葫芦。",
+      "intent_pattern": [
+        {"type": "attack", "value": 12},
+        {"type": "special", "value": 0},
+        {"type": "heavy_attack", "value": 18},
+        {"type": "defend", "value": 10},
+        {"type": "attack", "value": 14}
+      ],
+      "skills": [
+        {"skill_id": "gourd", "name": "紫金红葫芦", "intent_type": "special", "effects": [{"type": "status", "status_type": "seal", "value": 2, "target": "player"}]}
+      ],
+      "phase_thresholds": [
+        {"threshold": 0.5, "phase": 2, "description": "金角大王使用法宝", "buff": {"type": "strength", "value": 4}}
+      ],
+      "drops": {"gold_min": 25, "gold_max": 45, "relic_chance": 0.4}
+    }
+  ]
+}
