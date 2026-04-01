@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://cselect001"]
+[gd_scene format=3 uid="uid://cselect001"]
 
-[ext_resource type="Script" path="res://scenes/character_select/CharacterSelectScene.gd" id="1"]
+[ext_resource type="Script" uid="uid://bd6rky1xgn7u4" path="res://scenes/character_select/CharacterSelectScene.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://xg5v1ibmk536" path="res://ui/images/character_select/character_select_bg.jpg" id="2_g8o0v"]
+[ext_resource type="Texture2D" uid="uid://ckqe7iiu8kr6v" path="res://ui/images/character_select/character_select_title.png" id="3_pqjn1"]
 
-[node name="CharacterSelectScene" type="Control"]
+[node name="CharacterSelectScene" type="Control" unique_id=365468152]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +13,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=763920786]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,46 +22,64 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.176471, 0.203922, 0.211765, 1)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="BackgroundTextureRect" type="TextureRect" parent="." unique_id=251184517]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_g8o0v")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="TitleTextureRect" type="TextureRect" parent="." unique_id=1698246919]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 20.0
+offset_right = 300.0
+offset_bottom = 100.0
+grow_horizontal = 2
+texture = ExtResource("3_pqjn1")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=123826511]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 40.0
-offset_top = 20.0
+offset_top = 130.0
 offset_right = -40.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="TitleLabel" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-text = "选择取经人"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 36
-theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
-
-[node name="CardsContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="CardsContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1147669163]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
-alignment = 1
 theme_override_constants/separation = 20
-
-[node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
-layout_mode = 2
 alignment = 1
+
+[node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1525070433]
+layout_mode = 2
 theme_override_constants/separation = 40
+alignment = 1
 
-[node name="BackButton" type="Button" parent="VBoxContainer/ButtonContainer"]
-layout_mode = 2
+[node name="BackButton" type="Button" parent="VBoxContainer/ButtonContainer" unique_id=1928004532]
 custom_minimum_size = Vector2(160, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "返回"
-theme_override_font_sizes/font_size = 20
 
-[node name="StartButton" type="Button" parent="VBoxContainer/ButtonContainer"]
-layout_mode = 2
+[node name="StartButton" type="Button" parent="VBoxContainer/ButtonContainer" unique_id=2075499304]
 custom_minimum_size = Vector2(160, 50)
-text = "开始取经"
+layout_mode = 2
 theme_override_font_sizes/font_size = 20
+text = "开始取经"

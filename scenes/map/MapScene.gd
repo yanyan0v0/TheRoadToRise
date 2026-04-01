@@ -15,6 +15,8 @@ const DEV_CLICK_TIMEOUT: float = 2.0  # 2秒内连击5次
 @onready var map_container: Control = $ScrollContainer/MapContainer
 @onready var lines_container: Control = $ScrollContainer/MapContainer/LinesContainer
 @onready var nodes_container: Control = $ScrollContainer/MapContainer/NodesContainer
+@onready var legend_panel: PanelContainer = $LegendPanel
+@onready var legend_vbox: VBoxContainer = $LegendPanel/MarginContainer/VBox
 
 func _ready() -> void:
 	GameManager.change_state(GameManager.GameState.MAP)
@@ -29,6 +31,9 @@ func _ready() -> void:
 	else:
 		map_data = _deserialize_map(GameManager.current_map_data)
 	
+	# 创建图例悬浮窗
+	_create_legend()
+	
 	# 等待布局完成后再渲染
 	await get_tree().process_frame
 	_render_map()
@@ -38,6 +43,78 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED and map_data and not map_data.is_empty():
 		_render_map()
 
+## 地图放大倍数（相对于屏幕尺寸）
+const MAP_SCALE := 2.0
+
+## 图例中需要显示的节点类型（排除起点）
+const LEGEND_NODE_TYPES := [
+	MapGenerator.NodeType.BATTLE,
+	MapGenerator.NodeType.ELITE,
+	MapGenerator.NodeType.BOSS,
+	MapGenerator.NodeType.SHOP,
+	MapGenerator.NodeType.REST,
+	MapGenerator.NodeType.EVENT,
+	MapGenerator.NodeType.MYSTERY,
+	MapGenerator.NodeType.ALCHEMY,
+	MapGenerator.NodeType.FORGE,
+	MapGenerator.NodeType.TRIBULATION,
+]
+
+## 创建图例悬浮窗
+func _create_legend() -> void:
+	# 设置面板半透明深色背景
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.08, 0.1, 0.12, 0.85)
+	panel_style.corner_radius_top_left = 6
+	panel_style.corner_radius_top_right = 6
+	panel_style.corner_radius_bottom_left = 6
+	panel_style.corner_radius_bottom_right = 6
+	panel_style.border_width_top = 1
+	panel_style.border_width_bottom = 1
+	panel_style.border_width_left = 1
+	panel_style.border_width_right = 1
+	panel_style.border_color = Color(0.3, 0.3, 0.3, 0.6)
+	legend_panel.add_theme_stylebox_override("panel", panel_style)
+	
+	# 标题
+	var title_label := Label.new()
+	title_label.text = "图标说明"
+	title_label.add_theme_font_size_override("font_size", 14)
+	title_label.add_theme_color_override("font_color", Color(0.9, 0.85, 0.6, 1.0))
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	legend_vbox.add_child(title_label)
+	
+	# 分隔线
+	var separator := HSeparator.new()
+	separator.add_theme_constant_override("separation", 4)
+	legend_vbox.add_child(separator)
+	
+	# 遍历节点类型，创建图例条目
+	for node_type in LEGEND_NODE_TYPES:
+		var icon_path: String = MapGenerator.NODE_ICONS.get(node_type, "")
+		var type_name: String = MapGenerator.NODE_NAMES.get(node_type, "???")
+		
+		var hbox := HBoxContainer.new()
+		hbox.add_theme_constant_override("separation", 6)
+		
+		# 图标
+		var icon_rect := TextureRect.new()
+		if icon_path != "" and ResourceLoader.exists(icon_path):
+			icon_rect.texture = load(icon_path)
+		icon_rect.custom_minimum_size = Vector2(20, 20)
+		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		hbox.add_child(icon_rect)
+		
+		# 名称
+		var name_label := Label.new()
+		name_label.text = type_name
+		name_label.add_theme_font_size_override("font_size", 12)
+		name_label.add_theme_color_override("font_color", Color(0.85, 0.85, 0.85, 1.0))
+		hbox.add_child(name_label)
+		
+		legend_vbox.add_child(hbox)
+
 ## 渲染地图
 func _render_map() -> void:
 	# 清除旧内容
@@ -46,6 +123,11 @@ func _render_map() -> void:
 	for child in nodes_container.get_children():
 		child.queue_free()
 	node_buttons.clear()
+	
+	# 设置MapContainer为屏幕尺寸的MAP_SCALE倍，支持滚动
+	var viewport_size := get_viewport_rect().size
+	map_container.custom_minimum_size = Vector2(viewport_size.x * MAP_SCALE, viewport_size.y)
+	map_container.size = Vector2(viewport_size.x * MAP_SCALE, viewport_size.y)
 	
 	var nodes: Array = map_data.get("nodes", [])
 	
@@ -66,31 +148,41 @@ func _render_map() -> void:
 ## 创建节点按钮
 func _create_node_button(node: MapGenerator.MapNode) -> void:
 	var button := Button.new()
-	button.custom_minimum_size = Vector2(60, 60)
-	button.size = Vector2(60, 60)
+	button.custom_minimum_size = Vector2(48, 48)
+	button.size = Vector2(48, 48)
 	# 将比例坐标转换为实际像素坐标
 	var container_size := map_container.size
 	var actual_pos := Vector2(node.position.x * container_size.x, node.position.y * container_size.y)
-	button.position = actual_pos - Vector2(30, 30)
+	button.position = actual_pos - Vector2(24, 24)
 	
-	# 设置图标文字
-	var icon_text: String = MapGenerator.NODE_ICONS.get(node.node_type, "?")
+	# 设置图标纹理
+	var icon_path: String = MapGenerator.NODE_ICONS.get(node.node_type, "")
 	var type_name: String = MapGenerator.NODE_NAMES.get(node.node_type, "???")
-	button.text = icon_text
+	if icon_path != "" and ResourceLoader.exists(icon_path):
+		button.icon = load(icon_path)
+	button.text = ""
 	button.tooltip_text = type_name
+	# 图标撑满按钮，不显示文字
+	button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	button.expand_icon = true
 	
-	# 设置颜色
-	var color: Color = MapGenerator.NODE_COLORS.get(node.node_type, Color.WHITE)
+	# 取消按钮背景色（完全透明背景）
+	var empty_style := StyleBoxEmpty.new()
+	button.add_theme_stylebox_override("normal", empty_style)
+	button.add_theme_stylebox_override("hover", empty_style)
+	button.add_theme_stylebox_override("pressed", empty_style)
+	button.add_theme_stylebox_override("focus", empty_style)
 	
-	# 已访问节点
+	# 设置节点显示状态
 	if node.visited:
-		button.modulate = Color(0.5, 0.5, 0.5, 0.7)
+		# 已访问节点：置灰
+		button.modulate = Color(0.4, 0.4, 0.4, 1.0)
 	elif not node.reachable:
-		button.modulate = Color(0.3, 0.3, 0.3, 0.5)
+		# 不可访问节点：置灰（不透明）
+		button.modulate = Color(0.3, 0.3, 0.3, 1.0)
 	else:
-		button.modulate = color
-	
-	button.add_theme_font_size_override("font_size", 24)
+		# 可访问节点：正常显示原色
+		button.modulate = Color.WHITE
 	
 	# 连接点击信号
 	var node_id := node.id
@@ -160,9 +252,9 @@ func _update_reachable_nodes() -> void:
 		if node_buttons.has(node.id):
 			var btn: Button = node_buttons[node.id]
 			if node.visited:
-				btn.modulate = Color(0.5, 0.5, 0.5, 0.7)
+				btn.modulate = Color(0.4, 0.4, 0.4, 1.0)
 			else:
-				btn.modulate = Color(0.3, 0.3, 0.3, 0.5)
+				btn.modulate = Color(0.3, 0.3, 0.3, 1.0)
 	
 	# 只有当前节点直接连线的、未访问的下一层节点可达
 	for conn_id in current_node.connections:
@@ -171,8 +263,7 @@ func _update_reachable_nodes() -> void:
 			target.reachable = true
 			if node_buttons.has(conn_id):
 				var btn: Button = node_buttons[conn_id]
-				var color: Color = MapGenerator.NODE_COLORS.get(target.node_type, Color.WHITE)
-				btn.modulate = color
+				btn.modulate = Color.WHITE
 
 ## 节点点击处理
 func _on_node_clicked(node_id: int) -> void:

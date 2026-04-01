@@ -1,13 +1,11 @@
 ## 主菜单场景脚本
 extends Control
 
-@onready var title_label: Label = $VBoxContainer/TitleLabel
-@onready var subtitle_label: Label = $VBoxContainer/SubtitleLabel
-@onready var start_button: Button = $VBoxContainer/ButtonContainer/StartButton
-@onready var continue_button: Button = $VBoxContainer/ButtonContainer/ContinueButton
-@onready var settings_button: Button = $VBoxContainer/ButtonContainer/SettingsButton
-@onready var achievement_button: Button = $VBoxContainer/ButtonContainer/AchievementButton
-@onready var quit_button: Button = $VBoxContainer/ButtonContainer/QuitButton
+@onready var start_button: Button = $ButtonContainer/StartButton
+@onready var continue_button: Button = $ButtonContainer/ContinueButton
+@onready var settings_button: Button = $ButtonContainer/SettingsButton
+@onready var achievement_button: Button = $ButtonContainer/AchievementButton
+@onready var quit_button: Button = $ButtonContainer/QuitButton
 @onready var settings_panel: Control = $SettingsPanel
 
 func _ready() -> void:

@@ -8,7 +8,10 @@ const HIDDEN_SCENES := [
 ]
 
 var _hud_container: Control = null
+var _chapter_label: Label = null
+var _hp_icon: TextureRect = null
 var _hp_label: Label = null
+var _gold_icon: TextureRect = null
 var _gold_label: Label = null
 var _mana_label: Label = null
 var _karma_label: Label = null
@@ -18,6 +21,8 @@ var _timer_label: Label = null
 var _settings_button: Button = null
 var _settings_popup: PanelContainer = null
 var _tooltip: PanelContainer = null
+var _avatar_bubble: PanelContainer = null
+var _avatar_btn: TextureRect = null
 var _is_refreshing: bool = false
 
 ## 缓存当前显示的数据，避免不必要的重建导致频闪
@@ -90,6 +95,7 @@ func _update_visibility() -> void:
 	
 	if _hud_container.visible:
 		_timer_running = true
+		_update_avatar_texture()
 		_refresh_all()
 	else:
 		_timer_running = false
@@ -108,43 +114,98 @@ func _build_hud() -> void:
 	
 	var top_bg := ColorRect.new()
 	top_bg.position = Vector2(0, 0)
-	top_bg.size = Vector2(screen_w, 36)
+	top_bg.size = Vector2(screen_w, 54)
 	top_bg.color = Color(0.05, 0.05, 0.08, 0.85)
 	top_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_hud_container.add_child(top_bg)
 	
 	# 状态栏容器
 	var top_bar := HBoxContainer.new()
-	top_bar.position = Vector2(10, 4)
-	top_bar.size = Vector2(screen_w - 20, 28)
+	top_bar.position = Vector2(10, 8)
+	top_bar.size = Vector2(screen_w - 20, 38)
 	top_bar.add_theme_constant_override("separation", 20)
 	top_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_hud_container.add_child(top_bar)
 	
-	# HP（含章节名）
-	_hp_label = Label.new()
+	# 章节名
+	_chapter_label = Label.new()
 	var _init_chapter_name := ""
 	if GameManager.current_chapter < GameManager.CHAPTER_NAMES.size():
 		_init_chapter_name = GameManager.CHAPTER_NAMES[GameManager.current_chapter]
-	_hp_label.text = "%s  HP: %d/%d" % [_init_chapter_name, GameManager.current_hp, GameManager.max_hp]
-	_hp_label.add_theme_font_size_override("font_size", 14)
+	_chapter_label.text = _init_chapter_name
+	_chapter_label.add_theme_font_size_override("font_size", 20)
+	_chapter_label.add_theme_color_override("font_color", Color("DCDCDC"))
+	_chapter_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	top_bar.add_child(_chapter_label)
+	
+	# 角色头像（章节名和HP中间）
+	_avatar_btn = TextureRect.new()
+	_avatar_btn.custom_minimum_size = Vector2(24, 24)
+	_avatar_btn.size = Vector2(24, 24)
+	_avatar_btn.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_avatar_btn.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_avatar_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	_avatar_btn.mouse_entered.connect(_on_avatar_hover_enter)
+	_avatar_btn.mouse_exited.connect(_on_avatar_hover_exit)
+	_avatar_btn.gui_input.connect(_on_avatar_clicked)
+	_update_avatar_texture()
+	top_bar.add_child(_avatar_btn)
+	
+	# HP（心形图标 + 数值）
+	var hp_box := HBoxContainer.new()
+	hp_box.add_theme_constant_override("separation", 4)
+	hp_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	_hp_icon = TextureRect.new()
+	_hp_icon.custom_minimum_size = Vector2(16, 16)
+	_hp_icon.size = Vector2(16, 16)
+	_hp_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_hp_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_hp_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var heart_path := "res://ui/images/global/heart.png"
+	if ResourceLoader.exists(heart_path):
+		_hp_icon.texture = load(heart_path)
+	hp_box.add_child(_hp_icon)
+	
+	_hp_label = Label.new()
+	_hp_label.text = "%d/%d" % [GameManager.current_hp, GameManager.max_hp]
+	_hp_label.add_theme_font_size_override("font_size", 20)
 	_hp_label.add_theme_color_override("font_color", Color("FF6B6B"))
 	_hp_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	top_bar.add_child(_hp_label)
+	hp_box.add_child(_hp_label)
 	
-	# 金币
+	top_bar.add_child(hp_box)
+	
+	# 金币（图标 + 数值）
+	var gold_box := HBoxContainer.new()
+	gold_box.add_theme_constant_override("separation", 4)
+	gold_box.mouse_filter = Control.MOUSE_FILTER_STOP
+	gold_box.gui_input.connect(_on_gold_label_input)
+	
+	_gold_icon = TextureRect.new()
+	_gold_icon.custom_minimum_size = Vector2(16, 16)
+	_gold_icon.size = Vector2(16, 16)
+	_gold_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_gold_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_gold_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var gold_icon_path := "res://ui/images/global/icon.png"
+	if ResourceLoader.exists(gold_icon_path):
+		_gold_icon.texture = load(gold_icon_path)
+	gold_box.add_child(_gold_icon)
+	
 	_gold_label = Label.new()
-	_gold_label.text = "💰 %d" % GameManager.current_gold
-	_gold_label.add_theme_font_size_override("font_size", 14)
+	_gold_label.text = "%d" % GameManager.current_gold
+	_gold_label.add_theme_font_size_override("font_size", 20)
 	_gold_label.add_theme_color_override("font_color", Color("FDCB6E"))
-	_gold_label.mouse_filter = Control.MOUSE_FILTER_STOP
-	_gold_label.gui_input.connect(_on_gold_label_input)
-	top_bar.add_child(_gold_label)
+	_gold_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	gold_box.add_child(_gold_label)
+	
+	top_bar.add_child(gold_box)
 	
 	# 法力值（仅战斗场景可见）
 	_mana_label = Label.new()
 	_mana_label.text = "法力: %d/%d" % [GameManager.current_mana, GameManager.max_mana]
-	_mana_label.add_theme_font_size_override("font_size", 14)
+	_mana_label.add_theme_font_size_override("font_size", 20)
 	_mana_label.add_theme_color_override("font_color", Color("74B9FF"))
 	_mana_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_mana_label.visible = false
@@ -153,7 +214,7 @@ func _build_hud() -> void:
 	# 劫数
 	_karma_label = Label.new()
 	_karma_label.text = "劫: %d [%s]" % [GameManager.current_karma, GameManager.get_tribulation_level()]
-	_karma_label.add_theme_font_size_override("font_size", 14)
+	_karma_label.add_theme_font_size_override("font_size", 20)
 	_karma_label.add_theme_color_override("font_color", Color("A29BFE"))
 	_karma_label.mouse_filter = Control.MOUSE_FILTER_STOP
 	_karma_label.mouse_entered.connect(_on_karma_hover_enter)
@@ -175,7 +236,7 @@ func _build_hud() -> void:
 	# 计时显示（设置按钮左边）
 	_timer_label = Label.new()
 	_timer_label.text = "00:00"
-	_timer_label.add_theme_font_size_override("font_size", 13)
+	_timer_label.add_theme_font_size_override("font_size", 18)
 	_timer_label.add_theme_color_override("font_color", Color("B2BEC3"))
 	_timer_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	top_bar.add_child(_timer_label)
@@ -183,21 +244,22 @@ func _build_hud() -> void:
 	# 设置按钮
 	_settings_button = Button.new()
 	_settings_button.text = "⚙"
-	_settings_button.custom_minimum_size = Vector2(28, 28)
-	_settings_button.add_theme_font_size_override("font_size", 16)
+	_settings_button.custom_minimum_size = Vector2(40, 40)
+	_settings_button.add_theme_font_size_override("font_size", 22)
 	_settings_button.pressed.connect(_on_settings_pressed)
 	top_bar.add_child(_settings_button)
 	
 	# ===== 第二行：法宝栏（透明背景） =====
 	var relic_bg := ColorRect.new()
-	relic_bg.position = Vector2(0, 36)
+	relic_bg.position = Vector2(0, 54)
 	relic_bg.size = Vector2(screen_w, 30)
-	relic_bg.color = Color(0.05, 0.05, 0.08, 0.35)
+	# 透明背景
+	relic_bg.color = Color(0, 0, 0, 0)
 	relic_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_hud_container.add_child(relic_bg)
 	
 	_relic_container = HBoxContainer.new()
-	_relic_container.position = Vector2(10, 38)
+	_relic_container.position = Vector2(10, 56)
 	_relic_container.size = Vector2(screen_w - 20, 26)
 	_relic_container.add_theme_constant_override("separation", 4)
 	_relic_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -216,16 +278,18 @@ func _refresh_all() -> void:
 
 ## 更新HP显示
 func _update_hp_display() -> void:
-	if _hp_label:
+	if _chapter_label:
 		var chapter_name := ""
 		if GameManager.current_chapter < GameManager.CHAPTER_NAMES.size():
 			chapter_name = GameManager.CHAPTER_NAMES[GameManager.current_chapter]
-		_hp_label.text = "%s  HP: %d/%d" % [chapter_name, GameManager.current_hp, GameManager.max_hp]
+		_chapter_label.text = chapter_name
+	if _hp_label:
+		_hp_label.text = "%d/%d" % [GameManager.current_hp, GameManager.max_hp]
 
 ## 更新金币显示
 func _update_gold_display() -> void:
 	if _gold_label:
-		_gold_label.text = "💰 %d" % GameManager.current_gold
+		_gold_label.text = "%d" % GameManager.current_gold
 
 ## 更新法力值显示（仅战斗场景可见）
 func _update_mana_display() -> void:
@@ -575,7 +639,7 @@ func _on_settings_pressed() -> void:
 	
 	_settings_popup = PanelContainer.new()
 	var popup_x := get_viewport().get_visible_rect().size.x - 180.0
-	_settings_popup.position = Vector2(popup_x, 40)
+	_settings_popup.position = Vector2(popup_x, 58)
 	_settings_popup.z_index = 200
 	
 	var style := StyleBoxFlat.new()
@@ -661,8 +725,8 @@ func _remove_settings_overlay() -> void:
 
 ## 获取HUD总高度（供其他场景计算布局用）
 func get_hud_height() -> float:
-	# 第一行36px + 第二行法宝栏30px = 66px
-	return 66.0
+	# 第一行54px + 第二行法宝栏30px = 84px
+	return 84.0
 
 ## 显示tooltip（默认右侧显示，超出屏幕则自动调整）
 func _show_tooltip_at(target: Control, text: String) -> void:
@@ -726,6 +790,129 @@ func _hide_tooltip() -> void:
 	if _tooltip != null:
 		_tooltip.queue_free()
 		_tooltip = null
+
+## 更新角色头像纹理
+func _update_avatar_texture() -> void:
+	if _avatar_btn == null:
+		return
+	var char_id := GameManager.current_character_id
+	if char_id == "":
+		_avatar_btn.visible = false
+		return
+	var avatar_path := "res://ui/images/global/avatar_%s.jpg" % char_id
+	if ResourceLoader.exists(avatar_path):
+		_avatar_btn.texture = load(avatar_path)
+		_avatar_btn.visible = true
+	else:
+		_avatar_btn.visible = false
+
+## 角色头像hover进入 - 显示气泡框
+func _on_avatar_hover_enter() -> void:
+	_show_avatar_bubble()
+
+## 角色头像hover离开 - 隐藏气泡框
+func _on_avatar_hover_exit() -> void:
+	_hide_avatar_bubble()
+
+## 角色头像点击 - 切换气泡框显示
+func _on_avatar_clicked(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if _avatar_bubble != null:
+			_hide_avatar_bubble()
+		else:
+			_show_avatar_bubble()
+
+## 显示角色信息气泡框
+func _show_avatar_bubble() -> void:
+	_hide_avatar_bubble()
+	
+	var char_id := GameManager.current_character_id
+	if char_id == "":
+		return
+	var char_data: Dictionary = DataManager.get_character(char_id)
+	if char_data.is_empty():
+		return
+	
+	var char_name: String = char_data.get("character_name", "")
+	var passive_name: String = char_data.get("passive_name", "")
+	var passive_desc: String = char_data.get("passive_description", "")
+	
+	_avatar_bubble = PanelContainer.new()
+	_avatar_bubble.z_index = 200
+	
+	# 气泡框样式
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.1, 0.1, 0.15, 0.95)
+	style.border_color = Color(0.5, 0.45, 0.3, 0.8)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(6)
+	style.set_content_margin_all(10)
+	_avatar_bubble.add_theme_stylebox_override("panel", style)
+	
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 6)
+	
+	# 角色姓名
+	var name_label := Label.new()
+	name_label.text = char_name
+	name_label.add_theme_font_size_override("font_size", 15)
+	name_label.add_theme_color_override("font_color", Color(0.99, 0.85, 0.5))
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(name_label)
+	
+	# 分隔线
+	var separator := HSeparator.new()
+	separator.add_theme_constant_override("separation", 2)
+	vbox.add_child(separator)
+	
+	# 被动技能名称
+	var passive_title := Label.new()
+	passive_title.text = "被动：%s" % passive_name
+	passive_title.add_theme_font_size_override("font_size", 13)
+	passive_title.add_theme_color_override("font_color", Color(0.9, 0.8, 0.5))
+	vbox.add_child(passive_title)
+	
+	# 被动技能描述
+	var desc_label := Label.new()
+	desc_label.text = passive_desc
+	desc_label.add_theme_font_size_override("font_size", 12)
+	desc_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	desc_label.custom_minimum_size = Vector2(180, 0)
+	vbox.add_child(desc_label)
+	
+	_avatar_bubble.add_child(vbox)
+	_hud_container.add_child(_avatar_bubble)
+	
+	# 等一帧让PanelContainer计算出实际尺寸后再定位
+	await get_tree().process_frame
+	if _avatar_bubble == null or not is_instance_valid(_avatar_bubble):
+		return
+	
+	# 定位在头像下方
+	var screen_size := _hud_container.get_viewport_rect().size
+	var bubble_size := _avatar_bubble.size
+	var avatar_pos := _avatar_btn.global_position
+	var avatar_size := _avatar_btn.size
+	
+	var pos_x := avatar_pos.x
+	var pos_y := avatar_pos.y + avatar_size.y + 6
+	
+	# 右侧超出屏幕则左移
+	if pos_x + bubble_size.x > screen_size.x:
+		pos_x = screen_size.x - bubble_size.x - 4
+	
+	# 下方超出屏幕则显示在上方
+	if pos_y + bubble_size.y > screen_size.y:
+		pos_y = avatar_pos.y - bubble_size.y - 6
+	
+	_avatar_bubble.position = Vector2(pos_x, pos_y)
+
+## 隐藏角色信息气泡框
+func _hide_avatar_bubble() -> void:
+	if _avatar_bubble != null:
+		_avatar_bubble.queue_free()
+		_avatar_bubble = null
 
 ## 开发者模式：金币连点回调（连点5次增加100金币）
 func _on_gold_label_input(event: InputEvent) -> void:

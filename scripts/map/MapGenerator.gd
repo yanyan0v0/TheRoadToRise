@@ -19,9 +19,9 @@ enum NodeType {
 
 ## 章节配置
 const CHAPTER_CONFIG := {
-	0: {"name": "取经路", "layers": 8, "boss_id": "bai_gu_furen"},
-	1: {"name": "三打白骨", "layers": 10, "boss_id": "hong_hai_er"},
-	2: {"name": "火焰山", "layers": 10, "boss_id": "niu_mo_wang"},
+	0: {"name": "取经缘起", "layers": 8, "boss_id": "bai_gu_furen"},
+	1: {"name": "妖魔纵横", "layers": 10, "boss_id": "hong_hai_er"},
+	2: {"name": "心魔迷障", "layers": 10, "boss_id": "niu_mo_wang"},
 	3: {"name": "西天真经", "layers": 12, "boss_id": "liu_er_mihou"},
 }
 
@@ -55,19 +55,19 @@ const NODE_NAMES := {
 	NodeType.TRIBULATION: "渡劫",
 }
 
-## 节点类型图标
+## 节点类型图标（48x48 png图片路径）
 const NODE_ICONS := {
-	NodeType.BATTLE: "⚔️",
-	NodeType.ELITE: "💀",
-	NodeType.SHOP: "🏪",
-	NodeType.REST: "🔥",
-	NodeType.MYSTERY: "❓",
-	NodeType.EVENT: "❗",
-	NodeType.BOSS: "👹",
-	NodeType.START: "🏠",
-	NodeType.ALCHEMY: "🧪",
-	NodeType.FORGE: "🔨",
-	NodeType.TRIBULATION: "⚡",
+	NodeType.BATTLE: "res://ui/images/map/icon_battle.png",
+	NodeType.ELITE: "res://ui/images/map/icon_elite.png",
+	NodeType.SHOP: "res://ui/images/map/icon_shop.png",
+	NodeType.REST: "res://ui/images/map/icon_rest.png",
+	NodeType.MYSTERY: "res://ui/images/map/icon_mystery.png",
+	NodeType.EVENT: "res://ui/images/map/icon_event.png",
+	NodeType.BOSS: "res://ui/images/map/icon_boss.png",
+	NodeType.START: "res://ui/images/map/icon_start.png",
+	NodeType.ALCHEMY: "res://ui/images/map/icon_alchemy.png",
+	NodeType.FORGE: "res://ui/images/map/icon_forge.png",
+	NodeType.TRIBULATION: "res://ui/images/map/icon_tribulation.png",
 }
 
 ## 地图节点数据结构

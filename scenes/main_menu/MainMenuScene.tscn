@@ -1,9 +1,12 @@
-[gd_scene load_steps=3 format=3 uid="uid://cmainmenu001"]
+[gd_scene format=3 uid="uid://cmainmenu001"]
 
-[ext_resource type="Script" path="res://scenes/main_menu/MainMenuScene.gd" id="1"]
-[ext_resource type="Script" path="res://ui/components/SettingsPanel.gd" id="2"]
+[ext_resource type="Script" uid="uid://j7m4yprsy1np" path="res://scenes/main_menu/MainMenuScene.gd" id="1"]
+[ext_resource type="Script" uid="uid://n22dshps80uw" path="res://ui/components/SettingsPanel.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://dsme6gwfnfa10" path="res://ui/images/main/start_bg.jpg" id="2_mp6ew"]
+[ext_resource type="Texture2D" uid="uid://cnf4r16nj4p31" path="res://ui/images/main/start_title.png" id="3_oyeog"]
+[ext_resource type="Texture2D" uid="uid://2kwji3r5qmns" path="res://ui/images/main/start_subtitle.png" id="4_7sf0f"]
 
-[node name="MainMenuScene" type="Control"]
+[node name="MainMenuScene" type="Control" unique_id=1961063375]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +15,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=636727801]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,7 +24,38 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.176471, 0.203922, 0.211765, 1)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="BackgroundTextureRect" type="TextureRect" parent="." unique_id=2049306125]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_mp6ew")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Title" type="TextureRect" parent="." unique_id=317413698]
+layout_mode = 1
+offset_left = 850.0
+offset_top = 79.0
+offset_right = 950.0
+offset_bottom = 479.0
+texture = ExtResource("3_oyeog")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Subtitle" type="TextureRect" parent="Title" unique_id=1416572417]
+layout_mode = 0
+offset_left = 133.0
+offset_top = 10.0
+offset_right = 183.0
+offset_bottom = 292.0
+texture = ExtResource("4_7sf0f")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="ButtonContainer" type="VBoxContainer" parent="." unique_id=161382749]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -29,67 +63,45 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -200.0
-offset_top = -200.0
+offset_top = -40.0
 offset_right = 200.0
-offset_bottom = 200.0
+offset_bottom = 258.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 15
-
-[node name="TitleLabel" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-text = "西 行 路"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 56
-theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
-
-[node name="SubtitleLabel" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-text = "九九八十一难，皆是修行"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
-
-[node name="Spacer" type="Control" parent="VBoxContainer"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 40)
-
-[node name="ButtonContainer" type="VBoxContainer" parent="VBoxContainer"]
-layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 12
+alignment = 1
 
-[node name="StartButton" type="Button" parent="VBoxContainer/ButtonContainer"]
-layout_mode = 2
+[node name="StartButton" type="Button" parent="ButtonContainer" unique_id=1507065849]
 custom_minimum_size = Vector2(240, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "开始游戏"
-theme_override_font_sizes/font_size = 22
 
-[node name="ContinueButton" type="Button" parent="VBoxContainer/ButtonContainer"]
-layout_mode = 2
+[node name="ContinueButton" type="Button" parent="ButtonContainer" unique_id=744489868]
 custom_minimum_size = Vector2(240, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "继续游戏"
-theme_override_font_sizes/font_size = 22
 
-[node name="SettingsButton" type="Button" parent="VBoxContainer/ButtonContainer"]
-layout_mode = 2
+[node name="SettingsButton" type="Button" parent="ButtonContainer" unique_id=636562658]
 custom_minimum_size = Vector2(240, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "设置"
-theme_override_font_sizes/font_size = 22
 
-[node name="AchievementButton" type="Button" parent="VBoxContainer/ButtonContainer"]
-layout_mode = 2
+[node name="AchievementButton" type="Button" parent="ButtonContainer" unique_id=2095276115]
 custom_minimum_size = Vector2(240, 50)
-text = "🏆 成就"
+layout_mode = 2
 theme_override_font_sizes/font_size = 22
+text = "成就"
 
-[node name="QuitButton" type="Button" parent="VBoxContainer/ButtonContainer"]
-layout_mode = 2
+[node name="QuitButton" type="Button" parent="ButtonContainer" unique_id=24817618]
 custom_minimum_size = Vector2(240, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "退出游戏"
-theme_override_font_sizes/font_size = 22
 
-[node name="SettingsPanel" type="Control" parent="."]
+[node name="SettingsPanel" type="Control" parent="." unique_id=880163120]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -99,7 +111,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2")
 
-[node name="Overlay" type="ColorRect" parent="SettingsPanel"]
+[node name="Overlay" type="ColorRect" parent="SettingsPanel" unique_id=1025969563]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -108,7 +120,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.5)
 
-[node name="PanelContainer" type="PanelContainer" parent="SettingsPanel"]
+[node name="PanelContainer" type="PanelContainer" parent="SettingsPanel" unique_id=376262663]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -122,55 +134,53 @@ offset_bottom = 180.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="SettingsPanel/PanelContainer"]
+[node name="VBox" type="VBoxContainer" parent="SettingsPanel/PanelContainer" unique_id=1146207772]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Title" type="Label" parent="SettingsPanel/PanelContainer/VBox"]
+[node name="Title" type="Label" parent="SettingsPanel/PanelContainer/VBox" unique_id=2062746099]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
+theme_override_font_sizes/font_size = 28
 text = "设置"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 28
-theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
 
-[node name="BGMContainer" type="HBoxContainer" parent="SettingsPanel/PanelContainer/VBox"]
+[node name="BGMContainer" type="HBoxContainer" parent="SettingsPanel/PanelContainer/VBox" unique_id=1376519018]
 layout_mode = 2
 
-[node name="BGMLabel" type="Label" parent="SettingsPanel/PanelContainer/VBox/BGMContainer"]
-layout_mode = 2
+[node name="BGMLabel" type="Label" parent="SettingsPanel/PanelContainer/VBox/BGMContainer" unique_id=1261662598]
 custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
 text = "音乐音量"
 
-[node name="BGMSlider" type="HSlider" parent="SettingsPanel/PanelContainer/VBox/BGMContainer"]
+[node name="BGMSlider" type="HSlider" parent="SettingsPanel/PanelContainer/VBox/BGMContainer" unique_id=863363455]
 layout_mode = 2
 size_flags_horizontal = 3
-min_value = 0.0
 max_value = 1.0
 step = 0.05
 value = 0.8
 
-[node name="SFXContainer" type="HBoxContainer" parent="SettingsPanel/PanelContainer/VBox"]
+[node name="SFXContainer" type="HBoxContainer" parent="SettingsPanel/PanelContainer/VBox" unique_id=810127243]
 layout_mode = 2
 
-[node name="SFXLabel" type="Label" parent="SettingsPanel/PanelContainer/VBox/SFXContainer"]
-layout_mode = 2
+[node name="SFXLabel" type="Label" parent="SettingsPanel/PanelContainer/VBox/SFXContainer" unique_id=732957861]
 custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
 text = "音效音量"
 
-[node name="SFXSlider" type="HSlider" parent="SettingsPanel/PanelContainer/VBox/SFXContainer"]
+[node name="SFXSlider" type="HSlider" parent="SettingsPanel/PanelContainer/VBox/SFXContainer" unique_id=1470426671]
 layout_mode = 2
 size_flags_horizontal = 3
-min_value = 0.0
 max_value = 1.0
 step = 0.05
 value = 0.8
 
-[node name="FullscreenCheck" type="CheckButton" parent="SettingsPanel/PanelContainer/VBox"]
+[node name="FullscreenCheck" type="CheckButton" parent="SettingsPanel/PanelContainer/VBox" unique_id=1999541707]
 layout_mode = 2
 text = "全屏模式"
 
-[node name="CloseButton" type="Button" parent="SettingsPanel/PanelContainer/VBox"]
-layout_mode = 2
+[node name="CloseButton" type="Button" parent="SettingsPanel/PanelContainer/VBox" unique_id=1564914135]
 custom_minimum_size = Vector2(0, 40)
-text = "关闭"
+layout_mode = 2
 theme_override_font_sizes/font_size = 18
+text = "关闭"

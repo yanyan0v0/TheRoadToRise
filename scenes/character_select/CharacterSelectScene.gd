@@ -3,10 +3,21 @@ extends Control
 
 const CHARACTER_IDS: Array[String] = ["sun_wukong", "zhu_bajie", "sha_wujing", "tang_seng"]
 
+## 选中状态缩放比例
+const SELECTED_SCALE := Vector2(1.08, 1.08)
+## 默认缩放比例
+const DEFAULT_SCALE := Vector2(1.0, 1.0)
+## 悬停缩放比例
+const HOVER_SCALE := Vector2(1.04, 1.04)
+## 动画时长（秒）
+const ANIM_DURATION := 0.2
+## 卡片尺寸
+const CARD_SIZE := Vector2(236, 310)
+
 var _character_cards: Array[Panel] = []
 var _selected_index: int = -1
+var _active_tweens: Dictionary = {}
 
-@onready var title_label: Label = $VBoxContainer/TitleLabel
 @onready var cards_container: HBoxContainer = $VBoxContainer/CardsContainer
 @onready var start_button: Button = $VBoxContainer/ButtonContainer/StartButton
 @onready var back_button: Button = $VBoxContainer/ButtonContainer/BackButton
@@ -37,63 +48,127 @@ func _create_character_cards() -> void:
 		cards_container.add_child(card)
 		_character_cards.append(card)
 
+## 创建卡片样式（无边框，圆角）
+func _create_card_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	# 背景透明，完全依赖立绘图片
+	style.bg_color = Color(0, 0, 0, 0.0) 
+	style.corner_radius_top_left = 12
+	style.corner_radius_top_right = 12
+	style.corner_radius_bottom_left = 12
+	style.corner_radius_bottom_right = 12
+	style.border_width_top = 0
+	style.border_width_bottom = 0
+	style.border_width_left = 0
+	style.border_width_right = 0
+	style.content_margin_top = 0
+	style.content_margin_bottom = 0
+	style.content_margin_left = 0
+	style.content_margin_right = 0
+	return style
+
 ## 创建单个角色卡片
 func _create_card(char_data: Dictionary, index: int) -> Panel:
 	var card := Panel.new()
-	card.custom_minimum_size = Vector2(250, 350)
+	card.custom_minimum_size = CARD_SIZE
+	card.clip_contents = true
 	
-	var is_unlocked := SaveManager.is_character_unlocked(char_data.get("character_id", ""))
+	var char_id: String = char_data.get("character_id", "")
+	var is_unlocked := SaveManager.is_character_unlocked(char_id)
 	
-	var vbox := VBoxContainer.new()
-	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
-	vbox.add_theme_constant_override("separation", 8)
+	# 设置卡片样式（无边框）
+	var card_style := _create_card_style()
+	card.add_theme_stylebox_override("panel", card_style)
 	
-	# 角色占位图
-	var portrait := ColorRect.new()
-	portrait.custom_minimum_size = Vector2(200, 150)
-	var char_res := CharacterData.from_dict(char_data)
-	portrait.color = char_res.get_character_color() if is_unlocked else Color(0.3, 0.3, 0.3)
-	vbox.add_child(portrait)
+	# === 角色立绘（全铺卡片背景） ===
+	var portrait := TextureRect.new()
+	portrait.set_anchors_preset(Control.PRESET_FULL_RECT)
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	# 根据解锁状态加载不同图片
+	var img_path: String
+	if is_unlocked:
+		img_path = "res://ui/images/character_select/%s.png" % char_id
+	else:
+		img_path = "res://ui/images/character_select/%s_locked.png" % char_id
+	if ResourceLoader.exists(img_path):
+		portrait.texture = load(img_path)
+	card.add_child(portrait)
 	
-	# 角色名称标签
-	var portrait_label := Label.new()
-	portrait_label.text = char_data.get("character_name", "???")
-	portrait_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	portrait_label.set_anchors_preset(Control.PRESET_CENTER)
-	portrait.add_child(portrait_label)
+	# === 顶部信息区域容器（所有文字放在顶部） ===
+	var info_container := VBoxContainer.new()
+	info_container.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	info_container.offset_top = 32
+	info_container.offset_bottom = 160
+	info_container.offset_left = 10
+	info_container.offset_right = -10
+	info_container.add_theme_constant_override("separation", 3)
+	info_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(info_container)
 	
-	# 角色名称
+	# 角色名称（大字标题）
 	var name_label := Label.new()
-	name_label.text = char_data.get("character_name", "???") if is_unlocked else "???"
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.add_theme_font_size_override("font_size", 20)
-	vbox.add_child(name_label)
+	name_label.add_theme_font_size_override("font_size", 24)
+	name_label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.85))
+	name_label.add_theme_constant_override("outline_size", 3)
+	name_label.add_theme_color_override("font_outline_color", Color(0.15, 0.1, 0.05, 0.9))
+	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if is_unlocked:
+		name_label.text = char_data.get("character_name")
+	else:
+		name_label.text = "???"
+	info_container.add_child(name_label)
 	
 	# 属性简介
 	var stats_label := Label.new()
+	stats_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	stats_label.add_theme_font_size_override("font_size", 12)
+	stats_label.add_theme_color_override("font_color", Color(0.9, 0.88, 0.82))
+	stats_label.add_theme_constant_override("outline_size", 2)
+	stats_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+	stats_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if is_unlocked:
-		stats_label.text = "HP: %d | 法力: %d" % [char_data.get("max_hp", 0), char_data.get("mana", 0)]
+		stats_label.text = "HP:%d | 法力:%d" % [char_data.get("max_hp", 0), char_data.get("mana", 0)]
 		if char_data.get("stamina", 0) > 0:
-			stats_label.text += " | 体力: %d" % char_data.get("stamina", 0)
+			stats_label.text += " | 体力:%d" % char_data.get("stamina", 0)
 	else:
 		var unlock_text := _get_unlock_text(char_data.get("unlock_achievement", ""))
 		stats_label.text = "🔒 %s" % unlock_text
-	stats_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	stats_label.add_theme_font_size_override("font_size", 14)
-	vbox.add_child(stats_label)
+	info_container.add_child(stats_label)
 	
-	# 被动技能
+	# 被动技能名称
 	var passive_label := Label.new()
+	passive_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	passive_label.add_theme_font_size_override("font_size", 11)
+	passive_label.add_theme_constant_override("outline_size", 2)
+	passive_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+	passive_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if is_unlocked:
 		passive_label.text = char_data.get("passive_name", "")
+		passive_label.add_theme_color_override("font_color", Color(0.99, 0.8, 0.43))
 	else:
 		passive_label.text = ""
-	passive_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	passive_label.add_theme_font_size_override("font_size", 12)
-	passive_label.add_theme_color_override("font_color", Color("FDCB6E"))
-	vbox.add_child(passive_label)
+		passive_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+	info_container.add_child(passive_label)
 	
-	card.add_child(vbox)
+	# 被动技能描述
+	var passive_desc_label := Label.new()
+	passive_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	passive_desc_label.add_theme_font_size_override("font_size", 10)
+	passive_desc_label.add_theme_constant_override("outline_size", 2)
+	passive_desc_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+	passive_desc_label.add_theme_color_override("font_color", Color(0.82, 0.78, 0.7))
+	passive_desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	passive_desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if is_unlocked:
+		passive_desc_label.text = char_data.get("passive_description", "")
+	else:
+		passive_desc_label.text = ""
+	info_container.add_child(passive_desc_label)
+	
+	# 设置pivot_offset为卡片中心，使缩放从中心进行
+	card.pivot_offset = CARD_SIZE / 2.0
 	
 	# 点击事件
 	if is_unlocked:
@@ -103,29 +178,77 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 		)
 		card.mouse_entered.connect(func(): _on_card_hover(index, true))
 		card.mouse_exited.connect(func(): _on_card_hover(index, false))
+	else:
+		card.gui_input.connect(func(event: InputEvent):
+			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+				_show_locked_tip(card)
+		)
 	
 	return card
+
+## 显示未解锁提示
+func _show_locked_tip(card: Panel) -> void:
+	# 避免重复创建提示
+	for child in card.get_children():
+		if child.name == "LockedTip":
+			return
+	
+	var tip := Label.new()
+	tip.name = "LockedTip"
+	tip.text = "暂未解锁"
+	tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tip.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	tip.add_theme_font_size_override("font_size", 18)
+	tip.add_theme_color_override("font_color", Color(1.0, 0.85, 0.4))
+	tip.add_theme_constant_override("outline_size", 3)
+	tip.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.9))
+	tip.set_anchors_preset(Control.PRESET_CENTER)
+	tip.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	tip.grow_vertical = Control.GROW_DIRECTION_BOTH
+	tip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(tip)
+	
+	# 淡入淡出动画：出现 → 停留 → 上浮消失
+	tip.modulate.a = 0.0
+	var tween := create_tween()
+	tween.tween_property(tip, "modulate:a", 1.0, 0.15)
+	tween.tween_interval(0.6)
+	tween.parallel().tween_property(tip, "position:y", tip.position.y - 30, 0.4)
+	tween.tween_property(tip, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(tip.queue_free)
 
 ## 获取解锁条件文本
 func _get_unlock_text(achievement_id: String) -> String:
 	match achievement_id:
-		"first_play": return "完成成就：初窥门径"
-		"floor_18": return "完成成就：18层地狱"
-		"clear_game": return "完成成就：取得真经"
+		"first_play": return "初窥门径"
+		"floor_18": return "18层地狱"
+		"clear_game": return "取得真经"
 	return "未知条件"
+
+## 对卡片执行缩放动画
+func _animate_card_scale(card: Panel, target_scale: Vector2) -> void:
+	var card_id := card.get_instance_id()
+	# 如果该卡片有正在进行的动画，先停止
+	if _active_tweens.has(card_id) and _active_tweens[card_id] != null:
+		_active_tweens[card_id].kill()
+	var tween := create_tween()
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(card, "scale", target_scale, ANIM_DURATION)
+	_active_tweens[card_id] = tween
 
 ## 角色卡片选中
 func _on_card_selected(index: int) -> void:
-	# 取消之前的选中
+	# 取消之前的选中 —— 缩小回默认大小
 	if _selected_index >= 0 and _selected_index < _character_cards.size():
 		var prev_card := _character_cards[_selected_index]
-		prev_card.modulate = Color.WHITE
+		_animate_card_scale(prev_card, DEFAULT_SCALE)
 	
 	_selected_index = index
 	
-	# 高亮选中卡片
+	# 高亮选中卡片 —— 放大
 	var card := _character_cards[index]
-	card.modulate = Color(1.2, 1.2, 1.0)
+	_animate_card_scale(card, SELECTED_SCALE)
 	
 	start_button.disabled = false
 
@@ -135,9 +258,9 @@ func _on_card_hover(index: int, is_hovering: bool) -> void:
 		return
 	var card := _character_cards[index]
 	if is_hovering:
-		card.modulate = Color(1.1, 1.1, 1.1)
+		_animate_card_scale(card, HOVER_SCALE)
 	else:
-		card.modulate = Color.WHITE
+		_animate_card_scale(card, DEFAULT_SCALE)
 
 ## 开始游戏
 func _on_start_pressed() -> void:
