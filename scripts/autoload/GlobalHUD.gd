@@ -799,7 +799,7 @@ func _update_avatar_texture() -> void:
 	if char_id == "":
 		_avatar_btn.visible = false
 		return
-	var avatar_path := "res://ui/images/global/avatar_%s.jpg" % char_id
+	var avatar_path := "res://ui/images/global/avatar/%s.jpg" % char_id
 	if ResourceLoader.exists(avatar_path):
 		_avatar_btn.texture = load(avatar_path)
 		_avatar_btn.visible = true

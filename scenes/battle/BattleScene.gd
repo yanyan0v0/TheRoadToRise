@@ -132,8 +132,8 @@ func _get_current_enemies() -> Array[String]:
 	
 	if battle_type == "elite":
 		var elite_pools: Array = [
-			["hu_xian_feng"], ["hong_hai_er"], ["zhi_zhu_jing"],
-			["hei_xiong_jing"], ["jin_jiao"]
+			["sheng_ying_da_wang"], ["pi_pa_jing"], ["liu_er_mi_hou"],
+			["jiu_tou_chong"], ["sai_tai_sui"]
 		]
 		var elite_result: Array[String] = []
 		for s in elite_pools[randi() % elite_pools.size()]:
@@ -145,39 +145,39 @@ func _get_current_enemies() -> Array[String]:
 	match chapter:
 		0:
 			normal_pools = [
-				["xiao_yao", "xiao_yao"],
-				["xiao_yao", "lang_jing"],
-				["lang_jing", "shu_guai"],
-				["gui_zu", "gui_zu", "gui_zu"],
-				["shan_fei", "xiao_yao"],
-				["shi_ren_hua", "feng_yao"],
+				["hun_shi_mo_wang", "yin_jiang_jun"],
+				["xiong_shan_jun", "te_chu_shi"],
+				["hei_feng_guai", "bai_yi_xiu_shi"],
+				["ling_xu_zi", "yin_jiang_jun", "te_chu_shi"],
+				["hun_shi_mo_wang", "xiong_shan_jun"],
+				["hei_feng_guai", "ling_xu_zi"],
 			]
 		1:
 			normal_pools = [
-				["hu_yao", "shu_guai"],
-				["she_yao", "lang_jing"],
-				["meng_hu_jing", "xiao_yao"],
-				["feng_yao", "feng_yao", "she_yao"],
-				["shan_fei", "shan_fei"],
+				["huang_feng_guai", "jing_xi_gui"],
+				["bai_gu_jing", "yin_jiao"],
+				["ling_li_chong", "shi_li_guai"],
+				["huang_pao_guai", "jing_xi_gui", "ling_li_chong"],
+				["tuo_long", "shi_li_guai"],
 			]
 		2:
 			normal_pools = [
-				["meng_hu_jing", "xiong_pi_guai"],
-				["shi_shi", "she_yao"],
-				["zhu_yao", "lang_jing", "xiao_yao"],
-				["xiong_pi_guai", "shu_guai"],
-				["shi_shi", "feng_yao", "feng_yao"],
+				["hu_li_da_xian", "lu_li_da_xian"],
+				["yang_li_da_xian", "jin_yu_guai"],
+				["ru_yi_zhen_xian", "hu_li_da_xian", "tuo_long"],
+				["tie_shan_gong_zhu", "yu_mian_hu_li"],
+				["jin_yu_guai", "lu_li_da_xian", "yang_li_da_xian"],
 			]
 		3:
 			normal_pools = [
-				["hu_yao", "lang_jing", "shu_guai"],
-				["meng_hu_jing", "she_yao", "gui_zu"],
-				["shi_shi", "xiong_pi_guai"],
-				["zhu_yao", "hu_yao", "feng_yao"],
+				["ben_bo_er_ba", "ba_bo_er_ben", "gu_zhi_gong"],
+				["xing_xian", "ju_mang_guai"],
+				["qi_zhi_zhu_jing", "mi_ma_lu_ban"],
+				["bai_lu_guai", "bai_mian_hu_li", "jin_bi_lao_shu_jing"],
 			]
 	
 	if normal_pools.is_empty():
-		return ["xiao_yao"]
+		return ["hun_shi_mo_wang"]
 	var result: Array[String] = []
 	for s in normal_pools[randi() % normal_pools.size()]:
 		result.append(s)
