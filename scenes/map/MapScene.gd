@@ -134,9 +134,10 @@ func _render_map() -> void:
 			max_x = n.position.x
 		if n.position.y > max_y:
 			max_y = n.position.y
-	# 右侧额外留出空间给BOSS大节点，底部留出边距
+	# 右侧额外留出空间给BOSS大节点
 	var map_width: float = max(max_x + BOSS_RIGHT_MARGIN, viewport_size.x)
-	var map_height: float = max(max_y + 200.0, viewport_size.y)
+	# 高度固定为屏幕高度，不允许垂直缩放，避免背景图变形
+	var map_height: float = viewport_size.y
 	map_container.custom_minimum_size = Vector2(map_width, map_height)
 	map_container.size = Vector2(map_width, map_height)
 	
@@ -163,14 +164,14 @@ const NODE_BUTTON_SIZE := Vector2(100, 100)
 const NODE_DESCRIPTIONS := {
 	MapGenerator.NodeType.BATTLE: "与妖魔鬼怪战斗，获取经验和战利品",
 	MapGenerator.NodeType.ELITE: "挑战强大的精英敌人，获取丰厚奖励",
-	MapGenerator.NodeType.SHOP: "购买装备、丹药和法宝",
-	MapGenerator.NodeType.REST: "在篝火旁休息，恢复生命值",
+	MapGenerator.NodeType.SHOP: "购买卡牌、丹药和法宝",
+	MapGenerator.NodeType.REST: "在篝火旁休息，恢复生命值/悟道/融合卡牌",
 	MapGenerator.NodeType.MYSTERY: "神秘商人出没，可能有稀有物品",
 	MapGenerator.NodeType.EVENT: "触发随机事件，可能是机遇也可能是危险",
 	MapGenerator.NodeType.BOSS: "挑战本章最终BOSS",
 	MapGenerator.NodeType.START: "旅途的起点",
 	MapGenerator.NodeType.ALCHEMY: "炼制丹药，提升属性",
-	MapGenerator.NodeType.FORGE: "锻造和强化装备",
+	MapGenerator.NodeType.FORGE: "锻造和融合法宝",
 	MapGenerator.NodeType.TRIBULATION: "渡劫试炼，突破修为瓶颈",
 }
 

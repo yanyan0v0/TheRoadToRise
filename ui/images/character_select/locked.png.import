@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ckcdlya1u2nde"
-path="res://.godot/imported/avatar_zhu_bajie.jpg-2d098bf18ed8b59375cd5bf9bb2dc42c.ctex"
+uid="uid://be187so0mimxs"
+path="res://.godot/imported/locked.png-b394f1e5ead069827d5e35726db5d3e4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/images/global/avatar_zhu_bajie.jpg"
-dest_files=["res://.godot/imported/avatar_zhu_bajie.jpg-2d098bf18ed8b59375cd5bf9bb2dc42c.ctex"]
+source_file="res://ui/images/character_select/locked.png"
+dest_files=["res://.godot/imported/locked.png-b394f1e5ead069827d5e35726db5d3e4.ctex"]
 
 [params]
 

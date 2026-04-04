@@ -121,26 +121,144 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 	info_container.add_child(name_label)
 	
 	# 属性简介
-	var stats_label := Label.new()
-	stats_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	stats_label.add_theme_font_size_override("font_size", 12)
-	stats_label.add_theme_color_override("font_color", Color(0.9, 0.88, 0.82))
-	stats_label.add_theme_constant_override("outline_size", 2)
-	stats_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
-	stats_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if is_unlocked:
-		stats_label.text = "HP:%d | 法力:%d" % [char_data.get("max_hp", 0), char_data.get("mana", 0)]
+		# 使用图标+数值的水平布局
+		var stats_hbox := HBoxContainer.new()
+		stats_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+		stats_hbox.add_theme_constant_override("separation", 2)
+		stats_hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		
+		# 生命值：图标+数值
+		var heart_icon := TextureRect.new()
+		var heart_path := "res://ui/images/global/heart.png"
+		if ResourceLoader.exists(heart_path):
+			heart_icon.texture = load(heart_path)
+		heart_icon.custom_minimum_size = Vector2(16, 16)
+		heart_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		heart_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		heart_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		stats_hbox.add_child(heart_icon)
+		
+		var hp_label := Label.new()
+		hp_label.text = ":%d" % char_data.get("max_hp", 0)
+		hp_label.add_theme_font_size_override("font_size", 14)
+		hp_label.add_theme_color_override("font_color", Color(0.9, 0.88, 0.82))
+		hp_label.add_theme_constant_override("outline_size", 2)
+		hp_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+		hp_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		stats_hbox.add_child(hp_label)
+		
+		# 分隔符
+		var sep1 := Label.new()
+		sep1.text = " | "
+		sep1.add_theme_font_size_override("font_size", 14)
+		sep1.add_theme_color_override("font_color", Color(0.7, 0.68, 0.62))
+		sep1.add_theme_constant_override("outline_size", 2)
+		sep1.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+		sep1.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		stats_hbox.add_child(sep1)
+		
+		# 法力：图标+数值
+		var power_icon := TextureRect.new()
+		var power_path := "res://ui/images/global/power.png"
+		if ResourceLoader.exists(power_path):
+			power_icon.texture = load(power_path)
+		power_icon.custom_minimum_size = Vector2(16, 16)
+		power_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		power_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		power_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		stats_hbox.add_child(power_icon)
+		
+		var mana_label := Label.new()
+		mana_label.text = ":%d" % char_data.get("mana", 0)
+		mana_label.add_theme_font_size_override("font_size", 14)
+		mana_label.add_theme_color_override("font_color", Color(0.9, 0.88, 0.82))
+		mana_label.add_theme_constant_override("outline_size", 2)
+		mana_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+		mana_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		stats_hbox.add_child(mana_label)
+		
+		# 体力（仅当有体力值时显示）
 		if char_data.get("stamina", 0) > 0:
-			stats_label.text += " | 体力:%d" % char_data.get("stamina", 0)
+			var sep2 := Label.new()
+			sep2.text = " | "
+			sep2.add_theme_font_size_override("font_size", 14)
+			sep2.add_theme_color_override("font_color", Color(0.7, 0.68, 0.62))
+			sep2.add_theme_constant_override("outline_size", 2)
+			sep2.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+			sep2.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			stats_hbox.add_child(sep2)
+			
+			var strength_icon := TextureRect.new()
+			var strength_path := "res://ui/images/global/strength.png"
+			if ResourceLoader.exists(strength_path):
+				strength_icon.texture = load(strength_path)
+			strength_icon.custom_minimum_size = Vector2(16, 16)
+			strength_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			strength_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+			strength_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			stats_hbox.add_child(strength_icon)
+			
+			var stamina_label := Label.new()
+			stamina_label.text = ":%d" % char_data.get("stamina", 0)
+			stamina_label.add_theme_font_size_override("font_size", 14)
+			stamina_label.add_theme_color_override("font_color", Color(0.9, 0.88, 0.82))
+			stamina_label.add_theme_constant_override("outline_size", 2)
+			stamina_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+			stamina_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			stats_hbox.add_child(stamina_label)
+		
+		info_container.add_child(stats_hbox)
 	else:
-		var unlock_text := _get_unlock_text(char_data.get("unlock_achievement", ""))
-		stats_label.text = "🔒 %s" % unlock_text
-	info_container.add_child(stats_label)
+		# 未解锁角色：图标+成就名 换行显示成就描述
+		var achievement_id: String = char_data.get("unlock_achievement", "")
+		var unlock_info := _get_unlock_info(achievement_id)
+		
+		# 图标+成就名 水平排列
+		var lock_hbox := HBoxContainer.new()
+		lock_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+		lock_hbox.add_theme_constant_override("separation", 4)
+		lock_hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		
+		# 锁图标
+		var lock_icon := TextureRect.new()
+		var lock_icon_path := "res://ui/images/character_select/locked.png"
+		if ResourceLoader.exists(lock_icon_path):
+			lock_icon.texture = load(lock_icon_path)
+		lock_icon.custom_minimum_size = Vector2(16, 16)
+		lock_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		lock_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		lock_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		lock_hbox.add_child(lock_icon)
+		
+		# 成就名称
+		var lock_name_label := Label.new()
+		lock_name_label.text = unlock_info.get("name", "???")
+		lock_name_label.add_theme_font_size_override("font_size", 16)
+		lock_name_label.add_theme_color_override("font_color", Color(0.9, 0.88, 0.82))
+		lock_name_label.add_theme_constant_override("outline_size", 2)
+		lock_name_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+		lock_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		lock_hbox.add_child(lock_name_label)
+		
+		info_container.add_child(lock_hbox)
+		
+		# 成就描述（换行显示）
+		var lock_desc_label := Label.new()
+		lock_desc_label.text = unlock_info.get("description", "")
+		lock_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lock_desc_label.add_theme_font_size_override("font_size", 14)
+		lock_desc_label.add_theme_color_override("font_color", Color(0.7, 0.68, 0.62))
+		lock_desc_label.add_theme_constant_override("outline_size", 2)
+		lock_desc_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+		lock_desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+		lock_desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		info_container.add_child(lock_desc_label)
 	
 	# 被动技能名称
 	var passive_label := Label.new()
 	passive_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	passive_label.add_theme_font_size_override("font_size", 11)
+	passive_label.add_theme_font_size_override("font_size", 16)
 	passive_label.add_theme_constant_override("outline_size", 2)
 	passive_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
 	passive_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -155,7 +273,7 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 	# 被动技能描述
 	var passive_desc_label := Label.new()
 	passive_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	passive_desc_label.add_theme_font_size_override("font_size", 10)
+	passive_desc_label.add_theme_font_size_override("font_size", 14)
 	passive_desc_label.add_theme_constant_override("outline_size", 2)
 	passive_desc_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
 	passive_desc_label.add_theme_color_override("font_color", Color(0.82, 0.78, 0.7))
@@ -217,13 +335,28 @@ func _show_locked_tip(card: Panel) -> void:
 	tween.tween_property(tip, "modulate:a", 0.0, 0.3)
 	tween.tween_callback(tip.queue_free)
 
-## 获取解锁条件文本
-func _get_unlock_text(achievement_id: String) -> String:
+## 获取解锁条件信息（返回成就名称和描述）
+func _get_unlock_info(achievement_id: String) -> Dictionary:
+	# 从 AchievementManager 的成就定义中获取
+	if AchievementManager.ACHIEVEMENTS.has(achievement_id):
+		var ach_data: Dictionary = AchievementManager.ACHIEVEMENTS[achievement_id]
+		return {
+			"name": ach_data.get("name", "???"),
+			"description": ach_data.get("description", ""),
+		}
+	# 兼容旧的 achievement_id 映射
 	match achievement_id:
-		"first_play": return "初窥门径"
-		"floor_18": return "18层地狱"
-		"clear_game": return "取得真经"
-	return "未知条件"
+		"first_play":
+			if AchievementManager.ACHIEVEMENTS.has("first_game"):
+				var ach_data: Dictionary = AchievementManager.ACHIEVEMENTS["first_game"]
+				return {"name": ach_data.get("name", "初窥门径"), "description": ach_data.get("description", "使用默认角色游玩一局")}
+			return {"name": "初窥门径", "description": "使用默认角色游玩一局"}
+		"clear_game":
+			if AchievementManager.ACHIEVEMENTS.has("true_scripture"):
+				var ach_data: Dictionary = AchievementManager.ACHIEVEMENTS["true_scripture"]
+				return {"name": ach_data.get("name", "取得真经"), "description": ach_data.get("description", "任意角色完成通关")}
+			return {"name": "取得真经", "description": "任意角色完成通关"}
+	return {"name": "???", "description": ""}
 
 ## 对卡片执行缩放动画
 func _animate_card_scale(card: Panel, target_scale: Vector2) -> void:

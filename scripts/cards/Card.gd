@@ -20,14 +20,12 @@ var _saved_border_color: Color = Color.WHITE  # 保存原始边框颜色
 ## 内部节点引用
 @onready var background: ColorRect = $Background
 @onready var border: ColorRect = $Border
+@onready var card_artwork: TextureRect = $CardArtwork
 @onready var cost_circle: ColorRect = $CostCircle
 @onready var cost_label: Label = $CostCircle/CostLabel
-@onready var rarity_indicator: ColorRect = $RarityIndicator
+@onready var star_label: Label = $StarLabel
 @onready var title_area: ColorRect = $TitleArea
 @onready var title_label: Label = $TitleArea/TitleLabel
-@onready var artwork_area: ColorRect = $ArtworkArea
-@onready var artwork_label: Label = $ArtworkArea/ArtworkLabel
-@onready var type_label: Label = $TypeLabel
 @onready var description_area: ColorRect = $DescriptionArea
 @onready var description_label: RichTextLabel = $DescriptionArea/DescriptionLabel
 
@@ -54,6 +52,13 @@ const TYPE_COLORS := {
 	"attack": Color("D63031"),
 	"skill": Color("0984E3"),
 	"ultimate": Color("6C5CE7"),
+}
+
+## 边框颜色映射（根据卡牌类型）
+const BORDER_COLORS := {
+	"attack": Color(0.45, 0.15, 0.15, 1.0),
+	"skill": Color(0.15, 0.25, 0.45, 1.0),
+	"ultimate": Color(0.3, 0.2, 0.45, 1.0),
 }
 
 func _ready() -> void:
@@ -93,34 +98,30 @@ func _update_display() -> void:
 	if stamina_cost > 0:
 		cost_label.text = "%d/%d" % [energy_cost, stamina_cost]
 	
-	# 稀有度边框颜色
+	# 稀有度边框颜色（根据稀有度调整边框亮度）
 	var rarity_color: Color = RARITY_COLORS.get(rarity, Color.WHITE)
-	border.color = rarity_color
-	_saved_border_color = rarity_color
-	rarity_indicator.color = rarity_color
+	var base_border_color: Color = BORDER_COLORS.get(card_type, Color(0.45, 0.15, 0.15, 1.0))
+	if rarity == "legendary":
+		base_border_color = Color(0.5, 0.4, 0.15, 1.0)  # 传说金色边框
+	elif rarity == "rare":
+		base_border_color = Color(0.15, 0.25, 0.5, 1.0)  # 稀有蓝色边框
+	border.color = base_border_color
+	_saved_border_color = base_border_color
 	
-	# 标题（含星级标识）
-	var star_display := _get_star_display()
+	# 标题名称
 	title_label.text = card_name
 	
-	# 星级颜色
+	# 星级颜色和显示
+	star_label.text = _get_star_display()
 	if star_level >= 3:
-		title_label.add_theme_color_override("font_color", Color("FDCB6E"))  # 金色
+		star_label.add_theme_color_override("font_color", Color("FDCB6E"))  # 金色
+		title_label.add_theme_color_override("font_color", Color("FDCB6E"))
 	elif star_level >= 2:
-		title_label.add_theme_color_override("font_color", Color("00B894"))  # 翠绿
+		star_label.add_theme_color_override("font_color", Color("00B894"))  # 翠绿
+		title_label.add_theme_color_override("font_color", Color("00B894"))
 	
-	# 类型
-	var type_name := ""
-	match card_type:
-		"attack": type_name = "攻击"
-		"skill": type_name = "技能"
-		"ultimate": type_name = "终结技"
-	type_label.text = "[%s]" % type_name
-	type_label.add_theme_color_override("font_color", TYPE_COLORS.get(card_type, Color.WHITE))
-	
-	# 插画区域颜色
-	artwork_area.color = TYPE_COLORS.get(card_type, Color.GRAY).darkened(0.6)
-	artwork_label.text = card_name
+	# 加载角色对应的卡牌背景图片
+	_load_card_artwork(card_type)
 	
 	# 描述（根据星级显示对应效果描述）
 	var desc_text: String = card_data.get("description", "")
@@ -128,7 +129,37 @@ func _update_display() -> void:
 		var star_desc: String = card_data.get("star_%d_description" % star_level, "")
 		if star_desc != "":
 			desc_text = star_desc
-	description_label.text = star_display + "\n" + desc_text
+	
+	# 类型标签融入描述
+	var type_name := ""
+	match card_type:
+		"attack": type_name = "攻击"
+		"skill": type_name = "技能"
+		"ultimate": type_name = "终结技"
+	description_label.text = "[%s] %s" % [type_name, desc_text]
+
+## 加载角色对应的卡牌背景图片
+func _load_card_artwork(card_type: String) -> void:
+	if card_artwork == null:
+		return
+	
+	var char_id: String = GameManager.current_character_id
+	if char_id.is_empty():
+		card_artwork.visible = false
+		return
+	
+	# 优先加载角色+卡牌类型对应的图片
+	# 路径格式：res://ui/images/global/card/{角色ID}/{卡牌类型}.png
+	var img_path := "res://ui/images/global/card/%s/%s.png" % [char_id, card_type]
+	if not ResourceLoader.exists(img_path):
+		# 回退：尝试加载角色通用图片
+		img_path = "res://ui/images/global/card/%s/attack.png" % char_id
+	
+	if ResourceLoader.exists(img_path):
+		card_artwork.texture = load(img_path)
+		card_artwork.visible = true
+	else:
+		card_artwork.visible = false
 
 ## 设置是否可打出
 func set_playable(playable: bool) -> void:

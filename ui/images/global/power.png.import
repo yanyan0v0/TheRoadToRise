@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://or3tx8k5qimg"
-path="res://.godot/imported/avatar_tang_seng.jpg-26d48c6fceaf592c257bb5c7c0271eda.ctex"
+uid="uid://ruh4kt2noh0f"
+path="res://.godot/imported/power.png-e900305b0fad87e923455083819f864c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/images/global/avatar_tang_seng.jpg"
-dest_files=["res://.godot/imported/avatar_tang_seng.jpg-26d48c6fceaf592c257bb5c7c0271eda.ctex"]
+source_file="res://ui/images/global/power.png"
+dest_files=["res://.godot/imported/power.png-e900305b0fad87e923455083819f864c.ctex"]
 
 [params]
 

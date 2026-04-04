@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b1037b5mdrdxm"
-path="res://.godot/imported/avatar_sha_wujing.jpg-1584d6bac22ef76e67c7bc961c891d1d.ctex"
+uid="uid://1p5cg52ea17p"
+path="res://.godot/imported/attack.png-7347afe2ab40dcacdb5309f52574654f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/images/global/avatar_sha_wujing.jpg"
-dest_files=["res://.godot/imported/avatar_sha_wujing.jpg-1584d6bac22ef76e67c7bc961c891d1d.ctex"]
+source_file="res://ui/images/global/card/sun_wukong/attack.png"
+dest_files=["res://.godot/imported/attack.png-7347afe2ab40dcacdb5309f52574654f.ctex"]
 
 [params]
 

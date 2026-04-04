@@ -7,3 +7,5 @@ res://scenes/map/MapScene.gd
 res://scripts/map/MapGenerator.gd
 res://scenes/map/MapScene.tscn
 res://scenes/battle/BattleScene.gd
+res://scenes/battle/Card.tscn
+res://scripts/cards/Card.gd

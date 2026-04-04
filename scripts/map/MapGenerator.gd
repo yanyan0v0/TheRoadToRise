@@ -199,8 +199,11 @@ static func generate_map(chapter: int) -> Dictionary:
 		
 		prev_layer_nodes = layer_nodes
 	
-	# 确保每种节点类型至少出现一次（除了渡劫和起点和BOSS）
+	# 确保每种节点类型至少出现一次（除了渡劫和起点和BOSS和神秘商人）
 	_ensure_all_node_types(nodes, chapter)
+	
+	# 神秘商人节点特殊处理：最多出现1次，多余的替换为战斗节点
+	_limit_mystery_nodes(nodes, chapter)
 	
 	# BOSS层（1个节点）
 	var boss_node := MapNode.new()
@@ -367,7 +370,6 @@ const REQUIRED_NODE_TYPES := [
 	NodeType.ELITE,
 	NodeType.SHOP,
 	NodeType.REST,
-	NodeType.MYSTERY,
 	NodeType.EVENT,
 	NodeType.ALCHEMY,
 	NodeType.FORGE,
@@ -424,6 +426,21 @@ static func _ensure_all_node_types(nodes: Array, chapter: int) -> void:
 		_assign_encounter_data(target_node, chapter)
 		replaceable_nodes.remove_at(idx)
 
+## 限制神秘商人节点最多出现1次，多余的替换为战斗节点
+static func _limit_mystery_nodes(nodes: Array, chapter: int) -> void:
+	var mystery_nodes: Array = []
+	for node in nodes:
+		if node.node_type == NodeType.MYSTERY:
+			mystery_nodes.append(node)
+	
+	# 如果神秘商人超过1个，随机保留1个，其余替换为战斗
+	if mystery_nodes.size() > 1:
+		# 随机打乱，保留第一个
+		mystery_nodes.shuffle()
+		for i in range(1, mystery_nodes.size()):
+			mystery_nodes[i].node_type = NodeType.BATTLE
+			_assign_encounter_data(mystery_nodes[i], chapter)
+
 ## 标记可达节点
 static func _mark_reachable(nodes: Array, start_node: MapNode) -> void:
 	start_node.reachable = true
@@ -461,7 +478,6 @@ static func _assign_encounter_data(node: MapNode, chapter: int) -> void:
 const NODE_SPACING_H := 200  # 水平层间距（像素），范围 [100, 200]
 const NODE_SPACING_V := 150  # 垂直节点间距（像素），范围 [100, 200]
 const NODE_MARGIN_LEFT := 250  # 左侧边距（像素）
-const NODE_MARGIN_TOP_MIN := 200   # 最小上侧边距（像素）
 
 ## 计算节点位置（使用像素坐标，节点间距固定在 [100, 200] 范围内）
 ## 节点群在垂直方向居中显示（基于屏幕高度）
@@ -484,9 +500,9 @@ static func _calculate_positions(nodes: Array, total_layers: int) -> void:
 	var viewport_height: float = ProjectSettings.get_setting("display/window/size/viewport_height", 720)
 	# 节点群总高度
 	var nodes_total_height: float = (max_count - 1) * NODE_SPACING_V
-	# 计算上边距，使节点群垂直居中，但不小于最小边距
-	var margin_top: float = max((viewport_height - nodes_total_height) / 2.0, NODE_MARGIN_TOP_MIN)
-	
+	# 计算上边距，使节点群垂直居中，但不小于最小边距 - GlobalHUD高度
+	var margin_top: float = ((viewport_height  - 54) - nodes_total_height) / 2.0 + 54
+
 	# 计算每个节点的像素位置
 	for layer_idx in layers_dict:
 		var layer_nodes: Array = layers_dict[layer_idx]

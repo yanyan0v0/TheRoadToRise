@@ -13,6 +13,7 @@ var _hp_icon: TextureRect = null
 var _hp_label: Label = null
 var _gold_icon: TextureRect = null
 var _gold_label: Label = null
+var _mana_container: HBoxContainer = null
 var _mana_label: Label = null
 var _karma_label: Label = null
 var _relic_container: HBoxContainer = null
@@ -188,7 +189,7 @@ func _build_hud() -> void:
 	_gold_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_gold_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_gold_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var gold_icon_path := "res://ui/images/global/icon.png"
+	var gold_icon_path := "res://ui/images/global/coin.png"
 	if ResourceLoader.exists(gold_icon_path):
 		_gold_icon.texture = load(gold_icon_path)
 	gold_box.add_child(_gold_icon)
@@ -202,14 +203,31 @@ func _build_hud() -> void:
 	
 	top_bar.add_child(gold_box)
 	
-	# 法力值（仅战斗场景可见）
+	# 法力值（仅战斗场景可见，图标+数值）
+	_mana_container = HBoxContainer.new()
+	_mana_container.add_theme_constant_override("separation", 4)
+	_mana_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_mana_container.visible = false
+	
+	var mana_icon := TextureRect.new()
+	mana_icon.custom_minimum_size = Vector2(16, 16)
+	mana_icon.size = Vector2(16, 16)
+	mana_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	mana_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	mana_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var power_path := "res://ui/images/global/power.png"
+	if ResourceLoader.exists(power_path):
+		mana_icon.texture = load(power_path)
+	_mana_container.add_child(mana_icon)
+	
 	_mana_label = Label.new()
-	_mana_label.text = "法力: %d/%d" % [GameManager.current_mana, GameManager.max_mana]
+	_mana_label.text = "%d/%d" % [GameManager.current_mana, GameManager.max_mana]
 	_mana_label.add_theme_font_size_override("font_size", 20)
 	_mana_label.add_theme_color_override("font_color", Color("74B9FF"))
 	_mana_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_mana_label.visible = false
-	top_bar.add_child(_mana_label)
+	_mana_container.add_child(_mana_label)
+	
+	top_bar.add_child(_mana_container)
 	
 	# 劫数
 	_karma_label = Label.new()
@@ -293,13 +311,13 @@ func _update_gold_display() -> void:
 
 ## 更新法力值显示（仅战斗场景可见）
 func _update_mana_display() -> void:
-	if _mana_label == null:
+	if _mana_container == null or _mana_label == null:
 		return
 	var current_scene := get_tree().current_scene
 	var in_battle: bool = current_scene != null and current_scene.name == "BattleScene"
-	_mana_label.visible = in_battle
+	_mana_container.visible = in_battle
 	if in_battle:
-		_mana_label.text = "法力: %d/%d" % [GameManager.current_mana, GameManager.max_mana]
+		_mana_label.text = "%d/%d" % [GameManager.current_mana, GameManager.max_mana]
 
 ## 更新劫数显示
 func _update_karma_display() -> void:

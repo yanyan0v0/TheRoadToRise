@@ -23,7 +23,7 @@
       "gold": 50,
       "passive_id": "battle_start_stamina",
       "passive_name": "天蓬体魄",
-      "passive_description": "每次战斗开始恢复3点体力，卡牌池新增需要体力才能打出的卡牌",
+      "passive_description": "每次战斗开始恢复3点体力",
       "unlock_condition": "achievement",
       "unlock_achievement": "first_play",
       "starter_deck": ["attack", "attack", "attack", "attack", "defend", "defend", "defend", "defend", "meng_zhuang", "tan_shi"]
@@ -51,7 +51,7 @@
       "gold": 50,
       "passive_id": "bailongma_bond",
       "passive_name": "白龙马羁绊",
-      "passive_description": "与坐骑白龙马形成羁绊，白龙马每1点血量造成伤害+1、防御+1",
+      "passive_description": "白龙马每1点血量造成伤害+1、防御+1",
       "bailongma_hp": 10,
       "unlock_condition": "achievement",
       "unlock_achievement": "clear_game",
