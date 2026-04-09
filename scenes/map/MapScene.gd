@@ -636,7 +636,8 @@ func _on_node_clicked(node_id: int) -> void:
 	
 	# 开发者模式：对不可达/已访问节点也可以连击5次进入
 	if node.visited or not node.reachable:
-		_handle_dev_click(node_id)
+		if GameManager.dev_mode:
+			_handle_dev_click(node_id)
 		return
 	
 	_enter_node(node)

@@ -1,0 +1,40 @@
+
+# Godot 4 specific ignores
+.godot/
+
+# Godot exported builds
+*.apk
+*.aab
+*.pck
+*.exe
+*.x86_64
+*.x86
+*.dmg
+*.app
+
+# Godot temporary files
+*.tmp
+*.tscn*.tmp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Debug keystore (contains sensitive signing info)
+debug.keystore
+
+# Export credentials (contains sensitive info)
+.godot/export_credentials.cfg

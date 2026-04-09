@@ -140,9 +140,9 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 		stats_hbox.add_child(heart_icon)
 		
 		var hp_label := Label.new()
-		hp_label.text = ":%d" % char_data.get("max_hp", 0)
+		hp_label.text = "%d" % char_data.get("max_hp", 0)
 		hp_label.add_theme_font_size_override("font_size", 14)
-		hp_label.add_theme_color_override("font_color", Color(0.9, 0.88, 0.82))
+		hp_label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.85))
 		hp_label.add_theme_constant_override("outline_size", 2)
 		hp_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
 		hp_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -152,7 +152,7 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 		var sep1 := Label.new()
 		sep1.text = " | "
 		sep1.add_theme_font_size_override("font_size", 14)
-		sep1.add_theme_color_override("font_color", Color(0.7, 0.68, 0.62))
+		sep1.add_theme_color_override("font_color", Color(1.0, 0.95, 0.85))
 		sep1.add_theme_constant_override("outline_size", 2)
 		sep1.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
 		sep1.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -170,9 +170,9 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 		stats_hbox.add_child(power_icon)
 		
 		var mana_label := Label.new()
-		mana_label.text = ":%d" % char_data.get("mana", 0)
+		mana_label.text = "%d" % char_data.get("mana", 0)
 		mana_label.add_theme_font_size_override("font_size", 14)
-		mana_label.add_theme_color_override("font_color", Color(0.9, 0.88, 0.82))
+		mana_label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.85))
 		mana_label.add_theme_constant_override("outline_size", 2)
 		mana_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
 		mana_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -183,7 +183,7 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 			var sep2 := Label.new()
 			sep2.text = " | "
 			sep2.add_theme_font_size_override("font_size", 14)
-			sep2.add_theme_color_override("font_color", Color(0.7, 0.68, 0.62))
+			sep2.add_theme_color_override("font_color", Color(1.0, 0.95, 0.85))
 			sep2.add_theme_constant_override("outline_size", 2)
 			sep2.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
 			sep2.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -200,7 +200,7 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 			stats_hbox.add_child(strength_icon)
 			
 			var stamina_label := Label.new()
-			stamina_label.text = ":%d" % char_data.get("stamina", 0)
+			stamina_label.text = "%d" % char_data.get("stamina", 0)
 			stamina_label.add_theme_font_size_override("font_size", 14)
 			stamina_label.add_theme_color_override("font_color", Color(0.9, 0.88, 0.82))
 			stamina_label.add_theme_constant_override("outline_size", 2)
@@ -248,7 +248,7 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 		lock_desc_label.text = unlock_info.get("description", "")
 		lock_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		lock_desc_label.add_theme_font_size_override("font_size", 14)
-		lock_desc_label.add_theme_color_override("font_color", Color(0.7, 0.68, 0.62))
+		lock_desc_label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.85))
 		lock_desc_label.add_theme_constant_override("outline_size", 2)
 		lock_desc_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
 		lock_desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
@@ -276,7 +276,7 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 	passive_desc_label.add_theme_font_size_override("font_size", 14)
 	passive_desc_label.add_theme_constant_override("outline_size", 2)
 	passive_desc_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
-	passive_desc_label.add_theme_color_override("font_color", Color(0.82, 0.78, 0.7))
+	passive_desc_label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.85))
 	passive_desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	passive_desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if is_unlocked:

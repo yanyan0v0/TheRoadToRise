@@ -8,10 +8,16 @@ var deck_manager: Node = null
 var hand_manager: Node = null
 var selected_target: Node = null
 
+## Frame animation variables
+var _anim_frames: Array[Texture2D] = []
+var _anim_frame_index: int = 0
+var _anim_timer: float = 0.0
+const ANIM_FPS := 12.0  # Frame animation playback speed (frames per second)
+
 @onready var battle_area: Control = $BattleArea
-@onready var player_area: Control = $BattleArea/PlayerArea
+@onready var player_area: VBoxContainer = $BattleArea/PlayerArea
 @onready var enemy_area: HBoxContainer = $BattleArea/EnemyArea
-@onready var player_sprite: ColorRect = $BattleArea/PlayerArea/PlayerSprite
+@onready var player_sprite: TextureRect = $BattleArea/PlayerArea/PlayerSprite
 @onready var player_label: Label = $BattleArea/PlayerArea/PlayerSprite/PlayerLabel
 @onready var player_hp_bar: ProgressBar = $BattleArea/PlayerArea/PlayerHPBar
 @onready var player_armor_label: Label = $BattleArea/PlayerArea/ArmorLabel
@@ -24,7 +30,7 @@ var selected_target: Node = null
 @onready var floating_text_container: Control = $FloatingTextContainer
 @onready var pause_menu: Control = $PauseMenu
 
-@onready var player_hp_text: Label = $BattleArea/PlayerArea/PlayerHPText
+@onready var player_hp_text: Label = $BattleArea/PlayerArea/PlayerHPBar/PlayerHPText
 
 ## 战斗初始状态（用于重打）
 var _initial_hp: int = 0
@@ -93,6 +99,9 @@ func _ready() -> void:
 		_is_restart = false
 		_restart_deck_order.clear()
 	
+	# Initialize player character frame animation
+	_setup_player_animation()
+	
 	# 初始化UI
 	_update_player_ui()
 	_update_player_name()
@@ -100,6 +109,49 @@ func _ready() -> void:
 	# 加载敌人数据	
 	# 加载敌人数据（从 GameManager 获取当前战斗的敌人）
 	_setup_battle(_no_shuffle)
+
+## Setup player character wait animation
+func _setup_player_animation() -> void:
+	var char_id := GameManager.current_character_id
+	var frames_dir := "res://resources/frames/character/%s/wait/" % char_id
+	_anim_frames.clear()
+	_anim_frame_index = 0
+	_anim_timer = 0.0
+	
+	# Scan directory for all frame_*.png files and sort them
+	var dir := DirAccess.open(frames_dir)
+	if dir:
+		var file_names: Array[String] = []
+		dir.list_dir_begin()
+		var file_name := dir.get_next()
+		while file_name != "":
+			if file_name.begins_with("frame_") and file_name.ends_with(".png"):
+				file_names.append(file_name)
+			file_name = dir.get_next()
+		dir.list_dir_end()
+		file_names.sort()
+		for fname in file_names:
+			var tex := load(frames_dir + fname) as Texture2D
+			if tex != null:
+				_anim_frames.append(tex)
+	
+	if _anim_frames.size() > 0:
+		player_sprite.texture = _anim_frames[0]
+		# Hide the player label since we now have a sprite animation
+		player_label.visible = false
+		print("[BattleScene] Loaded %d wait animation frames for %s" % [_anim_frames.size(), char_id])
+	else:
+		print("[BattleScene] No wait animation frames found for %s" % char_id)
+
+func _process(delta: float) -> void:
+	if _anim_frames.size() <= 1:
+		return
+	_anim_timer += delta
+	var frame_duration := 1.0 / ANIM_FPS
+	if _anim_timer >= frame_duration:
+		_anim_timer -= frame_duration
+		_anim_frame_index = (_anim_frame_index + 1) % _anim_frames.size()
+		player_sprite.texture = _anim_frames[_anim_frame_index]
 
 ## 设置战斗
 func _setup_battle(no_shuffle: bool = false) -> void:

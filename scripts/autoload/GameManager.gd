@@ -152,6 +152,8 @@ func _ready() -> void:
 
 ## 处理开发者模式金币连点
 func dev_gold_click() -> void:
+	if not dev_mode:
+		return
 	var now := Time.get_ticks_msec() / 1000.0
 	if now - _dev_gold_click_timer > DEV_GOLD_CLICK_TIMEOUT:
 		_dev_gold_click_count = 0

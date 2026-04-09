@@ -23,11 +23,12 @@ var _saved_border_color: Color = Color.WHITE  # 保存原始边框颜色
 @onready var card_artwork: TextureRect = $CardArtwork
 @onready var cost_circle: ColorRect = $CostCircle
 @onready var cost_label: Label = $CostCircle/CostLabel
-@onready var star_label: Label = $StarLabel
-@onready var title_area: ColorRect = $TitleArea
-@onready var title_label: Label = $TitleArea/TitleLabel
+@onready var star_container: HBoxContainer = $StarContainer
+@onready var title_label: Label = $TitleLabel
 @onready var description_area: ColorRect = $DescriptionArea
 @onready var description_label: RichTextLabel = $DescriptionArea/DescriptionLabel
+@onready var type_tag_container: PanelContainer = $TypeTagCenter/TypeTagContainer
+@onready var type_tag_label: Label = $TypeTagCenter/TypeTagContainer/TypeTagLabel
 
 const CARD_WIDTH := 180
 const CARD_HEIGHT := 270
@@ -111,13 +112,11 @@ func _update_display() -> void:
 	# 标题名称
 	title_label.text = card_name
 	
-	# 星级颜色和显示
-	star_label.text = _get_star_display()
+	# Star display with images
+	_update_star_display()
 	if star_level >= 3:
-		star_label.add_theme_color_override("font_color", Color("FDCB6E"))  # 金色
 		title_label.add_theme_color_override("font_color", Color("FDCB6E"))
 	elif star_level >= 2:
-		star_label.add_theme_color_override("font_color", Color("00B894"))  # 翠绿
 		title_label.add_theme_color_override("font_color", Color("00B894"))
 	
 	# 加载角色对应的卡牌背景图片
@@ -130,13 +129,15 @@ func _update_display() -> void:
 		if star_desc != "":
 			desc_text = star_desc
 	
-	# 类型标签融入描述
+	# 类型标签单独显示
 	var type_name := ""
 	match card_type:
 		"attack": type_name = "攻击"
 		"skill": type_name = "技能"
 		"ultimate": type_name = "终结技"
-	description_label.text = "[%s] %s" % [type_name, desc_text]
+	if type_tag_label:
+		type_tag_label.text = type_name
+	description_label.text = "[center]%s[/center]" % desc_text
 
 ## 加载角色对应的卡牌背景图片
 func _load_card_artwork(card_type: String) -> void:
@@ -315,13 +316,23 @@ func _clear_drag_enemy_hover() -> void:
 		_drag_hovered_enemy.set_meta("is_hovered", false)
 	_drag_hovered_enemy = null
 
-## 获取星级显示文本
-func _get_star_display() -> String:
-	match star_level:
-		1: return "★☆☆"
-		2: return "★★☆"
-		3: return "★★★"
-	return "★☆☆"
+## Update star display with star.png images
+func _update_star_display() -> void:
+	if star_container == null:
+		return
+	# Clear existing stars
+	for child in star_container.get_children():
+		child.queue_free()
+	# Add star images based on star_level
+	var star_texture := preload("res://ui/images/global/card/star.png")
+	for i in range(star_level):
+		var star_icon := TextureRect.new()
+		star_icon.texture = star_texture
+		star_icon.custom_minimum_size = Vector2(8, 8)
+		star_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		star_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		star_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		star_container.add_child(star_icon)
 
 ## 判断卡牌是否完全拖出了手牌区域
 func _is_card_outside_hand_area() -> bool:

@@ -1,17 +1,34 @@
-[gd_scene load_steps=2 format=3 uid="uid://ccard001"]
+[gd_scene format=3 uid="uid://ccard001"]
 
-[ext_resource type="Script" path="res://scripts/cards/Card.gd" id="1"]
+[ext_resource type="Script" uid="uid://dwxon6ohlw1fm" path="res://scripts/cards/Card.gd" id="1"]
 
-[node name="Card" type="Control"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_typetag"]
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
+bg_color = Color(0.59607846, 0.47058824, 0.12941177, 0.78431374)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.78385586, 0.5475597, 0.17714423, 0.8)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="Card" type="Control" unique_id=36816691]
+clip_contents = true
 custom_minimum_size = Vector2(180, 270)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 180.0
 offset_bottom = 270.0
-clip_contents = true
 script = ExtResource("1")
 
-[node name="Border" type="ColorRect" parent="."]
+[node name="Border" type="ColorRect" parent="." unique_id=372836247]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,7 +38,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.45, 0.15, 0.15, 1)
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=719478330]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -35,103 +52,110 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.12, 0.08, 0.06, 1)
 
-[node name="CardArtwork" type="TextureRect" parent="."]
+[node name="CardArtwork" type="TextureRect" parent="." unique_id=1208103942]
 layout_mode = 0
 offset_left = 4.0
 offset_top = 4.0
-offset_right = 176.0
-offset_bottom = 220.0
+offset_right = 177.0
+offset_bottom = 267.0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
 
-[node name="CostCircle" type="ColorRect" parent="."]
+[node name="CostCircle" type="ColorRect" parent="." unique_id=353880759]
+z_index = 5
 layout_mode = 0
 offset_left = 4.0
 offset_top = 4.0
 offset_right = 40.0
 offset_bottom = 40.0
-z_index = 5
 mouse_filter = 2
-color = Color(0.15, 0.05, 0.05, 0.85)
+color = Color(1, 1, 1, 0)
 
-[node name="CostLabel" type="Label" parent="CostCircle"]
+[node name="CostLabel" type="Label" parent="CostCircle" unique_id=617059253]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
 text = "1"
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.454902, 0.811765, 0.890196, 1)
 
-[node name="StarLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 130.0
-offset_top = 6.0
-offset_right = 176.0
-offset_bottom = 28.0
+[node name="StarContainer" type="HBoxContainer" parent="." unique_id=1644424011]
 z_index = 5
+layout_mode = 0
+offset_left = 142.0
+offset_top = 11.0
+offset_right = 171.0
+offset_bottom = 22.0
 mouse_filter = 2
-text = "★☆☆"
-horizontal_alignment = 2
-vertical_alignment = 1
-theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
-theme_override_constants/outline_size = 2
-theme_override_colors/font_outline_color = Color(0.0, 0.0, 0.0, 0.9)
+theme_override_constants/separation = 1
+alignment = 1
 
-[node name="TitleArea" type="ColorRect" parent="."]
+[node name="TitleLabel" type="Label" parent="." unique_id=1203213404]
 layout_mode = 0
 offset_left = 4.0
-offset_top = 30.0
+offset_top = 25.0
 offset_right = 176.0
-offset_bottom = 58.0
-z_index = 5
-mouse_filter = 2
-color = Color(0.75, 0.6, 0.3, 0.85)
-
-[node name="TitleLabel" type="Label" parent="TitleArea"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+offset_bottom = 46.0
+theme_override_colors/font_color = Color(0.98872954, 0.9475966, 0.89828724, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0.1, 0, 0.9)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 14
 text = "卡牌名称"
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(1.0, 0.95, 0.85, 1)
-theme_override_constants/outline_size = 2
-theme_override_colors/font_outline_color = Color(0.2, 0.1, 0.0, 0.9)
 
-[node name="DescriptionArea" type="ColorRect" parent="."]
+[node name="TypeTagCenter" type="CenterContainer" parent="." unique_id=133032236]
+z_index = 5
 layout_mode = 0
 offset_left = 4.0
-offset_top = 220.0
+offset_top = 160.0
+offset_right = 176.0
+offset_bottom = 180.0
+mouse_filter = 2
+
+[node name="TypeTagContainer" type="PanelContainer" parent="TypeTagCenter" unique_id=1366289210]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_typetag")
+
+[node name="TypeTagLabel" type="Label" parent="TypeTagCenter/TypeTagContainer" unique_id=72529928]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 8
+text = "攻击"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DescriptionArea" type="ColorRect" parent="." unique_id=2121829680]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 180.0
 offset_right = 176.0
 offset_bottom = 266.0
 mouse_filter = 2
-color = Color(0.12, 0.06, 0.04, 0.92)
+color = Color(1, 1, 1, 0)
 
-[node name="DescriptionLabel" type="RichTextLabel" parent="DescriptionArea"]
+[node name="DescriptionLabel" type="RichTextLabel" parent="DescriptionArea" unique_id=1040375169]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 5.0
-offset_top = 2.0
-offset_right = -5.0
-offset_bottom = -2.0
+offset_left = 13.0
+offset_top = 5.0
+offset_right = -16.0
+offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-text = "卡牌效果描述"
+theme_override_font_sizes/normal_font_size = 9
+bbcode_enabled = true
+text = "[center]卡牌效果描述[/center]"
 fit_content = true
-theme_override_font_sizes/normal_font_size = 11

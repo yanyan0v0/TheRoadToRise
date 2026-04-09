@@ -7,6 +7,7 @@ extends Control
 @onready var achievement_button: Button = $ButtonContainer/AchievementButton
 @onready var quit_button: Button = $ButtonContainer/QuitButton
 @onready var settings_panel: Control = $SettingsPanel
+@onready var button_container: VBoxContainer = $ButtonContainer
 
 func _ready() -> void:
 	GameManager.change_state(GameManager.GameState.MENU)
@@ -24,6 +25,7 @@ func _ready() -> void:
 	# 隐藏设置面板
 	if settings_panel:
 		settings_panel.visible = false
+		settings_panel.panel_closed.connect(_on_settings_closed)
 
 ## 开始新游戏
 func _on_start_pressed() -> void:
@@ -46,6 +48,7 @@ func _on_continue_pressed() -> void:
 func _on_settings_pressed() -> void:
 	if settings_panel:
 		settings_panel.visible = true
+		button_container.visible = false
 
 ## 打开成就界面
 func _on_achievement_pressed() -> void:
@@ -54,3 +57,7 @@ func _on_achievement_pressed() -> void:
 ## 退出游戏
 func _on_quit_pressed() -> void:
 	get_tree().quit()
+
+## Settings panel closed callback
+func _on_settings_closed() -> void:
+	button_container.visible = true

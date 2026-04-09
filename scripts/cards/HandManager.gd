@@ -6,7 +6,7 @@ signal card_play_requested(card: Control)
 
 const CARD_SCENE := preload("res://scenes/battle/Card.tscn")
 const MAX_HAND_SIZE := 10
-const CARD_SPACING := 25
+const CARD_SPACING := 0
 const HAND_Y_OFFSET := 0  # 手牌区域Y偏移
 const FAN_ANGLE := 5.0  # 扇形排列角度（度）
 const FAN_ARC_HEIGHT := 40.0  # 扇形弧度高度（像素）
@@ -164,6 +164,9 @@ func _calculate_card_position(index: int) -> Vector2:
 	# 当卡牌过多时缩小间距
 	var available_width := size.x - 200  # 留出两侧边距
 	var total_step: float = card_width + spacing
+	# Ensure spacing between cards is at most 0 (cards can overlap but not spread apart)
+	if total_step > card_width:
+		total_step = card_width
 	var needed_width: float = (count - 1) * total_step
 	if needed_width > available_width and count > 1:
 		total_step = available_width / float(count - 1)
