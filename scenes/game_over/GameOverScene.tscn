@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cgameover001"]
+[gd_scene format=3 uid="uid://cgameover001"]
 
-[ext_resource type="Script" path="res://scenes/game_over/GameOverScene.gd" id="1"]
+[ext_resource type="Script" uid="uid://cj16ylgojkk8u" path="res://scenes/game_over/GameOverScene.gd" id="1"]
 
-[node name="GameOverScene" type="Control"]
+[node name="GameOverScene" type="Control" unique_id=415830124]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=769453003]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,7 +20,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.08, 0.08, 0.08, 1)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1777857136]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,52 +29,53 @@ offset_top = 54.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="CenterContainer"]
+[node name="VBox" type="VBoxContainer" parent="CenterContainer" unique_id=1327366736]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/VBox"]
+[node name="TitleLabel" type="Label" parent="CenterContainer/VBox" unique_id=1951491355]
 layout_mode = 2
+theme_override_font_sizes/font_size = 36
 text = "游戏结束"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 36
 
-[node name="SubtitleLabel" type="Label" parent="CenterContainer/VBox"]
+[node name="SubtitleLabel" type="Label" parent="CenterContainer/VBox" unique_id=678745344]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_font_sizes/font_size = 16
 text = "取经之路道阻且长"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
 
-[node name="Separator" type="HSeparator" parent="CenterContainer/VBox"]
-layout_mode = 2
+[node name="Separator" type="HSeparator" parent="CenterContainer/VBox" unique_id=878987198]
 custom_minimum_size = Vector2(400, 2)
-
-[node name="StatsTitle" type="Label" parent="CenterContainer/VBox"]
 layout_mode = 2
+
+[node name="StatsTitle" type="Label" parent="CenterContainer/VBox" unique_id=1962350044]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "— 本局统计 —"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 18
 
-[node name="StatsContainer" type="VBoxContainer" parent="CenterContainer/VBox"]
+[node name="StatsContainer" type="VBoxContainer" parent="CenterContainer/VBox" unique_id=1808460420]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="AchievementContainer" type="VBoxContainer" parent="CenterContainer/VBox"]
+[node name="AchievementContainer" type="VBoxContainer" parent="CenterContainer/VBox" unique_id=621495491]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="Spacer" type="Control" parent="CenterContainer/VBox"]
+[node name="Spacer" type="Control" parent="CenterContainer/VBox" unique_id=2062569176]
 custom_minimum_size = Vector2(0, 20)
-
-[node name="RetryButton" type="Button" parent="CenterContainer/VBox"]
 layout_mode = 2
+
+[node name="RetryButton" type="Button" parent="CenterContainer/VBox" unique_id=1856501418]
 custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "重新开始"
-theme_override_font_sizes/font_size = 20
 
-[node name="MainMenuButton" type="Button" parent="CenterContainer/VBox"]
-layout_mode = 2
+[node name="MainMenuButton" type="Button" parent="CenterContainer/VBox" unique_id=914254309]
 custom_minimum_size = Vector2(300, 50)
-text = "返回主菜单"
+layout_mode = 2
 theme_override_font_sizes/font_size = 20
+text = "返回主菜单"

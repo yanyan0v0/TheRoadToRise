@@ -17,11 +17,10 @@ enum NodeType {
 	TRIBULATION,   # 渡劫
 }
 
-## 章节配置
+## 章节配置（chapter 1/2/3 对应三章）
 const CHAPTER_CONFIG := {
-	0: {"name": "取经缘起", "layers": 9},
-	1: {"name": "妖魔纵横", "layers": 11},
-	2: {"name": "心魔迷障", "layers": 11},
+	1: {"name": "取经缘起", "layers": 9},
+	2: {"name": "妖魔纵横", "layers": 11},
 	3: {"name": "西天真经", "layers": 13},
 }
 
@@ -128,7 +127,7 @@ class MapNode:
 
 ## 生成地图
 static func generate_map(chapter: int) -> Dictionary:
-	var config: Dictionary = CHAPTER_CONFIG.get(chapter, CHAPTER_CONFIG[0])
+	var config: Dictionary = CHAPTER_CONFIG.get(chapter, CHAPTER_CONFIG[1])
 	var layers: int = config.get("layers", 8)
 	
 	# 从BOSS_POOL中随机选择一个未被其他章节使用的BOSS
@@ -446,7 +445,7 @@ static func _assign_encounter_data(node: MapNode, chapter: int) -> void:
 	if node.node_type == NodeType.BATTLE:
 		var pools: Array = _get_normal_enemy_pools(chapter)
 		if pools.is_empty():
-			pools = _get_normal_enemy_pools(0)
+			pools = _get_normal_enemy_pools(1)
 		var enemy_ids: Array = _pick_unique_pool(pools)
 		# 拼接所有敌人的名称作为显示名
 		var name_parts: Array = []

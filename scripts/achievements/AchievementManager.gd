@@ -27,7 +27,7 @@ static func check_achievements() -> void:
 	
 	# 取得真经：完成通关
 	if not SaveManager.is_achievement_unlocked("true_scripture"):
-		if GameManager.current_chapter >= 4:
+		if GameManager.current_chapter > GameManager.TOTAL_CHAPTERS:
 			SaveManager.unlock_achievement("true_scripture", "取得真经")
 			SaveManager.unlock_character("tang_seng")
 			SaveManager.increment_clear_count()

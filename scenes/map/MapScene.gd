@@ -31,12 +31,37 @@ func _ready() -> void:
 	else:
 		map_data = _deserialize_map(GameManager.current_map_data)
 	
+	# 同步本章BOSS到GameManager（使HUD章节名能立即显示）
+	_sync_current_chapter_boss()
+	
 	# 创建图例悬浮窗
 	_create_legend()
 	
 	# 等待布局完成后再渲染
 	await get_tree().process_frame
 	_render_map()
+
+## 从地图数据中提取BOSS节点的boss_id，同步到GameManager.current_boss_id
+## 这样 HUD 的章节名（取自boss的chapter_name）在进入地图时就能立即显示
+func _sync_current_chapter_boss() -> void:
+	var nodes_data: Array = map_data.get("nodes", [])
+	for n in nodes_data:
+		if n == null:
+			continue
+		var node_type_val: int = -1
+		var boss_id_val: String = ""
+		if n is MapGenerator.MapNode:
+			node_type_val = n.node_type
+			boss_id_val = n.encounter_data.get("boss_id", "")
+		elif n is Dictionary:
+			node_type_val = n.get("node_type", -1)
+			var enc: Dictionary = n.get("encounter_data", {})
+			boss_id_val = enc.get("boss_id", "")
+		if node_type_val == MapGenerator.NodeType.BOSS and boss_id_val != "":
+			GameManager.current_boss_id = boss_id_val
+			# 通知HUD刷新章节名
+			EventBus.next_chapter_entered.emit(GameManager.current_chapter)
+			return
 
 ## 窗口大小变化时重新渲染地图
 func _notification(what: int) -> void:

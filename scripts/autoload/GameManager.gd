@@ -55,8 +55,8 @@ var max_consumable_slots: int = 3
 ## 妖灵容量（初始3只）
 var spirit_capacity: int = 3
 
-## 当前章节索引（0-3对应4章）
-var current_chapter: int = 0
+## 当前章节（1-3 对应三章，与 enemies.json 中 boss.chapter 一致）
+var current_chapter: int = 1
 ## 当前地图节点索引
 var current_node_index: int = 0
 ## 当前地图数据
@@ -151,13 +151,28 @@ func get_tribulation_buff() -> float:
 	var level := get_tribulation_level()
 	return TRIBULATION_ENEMY_BUFF.get(level, 0.0)
 
-# ===== 章节名称 =====
-const CHAPTER_NAMES: Array[String] = [
-	"第一章：取经路",
-	"第二章：三打白骨",
-	"第三章：火焰山",
-	"第四章：西天真经"
-]
+# ===== 章节总数 =====
+const TOTAL_CHAPTERS: int = 3
+
+## 获取当前章节名（从当前章节对应的 boss 数据中读取 chapter_name）
+## 如果当前章节已分配 boss_id，则使用该 boss 的 chapter_name；
+## 否则从 DataManager 中该章节的 boss 池随机取一个的 chapter_name
+func get_current_chapter_name() -> String:
+	# 优先使用已分配的 boss_id
+	if current_boss_id != "":
+		var boss_data: Dictionary = DataManager.get_enemy(current_boss_id)
+		var name: String = boss_data.get("chapter_name", "")
+		if name != "":
+			return name
+	# Fallback：从当前章节的 boss 池中取第一个有 chapter_name 的
+	var boss_pool: Array[String] = DataManager.get_boss_pool()
+	for bid in boss_pool:
+		var bdata: Dictionary = DataManager.get_enemy(bid)
+		if bdata.get("chapter", -1) == current_chapter:
+			var cname: String = bdata.get("chapter_name", "")
+			if cname != "":
+				return cname
+	return ""
 
 func _ready() -> void:
 	stats.start_time = Time.get_unix_time_from_system()
@@ -202,7 +217,7 @@ func change_state(new_state: GameState) -> void:
 ## 初始化新游戏
 func start_new_game(character_id: String) -> void:
 	current_character_id = character_id
-	current_chapter = 0
+	current_chapter = 1
 	current_node_index = 0
 	current_map_data = {}  # 清空地图数据，重新生成
 	current_deck.clear()
@@ -409,7 +424,7 @@ func record_damage(amount: int) -> void:
 func advance_chapter() -> void:
 	current_chapter += 1
 	current_node_index = 0
-	if current_chapter >= CHAPTER_NAMES.size():
+	if current_chapter > TOTAL_CHAPTERS:
 		# 通关
 		save_character_persistent_stats()
 		change_state(GameState.VICTORY)
@@ -423,7 +438,7 @@ func get_play_time() -> int:
 
 ## Get total nodes cleared this run
 func get_nodes_cleared() -> int:
-	return current_chapter * 10 + current_node_index
+	return (current_chapter - 1) * 10 + current_node_index
 
 ## Save character persistent stats (call on game end)
 func save_character_persistent_stats() -> void:
@@ -505,7 +520,7 @@ func load_save_data(data: Dictionary) -> void:
 		elif relic_entry is String:
 			current_relics.append({"relic_id": relic_entry, "enhance_level": 0})
 	current_consumables = Array(data.get("current_consumables", []), TYPE_STRING, "", null)
-	current_chapter = data.get("current_chapter", 0)
+	current_chapter = data.get("current_chapter", 1)
 	current_node_index = data.get("current_node_index", 0)
 	current_map_data = data.get("current_map_data", {})
 	total_gold_earned = data.get("total_gold_earned", 0)

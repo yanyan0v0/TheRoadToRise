@@ -67,6 +67,7 @@ func _ready() -> void:
 	EventBus.karma_changed.connect(_on_karma_changed)
 	EventBus.consumable_capacity_changed.connect(_on_consumable_changed)
 	EventBus.relic_acquired.connect(_on_relic_acquired)
+	EventBus.next_chapter_entered.connect(_on_next_chapter_entered)
 	
 	# 初始隐藏（主菜单）
 	_update_visibility()
@@ -147,10 +148,7 @@ func _build_hud() -> void:
 	
 	# 章节名
 	_chapter_label = Label.new()
-	var _init_chapter_name := ""
-	if GameManager.current_chapter < GameManager.CHAPTER_NAMES.size():
-		_init_chapter_name = GameManager.CHAPTER_NAMES[GameManager.current_chapter]
-	_chapter_label.text = _init_chapter_name
+	_chapter_label.text = GameManager.get_current_chapter_name()
 	_chapter_label.add_theme_font_size_override("font_size", 20)
 	_chapter_label.add_theme_color_override("font_color", Color("DCDCDC"))
 	_chapter_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -380,10 +378,7 @@ func _update_deck_count() -> void:
 ## 更新HP显示
 func _update_hp_display() -> void:
 	if _chapter_label:
-		var chapter_name := ""
-		if GameManager.current_chapter < GameManager.CHAPTER_NAMES.size():
-			chapter_name = GameManager.CHAPTER_NAMES[GameManager.current_chapter]
-		_chapter_label.text = chapter_name
+		_chapter_label.text = GameManager.get_current_chapter_name()
 	if _hp_label:
 		_hp_label.text = "%d/%d" % [GameManager.current_hp, GameManager.max_hp]
 
@@ -724,6 +719,11 @@ func _on_relic_acquired(_relic_data) -> void:
 	_cached_relic_ids = []  # 强制清空缓存，确保刷新
 	_update_relic_display()
 	_is_refreshing = false
+
+## 进入新章节时刷新章节名
+func _on_next_chapter_entered(_chapter_index: int) -> void:
+	if _chapter_label:
+		_chapter_label.text = GameManager.get_current_chapter_name()
 
 ## 地图按钮点击 - 在地图界面回到上一界面，其他界面跳转回地图
 func _on_map_button_pressed() -> void:

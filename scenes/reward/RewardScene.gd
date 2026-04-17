@@ -504,7 +504,7 @@ func _on_continue_pressed() -> void:
 		GameManager.current_chapter += 1
 		GameManager.current_map_data = {}
 		
-		if GameManager.current_chapter >= 4:
+		if GameManager.current_chapter > GameManager.TOTAL_CHAPTERS:
 			SceneTransition.change_scene("res://scenes/game_over/GameOverScene.tscn")
 			return
 	

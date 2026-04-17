@@ -337,14 +337,14 @@ func _build_enemy_cache() -> void:
 		if etype == "elite":
 			_elite_pool.append(enemy_id)
 	
-	# Generate normal enemy combat pools per chapter
-	for chapter in range(4):
+	# Generate normal enemy combat pools per chapter (chapter 1/2/3)
+	for chapter in range(1, 4):
 		_normal_enemy_pools[chapter] = _generate_combat_pools(chapter)
 	
 	print("  - 敌人缓存: boss=%d, elite=%d, pools=%s" % [
 		_boss_pool.size(), _elite_pool.size(),
-		str([_normal_enemy_pools.get(0, []).size(), _normal_enemy_pools.get(1, []).size(),
-			_normal_enemy_pools.get(2, []).size(), _normal_enemy_pools.get(3, []).size()])
+		str([_normal_enemy_pools.get(1, []).size(), _normal_enemy_pools.get(2, []).size(),
+			_normal_enemy_pools.get(3, []).size()])
 	])
 
 ## Generate combat encounter pools for a chapter from normal enemies
