@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://creward001"]
+[gd_scene format=3 uid="uid://creward001"]
 
-[ext_resource type="Script" path="res://scenes/reward/RewardScene.gd" id="1"]
+[ext_resource type="Script" uid="uid://bssx417jo33eq" path="res://scenes/reward/RewardScene.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dn8t8l5mqsdc5" path="res://ui/images/battle/battle_reward_bg.jpg" id="2"]
 
-[node name="RewardScene" type="Control"]
+[node name="RewardScene" type="Control" unique_id=1406427670]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,66 +12,163 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1983313700]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.1, 0.08, 1)
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 6
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="GoldRewardLabel" type="Label" parent="." unique_id=175765360]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 170.0
+offset_right = 200.0
+offset_bottom = 200.0
 grow_horizontal = 2
-grow_vertical = 2
-
-[node name="VBox" type="VBoxContainer" parent="CenterContainer"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="TitleLabel" type="Label" parent="CenterContainer/VBox"]
-layout_mode = 2
-text = "🎉 战斗胜利！"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 32
 theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
-
-[node name="GoldRewardLabel" type="Label" parent="CenterContainer/VBox"]
-layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "获得 25 金币"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
 
-[node name="ChooseLabel" type="Label" parent="CenterContainer/VBox"]
-layout_mode = 2
-text = "选择一张卡牌加入卡组："
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
+[node name="CardClickArea" type="Button" parent="." unique_id=670426306]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.2
+anchor_right = 0.48
+anchor_bottom = 0.85
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
 
-[node name="CardChoicesContainer" type="HBoxContainer" parent="CenterContainer/VBox"]
-layout_mode = 2
-theme_override_constants/separation = 20
-alignment = 1
+[node name="RelicClickArea" type="Button" parent="." unique_id=1011800160]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.52
+anchor_top = 0.2
+anchor_right = 0.9
+anchor_bottom = 0.85
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
 
-[node name="RelicRewardContainer" type="HBoxContainer" parent="CenterContainer/VBox"]
-layout_mode = 2
-theme_override_constants/separation = 20
-alignment = 1
-
-[node name="SkipButton" type="Button" parent="CenterContainer/VBox"]
-layout_mode = 2
-custom_minimum_size = Vector2(200, 40)
-text = "跳过"
-theme_override_font_sizes/font_size = 16
-
-[node name="ContinueButton" type="Button" parent="CenterContainer/VBox"]
+[node name="CardChoicesPanel" type="PanelContainer" parent="." unique_id=622080038]
 visible = false
+custom_minimum_size = Vector2(500, 400)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CardChoicesBg" type="ColorRect" parent="CardChoicesPanel" unique_id=1495578530]
 layout_mode = 2
-custom_minimum_size = Vector2(200, 50)
-text = "继续前进"
+color = Color(0, 0, 0, 0.75)
+
+[node name="CardChoicesVBox" type="VBoxContainer" parent="CardChoicesPanel" unique_id=687926711]
+custom_minimum_size = Vector2(800, 400)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="CardChoicesTitle" type="Label" parent="CardChoicesPanel/CardChoicesVBox" unique_id=1511427778]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
+theme_override_font_sizes/font_size = 24
+text = "选择一张卡牌加入卡组"
+horizontal_alignment = 1
+
+[node name="CardChoicesContainer" type="HBoxContainer" parent="CardChoicesPanel/CardChoicesVBox" unique_id=1098581015]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="SkipButton" type="Button" parent="CardChoicesPanel/CardChoicesVBox" unique_id=1819905501]
+custom_minimum_size = Vector2(200, 45)
+layout_mode = 2
+size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 18
+text = "跳过"
+
+[node name="RelicPopupPanel" type="PanelContainer" parent="." unique_id=1841417686]
+visible = false
+custom_minimum_size = Vector2(200, 400)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -215.0
+offset_top = -200.0
+offset_right = 215.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RelicPopupBg" type="ColorRect" parent="RelicPopupPanel" unique_id=2037640152]
+layout_mode = 2
+color = Color(0, 0, 0, 0.75)
+
+[node name="RelicPopupVBox" type="VBoxContainer" parent="RelicPopupPanel" unique_id=228858065]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="RelicPopupTitle" type="Label" parent="RelicPopupPanel/RelicPopupVBox" unique_id=355407951]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
+theme_override_font_sizes/font_size = 24
+text = "获得法宝"
+horizontal_alignment = 1
+
+[node name="RelicDetailContainer" type="HBoxContainer" parent="RelicPopupPanel/RelicPopupVBox" unique_id=1105139842]
+layout_mode = 2
+alignment = 1
+
+[node name="RelicActionButtons" type="HBoxContainer" parent="RelicPopupPanel/RelicPopupVBox" unique_id=2111340685]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="TakeRelicButton" type="Button" parent="RelicPopupPanel/RelicPopupVBox/RelicActionButtons" unique_id=1834943024]
+custom_minimum_size = Vector2(100, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "获取法宝"
+
+[node name="SkipRelicButton" type="Button" parent="RelicPopupPanel/RelicPopupVBox/RelicActionButtons" unique_id=1022273365]
+custom_minimum_size = Vector2(100, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "跳过"
+
+[node name="ContinueButton" type="Button" parent="." unique_id=1335441887]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -70.0
+offset_right = 100.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 18
+text = "继续前进"

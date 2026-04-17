@@ -8,9 +8,7 @@ extends Resource
 @export var mana: int = 3
 @export var stamina: int = 0
 @export var gold: int = 50
-@export var passive_id: String = ""
-@export var passive_name: String = ""
-@export var passive_description: String = ""
+@export var starter_relic: String = ""
 @export var unlock_condition: String = "none"
 @export var unlock_achievement: String = ""
 @export var starter_deck: Array[String] = []
@@ -25,9 +23,7 @@ static func from_dict(data: Dictionary) -> CharacterData:
 	character.mana = data.get("mana", 3)
 	character.stamina = data.get("stamina", 0)
 	character.gold = data.get("gold", 50)
-	character.passive_id = data.get("passive_id", "")
-	character.passive_name = data.get("passive_name", "")
-	character.passive_description = data.get("passive_description", "")
+	character.starter_relic = data.get("starter_relic", "")
 	character.unlock_condition = data.get("unlock_condition", "none")
 	character.unlock_achievement = data.get("unlock_achievement", "")
 	character.bailongma_hp = data.get("bailongma_hp", 0)
@@ -42,6 +38,10 @@ static func from_dict(data: Dictionary) -> CharacterData:
 func apply_to_game() -> void:
 	GameManager.start_new_game(character_id)
 	GameManager.init_character_stats(max_hp, mana, gold, stamina, starter_deck.duplicate())
+	
+	# Add starter relic
+	if starter_relic != "":
+		GameManager.add_relic(starter_relic)
 	
 	# 角色专属初始化
 	match character_id:
@@ -59,7 +59,11 @@ func get_info_text() -> String:
 	if stamina > 0:
 		info += "体力: %d\n" % stamina
 	info += "金币: %d\n" % gold
-	info += "\n被动技能: %s\n%s" % [passive_name, passive_description]
+	if starter_relic != "":
+		var relic_data: Dictionary = DataManager.get_relic(starter_relic)
+		var relic_name: String = relic_data.get("relic_name", starter_relic)
+		var relic_desc: String = RelicTooltip.get_enhanced_description(relic_data)
+		info += "\n初始法宝: %s\n%s" % [relic_name, relic_desc]
 	return info
 
 ## 获取角色颜色（用于UI标识）

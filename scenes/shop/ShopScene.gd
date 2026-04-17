@@ -5,7 +5,10 @@ var shop_cards: Array = []
 var shop_relics: Array = []
 var shop_consumables: Array = []
 
-## 是否为神秘商人（商品有概率出现2星/3星）
+## Card scene for reuse
+const CARD_SCENE := preload("res://scenes/battle/Card.tscn")
+
+## 是否为神秘商人（商品有概率出现高星级/高强化值）
 var is_mystery_merchant: bool = false
 
 @onready var card_container: HBoxContainer = $ScrollContainer/VBox/CardSection/CardContainer
@@ -45,10 +48,34 @@ func _roll_mystery_star_level() -> int:
 		return 2
 	return 1
 
+## Roll relic enhance level for normal merchant (+0: 70%, +1: 25%, +2: 5%)
+func _roll_normal_relic_enhance() -> int:
+	var roll := randf()
+	if roll < 0.05:
+		return 2
+	elif roll < 0.30:
+		return 1
+	return 0
+
+## Roll relic enhance level for mystery merchant (+0: 20%, +1: 25%, +2: 25%, +3: 15%, +4: 10%, +5: 5%)
+func _roll_mystery_relic_enhance() -> int:
+	var roll := randf()
+	if roll < 0.05:
+		return 5
+	elif roll < 0.15:
+		return 4
+	elif roll < 0.30:
+		return 3
+	elif roll < 0.55:
+		return 2
+	elif roll < 0.80:
+		return 1
+	return 0
+
 ## 生成商店物品
 func _generate_shop_items() -> void:
 	if is_mystery_merchant:
-		print("[商店] 神秘商人 - 商品有概率出现高星级")
+		print("[商店] 神秘商人 - 商品有概率出现高星级/高强化值法宝")
 	
 	# 生成3-5张卡牌（过滤其他角色专属牌）
 	var all_cards := DataManager.get_all_cards()
@@ -71,19 +98,22 @@ func _generate_shop_items() -> void:
 			price = int(price * 2.5)
 		_add_shop_card(card_data, price, star_level)
 	
-	# 生成1-2个法宝
+	# 生成1-2个法宝（普通商人有概率出现低强化值，神秘商人有概率出现高强化值）
 	var all_relics := DataManager.get_all_relics()
 	all_relics.shuffle()
 	var relic_count := randi_range(1, 2)
 	for i in range(mini(relic_count, all_relics.size())):
 		var relic_data: Dictionary = all_relics[i]
-		var star_level := _roll_mystery_star_level()
+		var enhance_level: int = 0
+		if is_mystery_merchant:
+			enhance_level = _roll_mystery_relic_enhance()
+		else:
+			enhance_level = _roll_normal_relic_enhance()
 		var price := _get_relic_price(relic_data)
-		if star_level == 2:
-			price = int(price * 1.5)
-		elif star_level == 3:
-			price = int(price * 2.5)
-		_add_shop_relic(relic_data, price, star_level)
+		# Higher enhance level increases price
+		if enhance_level > 0:
+			price = int(price * (1.0 + enhance_level * 0.4))
+		_add_shop_relic(relic_data, price, enhance_level)
 	
 	# 生成2-3个消耗品
 	var all_consumables := DataManager.get_all_consumables()
@@ -123,148 +153,143 @@ func _add_shop_card(card_data: Dictionary, price: int, star_level: int = 1) -> v
 	var item := _create_shop_card_item(card_data, price, star_level)
 	card_container.add_child(item)
 	
-	var buy_btn: Button = item.get_node("BuyButton")
-	buy_btn.pressed.connect(func():
-		if GameManager.current_gold >= price:
-			GameManager.modify_gold(-price)
-			GameManager.current_deck.append({"card_id": card_data.get("card_id", ""), "star_level": star_level})
-			GameManager.modify_karma(1)  # 天劫系统：购买卡牌增加1点劫数
-			item.queue_free()
-		else:
-			_shake_item(item)
-	)
+	# Setup the card after adding to tree so @onready nodes resolve
+	var card_node: Control = item.get_meta("card_node")
+	if card_node != null:
+		card_node.setup(card_data, star_level)
+		card_node.is_playable = false
+		card_node.modulate = Color.WHITE
+		card_node.set_process_input(false)
+		# Hide background for non-battle card UI
+		if card_node.has_node("Background"):
+			card_node.get_node("Background").visible = false
+	
+	# Click overlay handles purchase
+	var click_overlay: ColorRect = item.get_meta("click_overlay")
+	if click_overlay != null:
+		click_overlay.gui_input.connect(func(event: InputEvent):
+			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+				if GameManager.current_gold >= price:
+					GameManager.modify_gold(-price)
+					GameManager.current_deck.append({"card_id": card_data.get("card_id", ""), "star_level": star_level})
+					GameManager.modify_karma(1)  # 天劫系统：购买卡牌增加1点劫数
+					item.queue_free()
+				else:
+					_shake_item(item)
+		)
 
 ## 添加商店法宝
-func _add_shop_relic(relic_data: Dictionary, price: int, star_level: int = 1) -> void:
-	var star_text := ""
-	match star_level:
-		1: star_text = "★☆☆"
-		2: star_text = "★★☆"
-		3: star_text = "★★★"
-	var display_name := "%s %s" % [relic_data.get("relic_name", "???"), star_text]
-	var item := _create_shop_detail_item(display_name, price, "法宝", relic_data.get("description", ""))
+func _add_shop_relic(relic_data: Dictionary, price: int, enhance_level: int = 0) -> void:
+	var base_name: String = relic_data.get("relic_name", "???")
+	var display_name := "[+%d] %s" % [enhance_level, base_name]
+	var desc: String = RelicTooltip.get_enhanced_description(relic_data, enhance_level)
+	var item := _create_shop_detail_item(display_name, price, "法宝", desc)
 	relic_container.add_child(item)
 	
-	var buy_btn: Button = item.get_node("BuyButton")
-	buy_btn.pressed.connect(func():
-		if GameManager.current_gold >= price:
-			GameManager.modify_gold(-price)
-			GameManager.add_relic(relic_data.get("relic_id", ""), star_level)
-			GameManager.modify_karma(1)  # 天劫系统：购买法宝增加1点劫数
-			# 通知GlobalHUD刷新法宝显示
-			EventBus.relic_acquired.emit(null)
-			item.queue_free()
+	# Tint the name color based on enhance level
+	var name_node: Label = item.get_meta("bg_node").get_child(0) if item.has_meta("bg_node") else null
+	if name_node != null and enhance_level > 0:
+		if enhance_level >= 4:
+			name_node.add_theme_color_override("font_color", Color("FF6B6B"))  # Red for +4/+5
+		elif enhance_level >= 2:
+			name_node.add_theme_color_override("font_color", Color("74B9FF"))  # Blue for +2/+3
 		else:
-			_shake_item(item)
-	)
+			name_node.add_theme_color_override("font_color", Color("00B894"))  # Green for +1
+	
+	# Click on item to purchase
+	var bg_node: ColorRect = item.get_meta("bg_node")
+	if bg_node != null:
+		bg_node.gui_input.connect(func(event: InputEvent):
+			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+				if GameManager.current_gold >= price:
+					GameManager.modify_gold(-price)
+					GameManager.add_relic(relic_data.get("relic_id", ""), enhance_level)
+					GameManager.modify_karma(1)  # 天劫系统：购买法宝增加1点劫数
+					EventBus.relic_acquired.emit(null)
+					item.queue_free()
+				else:
+					_shake_item(item)
+		)
 
 ## 添加商店消耗品
 func _add_shop_consumable(consumable_data: Dictionary, price: int) -> void:
 	var item := _create_shop_detail_item(consumable_data.get("consumable_name", "???"), price, "消耗品", consumable_data.get("description", ""))
 	consumable_container.add_child(item)
 	
-	var buy_btn: Button = item.get_node("BuyButton")
-	buy_btn.pressed.connect(func():
-		if GameManager.current_gold >= price:
-			GameManager.modify_gold(-price)
-			# 使用add_consumable方法（带上限校验和信号通知）
-			if not GameManager.add_consumable(consumable_data.get("consumable_id", "")):
-				# 丹药已满，退还金币
-				GameManager.modify_gold(price)
-				return
-			item.queue_free()
-		else:
-			_shake_item(item)
-	)
+	# Click on item to purchase
+	var bg_node: ColorRect = item.get_meta("bg_node")
+	if bg_node != null:
+		bg_node.gui_input.connect(func(event: InputEvent):
+			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+				if GameManager.is_consumable_full():
+					_show_full_tip(item, "丹药已满")
+					return
+				if GameManager.current_gold >= price:
+					GameManager.modify_gold(-price)
+					if not GameManager.add_consumable(consumable_data.get("consumable_id", "")):
+						GameManager.modify_gold(price)
+						_show_full_tip(item, "丹药已满")
+						return
+					item.queue_free()
+				else:
+					_shake_item(item)
+		)
 
-## 创建商店卡牌物品UI（显示具体效果）
+## 创建商店卡牌物品UI（使用战斗卡牌UI）
 func _create_shop_card_item(card_data: Dictionary, price: int, star_level: int = 1) -> VBoxContainer:
 	var container := VBoxContainer.new()
-	container.custom_minimum_size = Vector2(170, 180)
+	container.custom_minimum_size = Vector2(180, 310)
+	container.add_theme_constant_override("separation", 5)
 	
-	var bg := ColorRect.new()
-	bg.custom_minimum_size = Vector2(170, 145)
+	# Use the battle Card scene for consistent UI
+	var card_node: Control = CARD_SCENE.instantiate()
+	card_node.custom_minimum_size = Vector2(180, 270)
+	card_node.mouse_filter = Control.MOUSE_FILTER_STOP
+	container.add_child(card_node)
 	
-	var rarity: String = card_data.get("rarity", "common")
-	match rarity:
-		"common": bg.color = Color(0.22, 0.22, 0.25, 1)
-		"uncommon": bg.color = Color(0.0, 0.3, 0.24, 1)
-		"rare": bg.color = Color(0.04, 0.2, 0.4, 1)
-		"legendary": bg.color = Color(0.35, 0.28, 0.05, 1)
-		_: bg.color = Color(0.22, 0.22, 0.25, 1)
-	container.add_child(bg)
+	# Store card_node reference for later setup
+	container.set_meta("card_node", card_node)
 	
-	# 卡牌名称
-	var name_label := Label.new()
-	name_label.text = card_data.get("card_name", "???")
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.add_theme_font_size_override("font_size", 14)
-	name_label.add_theme_color_override("font_color", Color("FDCB6E"))
-	name_label.position = Vector2(5, 5)
-	name_label.size = Vector2(160, 22)
-	bg.add_child(name_label)
+	# Add a transparent overlay to prevent battle drag behavior
+	var click_overlay := ColorRect.new()
+	click_overlay.color = Color(0, 0, 0, 0)
+	click_overlay.position = Vector2.ZERO
+	click_overlay.size = Vector2(180, 270)
+	click_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	card_node.add_child(click_overlay)
 	
-	# 类型和费用
-	var card_type: String = card_data.get("card_type", "attack")
-	var type_name := ""
-	match card_type:
-		"attack": type_name = "攻击"
-		"skill": type_name = "技能"
-		"ultimate": type_name = "终结技"
-	var info_label := Label.new()
-	info_label.text = "[%s] 费用:%d" % [type_name, card_data.get("energy_cost", 1)]
-	info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	info_label.add_theme_font_size_override("font_size", 11)
-	info_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
-	info_label.position = Vector2(5, 28)
-	info_label.size = Vector2(160, 18)
-	bg.add_child(info_label)
+	# Hover highlight effect
+	click_overlay.mouse_entered.connect(func():
+		card_node.modulate = Color(1.2, 1.2, 1.2, 1.0)
+		card_node.scale = Vector2(1.05, 1.05)
+	)
+	click_overlay.mouse_exited.connect(func():
+		card_node.modulate = Color.WHITE
+		card_node.scale = Vector2.ONE
+	)
 	
-	# 描述/效果
-	var desc_label := Label.new()
-	desc_label.text = card_data.get("description", "")
-	desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	desc_label.add_theme_font_size_override("font_size", 10)
-	desc_label.position = Vector2(5, 48)
-	desc_label.size = Vector2(160, 55)
-	bg.add_child(desc_label)
-	
-	# 稀有度和星级
-	var rarity_label := Label.new()
-	var rarity_text := ""
-	match rarity:
-		"common": rarity_text = "普通"
-		"uncommon": rarity_text = "稀有"
-		"rare": rarity_text = "史诗"
-		"legendary": rarity_text = "传说"
-	var star_text := ""
-	match star_level:
-		1: star_text = "★☆☆"
-		2: star_text = "★★☆"
-		3: star_text = "★★★"
-	rarity_label.text = "%s %s" % [rarity_text, star_text]
-	rarity_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	rarity_label.add_theme_font_size_override("font_size", 11)
-	rarity_label.position = Vector2(5, 105)
-	rarity_label.size = Vector2(160, 18)
-	bg.add_child(rarity_label)
-	
-	# 价格
+	# Price label with coin icon
+	var price_hbox := HBoxContainer.new()
+	price_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	price_hbox.add_theme_constant_override("separation", 4)
+	var coin_icon := TextureRect.new()
+	coin_icon.custom_minimum_size = Vector2(14, 14)
+	coin_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	coin_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	coin_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var coin_path := "res://ui/images/global/coin.png"
+	if ResourceLoader.exists(coin_path):
+		coin_icon.texture = load(coin_path)
+	price_hbox.add_child(coin_icon)
 	var price_label := Label.new()
-	price_label.text = "%d 金币" % price
-	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	price_label.text = "%d" % price
 	price_label.add_theme_font_size_override("font_size", 13)
 	price_label.add_theme_color_override("font_color", Color("FDCB6E"))
-	price_label.position = Vector2(5, 124)
-	price_label.size = Vector2(160, 20)
-	bg.add_child(price_label)
+	price_hbox.add_child(price_label)
+	container.add_child(price_hbox)
 	
-	var buy_button := Button.new()
-	buy_button.name = "BuyButton"
-	buy_button.text = "购买"
-	buy_button.custom_minimum_size = Vector2(170, 30)
-	container.add_child(buy_button)
+	# Store click_overlay reference for purchase handling
+	container.set_meta("click_overlay", click_overlay)
 	
 	return container
 
@@ -306,20 +331,40 @@ func _create_shop_detail_item(item_name: String, price: int, item_type: String, 
 	desc_label.position = Vector2(5, 48)
 	desc_label.size = Vector2(140, 40)
 	
+	# Price with coin icon
+	var price_hbox := HBoxContainer.new()
+	price_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	price_hbox.add_theme_constant_override("separation", 4)
+	price_hbox.position = Vector2(5, 90)
+	price_hbox.size = Vector2(140, 20)
+	var coin_icon := TextureRect.new()
+	coin_icon.custom_minimum_size = Vector2(14, 14)
+	coin_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	coin_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	coin_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var coin_path := "res://ui/images/global/coin.png"
+	if ResourceLoader.exists(coin_path):
+		coin_icon.texture = load(coin_path)
+	price_hbox.add_child(coin_icon)
 	var price_label := Label.new()
-	price_label.text = "%d 金币" % price
-	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	price_label.text = "%d" % price
 	price_label.add_theme_font_size_override("font_size", 13)
 	price_label.add_theme_color_override("font_color", Color("FDCB6E"))
-	bg.add_child(price_label)
-	price_label.position = Vector2(5, 90)
-	price_label.size = Vector2(140, 20)
+	price_hbox.add_child(price_label)
+	bg.add_child(price_hbox)
 	
-	var buy_button := Button.new()
-	buy_button.name = "BuyButton"
-	buy_button.text = "购买"
-	buy_button.custom_minimum_size = Vector2(150, 30)
-	container.add_child(buy_button)
+	# Store bg reference for click handling, enable mouse
+	bg.mouse_filter = Control.MOUSE_FILTER_STOP
+	container.set_meta("bg_node", bg)
+	
+	# Hover effect
+	var base_color := bg.color
+	bg.mouse_entered.connect(func():
+		bg.color = base_color.lightened(0.2)
+	)
+	bg.mouse_exited.connect(func():
+		bg.color = base_color
+	)
 	
 	return container
 
@@ -384,6 +429,25 @@ func _shake_item(item: Control) -> void:
 		tween.tween_property(item, "position:x", original_pos.x + shake_offset, shake_duration)
 	tween.tween_property(item, "position:x", original_pos.x, shake_duration)
 	tween.tween_callback(func(): item.set_meta("is_shaking", false))
+
+## 显示携带已满提示（飘字）
+func _show_full_tip(item: Control, text: String) -> void:
+	_shake_item(item)
+	var tip := Label.new()
+	tip.text = text
+	tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tip.add_theme_font_size_override("font_size", 16)
+	tip.add_theme_color_override("font_color", Color("D63031"))
+	tip.add_theme_constant_override("outline_size", 2)
+	tip.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
+	tip.position = Vector2(item.size.x / 2.0 - 40, -20)
+	item.add_child(tip)
+	
+	tip.modulate.a = 1.0
+	var tween := create_tween()
+	tween.tween_property(tip, "position:y", tip.position.y - 30, 0.8)
+	tween.parallel().tween_property(tip, "modulate:a", 0.0, 0.8)
+	tween.tween_callback(tip.queue_free)
 
 ## 离开商店
 func _on_leave_pressed() -> void:

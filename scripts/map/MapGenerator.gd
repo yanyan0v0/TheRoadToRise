@@ -25,17 +25,13 @@ const CHAPTER_CONFIG := {
 	3: {"name": "西天真经", "layers": 13},
 }
 
-## BOSS敌人池（从enemies.json中所有boss类型的敌人）
-const BOSS_POOL := [
-	"bai_gu_jing",
-	"sheng_ying_da_wang",
-	"niu_mo_wang",
-	"liu_er_mi_hou",
-	"si_guai",
-	"huang_mei_lao_fo",
-	"da_peng_jin_chi_diao",
-	"jiu_ling_yuan_sheng",
-]
+## BOSS敌人池（从DataManager缓存获取）
+static var _boss_pool_cache: Array[String] = []
+
+static func _get_boss_pool() -> Array[String]:
+	if _boss_pool_cache.is_empty():
+		_boss_pool_cache = DataManager.get_boss_pool()
+	return _boss_pool_cache
 
 ## 已分配的BOSS（用于确保不同章节不重复）
 static var _assigned_bosses: Array[String] = []
@@ -85,58 +81,35 @@ const NODE_ICONS := {
 	NodeType.TRIBULATION: "res://ui/images/map/icon/tribulation.png",
 }
 
-## 普通战斗敌人池（按章节）
-const NORMAL_ENEMY_POOLS := {
-	0: [
-		["hun_shi_mo_wang", "yin_jiang_jun"],
-		["xiong_shan_jun", "te_chu_shi"],
-		["hei_feng_guai", "bai_yi_xiu_shi"],
-		["ling_xu_zi", "yin_jiang_jun", "te_chu_shi"],
-		["hun_shi_mo_wang", "xiong_shan_jun"],
-		["hei_feng_guai", "ling_xu_zi"],
-	],
-	1: [
-		["huang_feng_guai", "jing_xi_gui"],
-		["bai_gu_jing", "yin_jiao"],
-		["ling_li_chong", "shi_li_guai"],
-		["huang_pao_guai", "jing_xi_gui", "ling_li_chong"],
-		["tuo_long", "shi_li_guai"],
-	],
-	2: [
-		["hu_li_da_xian", "lu_li_da_xian"],
-		["yang_li_da_xian", "jin_yu_guai"],
-		["ru_yi_zhen_xian", "hu_li_da_xian", "tuo_long"],
-		["tie_shan_gong_zhu", "yu_mian_hu_li"],
-		["jin_yu_guai", "lu_li_da_xian", "yang_li_da_xian"],
-	],
-	3: [
-		["ben_bo_er_ba", "ba_bo_er_ben", "gu_zhi_gong"],
-		["xing_xian", "ju_mang_guai"],
-		["qi_zhi_zhu_jing", "mi_ma_lu_ban"],
-		["bai_lu_guai", "bai_mian_hu_li", "jin_bi_lao_shu_jing"],
-	],
-}
+## 普通战斗敌人池缓存（从DataManager按chapter动态获取）
+static var _normal_pools_cache: Dictionary = {}
 
-## 精英敌人池
-const ELITE_ENEMY_POOLS := [
-	"sheng_ying_da_wang", "pi_pa_jing", "liu_er_mi_hou",
-	"jiu_tou_chong", "sai_tai_sui", "bai_yan_mo_jun",
-	"shi_wang", "xiang_wang", "jiu_ling_yuan_sheng", "pi_han_da_wang",
-]
+static func _get_normal_enemy_pools(chapter: int) -> Array:
+	if not _normal_pools_cache.has(chapter):
+		_normal_pools_cache[chapter] = DataManager.get_normal_enemy_pools(chapter)
+	return _normal_pools_cache.get(chapter, [])
 
-## 节点类型背景图（100x100 显示）
+## 精英敌人池缓存（从DataManager动态获取）
+static var _elite_pool_cache: Array[String] = []
+
+static func _get_elite_pool() -> Array[String]:
+	if _elite_pool_cache.is_empty():
+		_elite_pool_cache = DataManager.get_elite_pool()
+	return _elite_pool_cache
+
+## 节点类型背景图
 const NODE_BGS := {
-	NodeType.BATTLE: "res://ui/images/map/bg/battle.png",
-	NodeType.ELITE: "res://ui/images/map/bg/elite.png",
-	NodeType.SHOP: "res://ui/images/map/bg/shop.png",
-	NodeType.REST: "res://ui/images/map/bg/rest.png",
-	NodeType.MYSTERY: "res://ui/images/map/bg/mystery.png",
-	NodeType.EVENT: "res://ui/images/map/bg/event.png",
-	NodeType.BOSS: "res://ui/images/map/bg/boss.png",
-	NodeType.START: "res://ui/images/map/bg/start.png",
-	NodeType.ALCHEMY: "res://ui/images/map/bg/alchemy.png",
-	NodeType.FORGE: "res://ui/images/map/bg/forge.png",
-	NodeType.TRIBULATION: "res://ui/images/map/bg/tribulation.png",
+	NodeType.BATTLE: "res://ui/images/map/icon/battle.png",
+	NodeType.ELITE: "res://ui/images/map/icon/elite.png",
+	NodeType.SHOP: "res://ui/images/map/icon/shop.png",
+	NodeType.REST: "res://ui/images/map/icon/rest.png",
+	NodeType.MYSTERY: "res://ui/images/map/icon/mystery.png",
+	NodeType.EVENT: "res://ui/images/map/icon/event.png",
+	NodeType.BOSS: "res://ui/images/map/icon/boss.png",
+	NodeType.START: "res://ui/images/map/icon/start.png",
+	NodeType.ALCHEMY: "res://ui/images/map/icon/alchemy.png",
+	NodeType.FORGE: "res://ui/images/map/icon/forge.png",
+	NodeType.TRIBULATION: "res://ui/images/map/icon/tribulation.png",
 }
 
 ## 地图节点数据结构
@@ -159,7 +132,7 @@ static func generate_map(chapter: int) -> Dictionary:
 	var layers: int = config.get("layers", 8)
 	
 	# 从BOSS_POOL中随机选择一个未被其他章节使用的BOSS
-	var boss_id: String = _pick_random_boss()
+	var boss_id: String = _pick_random_boss(chapter)
 	
 	var nodes: Array = []
 	var node_id_counter := 0
@@ -213,7 +186,7 @@ static func generate_map(chapter: int) -> Dictionary:
 	boss_node.node_type = NodeType.BOSS
 	var boss_data: Dictionary = DataManager.get_enemy(boss_id)
 	var boss_display_name: String = boss_data.get("enemy_name", "BOSS")
-	var boss_image: String = "res://ui/images/global/boss/%s.png" % boss_id
+	var boss_image: String = "res://ui/images/battle/enemy/%s.png" % boss_id
 	boss_node.encounter_data = {"boss_id": boss_id, "display_name": boss_display_name, "boss_image": boss_image}
 	nodes.append(boss_node)
 	
@@ -238,35 +211,53 @@ static func generate_map(chapter: int) -> Dictionary:
 		"total_layers": layers + 2,
 	}
 
-## 从BOSS池中随机选择一个不重复的BOSS
-static func _pick_random_boss() -> String:
-	# 过滤掉已分配的BOSS
+## 从BOSS池中随机选择一个不重复的BOSS（优先选择当前章节的BOSS）
+static func _pick_random_boss(chapter: int = -1) -> String:
+	var pool: Array[String] = _get_boss_pool()
+	if pool.is_empty():
+		return "bai_gu_jing"
+	
+	# Try to pick a boss matching the current chapter first
+	if chapter >= 0:
+		var chapter_bosses: Array[String] = []
+		for boss_id in pool:
+			if boss_id not in _assigned_bosses:
+				var data: Dictionary = DataManager.get_enemy(boss_id)
+				if data.get("chapter", -1) == chapter:
+					chapter_bosses.append(boss_id)
+		if not chapter_bosses.is_empty():
+			return chapter_bosses[randi() % chapter_bosses.size()]
+	
+	# Fallback: pick any unassigned boss
 	var available: Array[String] = []
-	for boss_id in BOSS_POOL:
+	for boss_id in pool:
 		if boss_id not in _assigned_bosses:
 			available.append(boss_id)
-	# 如果所有BOSS都已分配，重置并重新选择
+	# If all bosses assigned, reset and allow all
 	if available.is_empty():
 		_assigned_bosses.clear()
-		for boss_id in BOSS_POOL:
+		for boss_id in pool:
 			available.append(boss_id)
 	return available[randi() % available.size()]
 
-## 重置已分配的BOSS记录（新游戏时调用）
+## 重置已分配的BOSS记录和缓存（新游戏时调用）
 static func reset_assigned_bosses() -> void:
 	_assigned_bosses.clear()
+	_boss_pool_cache.clear()
+	_normal_pools_cache.clear()
+	_elite_pool_cache.clear()
 
-## 获取每层节点数（最少1个，最多4个）
+## 获取每层节点数（最少1个，最多5个）
 static func _get_layer_node_count(layer: int, total_layers: int) -> int:
 	# 中间层节点数较多，两端较少
 	var mid := total_layers / 2
 	var distance := abs(layer - mid) as int
 	if distance <= 1:
-		return randi_range(3, 4)
+		return randi_range(3, 5)
 	elif distance <= 3:
-		return randi_range(2, 4)
+		return randi_range(2, 5)
 	else:
-		return randi_range(1, 3)
+		return randi_range(1, 5)
 
 ## 决定节点类型
 static func _decide_node_type(layer: int, total_layers: int, _chapter: int) -> int:
@@ -453,8 +444,10 @@ static func _mark_reachable(nodes: Array, start_node: MapNode) -> void:
 ## 为节点分配敌人/遭遇数据
 static func _assign_encounter_data(node: MapNode, chapter: int) -> void:
 	if node.node_type == NodeType.BATTLE:
-		var pools: Array = NORMAL_ENEMY_POOLS.get(chapter, NORMAL_ENEMY_POOLS[0])
-		var enemy_ids: Array = pools[randi() % pools.size()]
+		var pools: Array = _get_normal_enemy_pools(chapter)
+		if pools.is_empty():
+			pools = _get_normal_enemy_pools(0)
+		var enemy_ids: Array = _pick_unique_pool(pools)
 		# 拼接所有敌人的名称作为显示名
 		var name_parts: Array = []
 		for eid in enemy_ids:
@@ -466,7 +459,11 @@ static func _assign_encounter_data(node: MapNode, chapter: int) -> void:
 			"display_name": display_name,
 		}
 	elif node.node_type == NodeType.ELITE:
-		var elite_id: String = ELITE_ENEMY_POOLS[randi() % ELITE_ENEMY_POOLS.size()]
+		var elite_pool: Array = []
+		for eid in _get_elite_pool():
+			elite_pool.append([eid])
+		var chosen: Array = _pick_unique_pool(elite_pool)
+		var elite_id: String = chosen[0]
 		var enemy_data: Dictionary = DataManager.get_enemy(elite_id)
 		var display_name: String = enemy_data.get("enemy_name", elite_id)
 		node.encounter_data = {
@@ -474,9 +471,26 @@ static func _assign_encounter_data(node: MapNode, chapter: int) -> void:
 			"display_name": display_name,
 		}
 
+## Pick a unique enemy pool that hasn't been encountered yet
+static func _pick_unique_pool(pools: Array) -> Array:
+	# Filter out already encountered pools
+	var available: Array = []
+	for pool in pools:
+		var pool_key: String = ",".join(PackedStringArray(pool))
+		if pool_key not in GameManager.encountered_enemy_pools:
+			available.append(pool)
+	# If all pools have been used, reset and allow all
+	if available.is_empty():
+		available = pools.duplicate()
+	var chosen: Array = available[randi() % available.size()]
+	# Record this pool as encountered
+	var chosen_key: String = ",".join(PackedStringArray(chosen))
+	GameManager.encountered_enemy_pools.append(chosen_key)
+	return chosen
+
 ## 节点间距常量（像素）
-const NODE_SPACING_H := 200  # 水平层间距（像素），范围 [100, 200]
-const NODE_SPACING_V := 150  # 垂直节点间距（像素），范围 [100, 200]
+const NODE_SPACING_H := 180  # 水平层间距（像素），范围 [100, 200]
+const NODE_SPACING_V := 120  # 垂直节点间距（像素），范围 [100, 200]
 const NODE_MARGIN_LEFT := 250  # 左侧边距（像素）
 
 ## 计算节点位置（使用像素坐标，节点间距固定在 [100, 200] 范围内）

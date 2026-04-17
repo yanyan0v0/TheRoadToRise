@@ -2,7 +2,7 @@
 extends Control
 
 signal card_selected(card: Control)
-signal card_play_requested(card: Control)
+signal card_play_requested(card: Control, target: Node)
 
 const CARD_SCENE := preload("res://scenes/battle/Card.tscn")
 const MAX_HAND_SIZE := 10
@@ -122,7 +122,7 @@ func discard_card(card: Control, animate: bool = true) -> void:
 ## 更新所有卡牌的可打出状态
 func update_playable_states(current_mana: int, current_stamina: int = 0) -> void:
 	for card in hand_cards:
-		var energy_cost: int = card.card_data.get("energy_cost", 1)
+		var energy_cost: int = CardData.get_card_energy_cost(card.card_data)
 		var stamina_cost: int = card.card_data.get("stamina_cost", 0)
 		var playable := energy_cost <= current_mana
 		if stamina_cost > 0:
@@ -202,8 +202,8 @@ func _on_card_hover(card: Control, is_hovering: bool) -> void:
 		card_selected.emit(card)
 
 ## 卡牌打出请求
-func _on_card_played(card: Control, _target: Node) -> void:
-	card_play_requested.emit(card)
+func _on_card_played(card: Control, target: Node) -> void:
+	card_play_requested.emit(card, target)
 
 ## 设置牌堆位置（用于动画起点/终点）
 func set_pile_positions(draw_pos: Vector2, discard_pos: Vector2) -> void:

@@ -1,0 +1,112 @@
+{
+	"achievements": [
+		{
+			"achievement_id": "first_game",
+			"name": "初窥门径",
+			"description": "使用默认角色游玩一局",
+			"category": "battle",
+			"unlock_character": "zhu_bajie"
+		},
+		{
+			"achievement_id": "perfect_battle",
+			"name": "毫发无伤",
+			"description": "在一场战斗中未受到任何伤害",
+			"category": "battle",
+			"unlock_type": "new_card",
+			"unlock_content": "jin_zhong_zhao"
+		},
+		{
+			"achievement_id": "spirit_hunter",
+			"name": "妖灵猎人",
+			"description": "累计收服3只妖灵",
+			"category": "battle",
+			"unlock_type": "new_card",
+			"unlock_content": "spirit_hu_xian"
+		},
+		{
+			"achievement_id": "tribulation_survivor",
+			"name": "渡劫成功",
+			"description": "成功完成一次渡劫",
+			"category": "battle",
+			"unlock_type": "new_relic",
+			"unlock_content": "du_jie_zhu"
+		},
+		{
+			"achievement_id": "floor_18",
+			"name": "18层地狱",
+			"description": "任意角色通关第18关",
+			"category": "explore",
+			"unlock_character": "sha_wujing"
+		},
+		{
+			"achievement_id": "true_scripture",
+			"name": "取得真经",
+			"description": "任意角色完成通关",
+			"category": "explore",
+			"unlock_character": "tang_seng"
+		},
+		{
+			"achievement_id": "alchemy_master",
+			"name": "丹道宗师",
+			"description": "累计炼制10颗丹药",
+			"category": "explore",
+			"unlock_type": "new_pill",
+			"unlock_content": "jiu_zhuan_jin_dan"
+		},
+		{
+			"achievement_id": "forge_master",
+			"name": "炼器大师",
+			"description": "累计锻造5件法宝",
+			"category": "explore",
+			"unlock_type": "new_relic",
+			"unlock_content": "hun_tian_ling"
+		},
+		{
+			"achievement_id": "star_master",
+			"name": "满星大师",
+			"description": "将一张卡牌升至3星",
+			"category": "collect",
+			"unlock_type": "new_card",
+			"unlock_content": "tian_gang_36"
+		},
+		{
+			"achievement_id": "relic_collector",
+			"name": "法宝收藏家",
+			"description": "同时持有5件以上法宝",
+			"category": "collect",
+			"unlock_type": "new_relic",
+			"unlock_content": "bai_bao_nang"
+		},
+		{
+			"achievement_id": "pill_hoarder",
+			"name": "丹药囤积者",
+			"description": "同时携带满上限的丹药",
+			"category": "collect",
+			"unlock_type": "new_pill",
+			"unlock_content": "da_huan_dan"
+		},
+		{
+			"achievement_id": "ten_clears",
+			"name": "十全十美",
+			"description": "任意角色累计通关10次",
+			"category": "challenge",
+			"unlock_mode": "infinite"
+		},
+		{
+			"achievement_id": "high_karma",
+			"name": "天罚降临",
+			"description": "劫数达到天罚等级（50点）",
+			"category": "challenge",
+			"unlock_type": "new_event",
+			"unlock_content": "tian_fa_event"
+		},
+		{
+			"achievement_id": "no_shop",
+			"name": "苦行僧",
+			"description": "不进入商店完成一次通关",
+			"category": "challenge",
+			"unlock_type": "new_card",
+			"unlock_content": "ku_xing_seng"
+		}
+	]
+}

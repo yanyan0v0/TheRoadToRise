@@ -31,14 +31,18 @@ var phase_skills: Array = []  # 每阶段技能池
 var battle_manager: Node = null
 
 ## UI节点
-@onready var sprite: ColorRect = $Sprite
+@onready var sprite: TextureRect = $Sprite
 @onready var name_label: Label = $NameLabel
-@onready var hp_bar: ProgressBar = $HPBar
-@onready var hp_text: Label = $HPText
-@onready var armor_label: Label = $ArmorLabel
+@onready var hp_bar: ProgressBar = $HPRow/HPBar
+@onready var hp_text: Label = $HPRow/HPBar/HPText
+@onready var armor_label: Label = $HPRow/ArmorLabel
 @onready var intent_icon: Label = $IntentIcon
 @onready var intent_value_label: Label = $IntentValueLabel
 @onready var status_bar: HBoxContainer = $StatusBar
+
+## HP bar fill styles for armor color change
+var _hp_fill_normal: StyleBoxFlat = null
+var _hp_fill_armored: StyleBoxFlat = null
 
 ## 意图气泡框
 var _intent_tooltip: PanelContainer = null
@@ -48,6 +52,12 @@ func _ready() -> void:
 	add_child(status_manager)
 	# 为意图图标设置hover事件
 	_setup_intent_hover()
+	# Initialize HP bar styles for armor color change
+	await get_tree().process_frame
+	if hp_bar:
+		_hp_fill_normal = hp_bar.get_theme_stylebox("fill").duplicate()
+		_hp_fill_armored = _hp_fill_normal.duplicate()
+		_hp_fill_armored.bg_color = Color(0.3, 0.75, 0.85, 1)
 
 ## 初始化敌人
 func setup(data: Dictionary, p_battle_manager: Node) -> void:
@@ -71,8 +81,27 @@ func setup(data: Dictionary, p_battle_manager: Node) -> void:
 	phase_thresholds = data.get("phase_thresholds", [])
 	phase_skills = data.get("phase_skills", [])
 	
+	# Load wait frame animation
+	_setup_enemy_animation()
+	
 	_update_ui()
 	_decide_next_intent()
+
+## Setup enemy sprite from static image
+func _setup_enemy_animation() -> void:
+	var image_path := "res://ui/images/battle/enemy/%s.png" % enemy_id
+	var tex := load(image_path) as Texture2D
+	if tex != null:
+		sprite.texture = tex
+		# Hide the sprite label since we now have a sprite image
+		var sprite_label := sprite.get_node_or_null("SpriteLabel")
+		if sprite_label:
+			sprite_label.visible = false
+		print("[Enemy] Loaded enemy image: %s" % image_path)
+	else:
+		# No image found, show fallback color background
+		sprite.self_modulate = Color(0.839216, 0.192157, 0.192157, 1)
+		print("[Enemy] Enemy image not found: %s" % image_path)
 
 ## 生成默认意图模式（普通敌人）
 func _generate_default_pattern() -> Array:
@@ -176,6 +205,16 @@ func _on_phase_change(new_phase: int) -> void:
 	
 	_update_ui()
 
+## Apply defend intent armor immediately at turn start (called by BattleManager)
+func apply_defend_at_turn_start() -> void:
+	if current_intent.is_empty():
+		return
+	var intent_type: String = current_intent.get("type", "")
+	if intent_type == "defend":
+		var value: int = current_intent.get("value", 0)
+		current_armor += value
+		_update_ui()
+
 ## 执行当前意图
 func execute_intent() -> void:
 	if current_intent.is_empty():
@@ -184,13 +223,22 @@ func execute_intent() -> void:
 	var intent_type: String = current_intent.get("type", "attack")
 	var value: int = current_intent.get("value", 0)
 	
+	# Seal check: each stack blocks 1 skill-type intent (buff/debuff/special) per turn
+	var skill_intents := ["buff", "debuff", "special"]
+	if intent_type in skill_intents and status_manager.has_effect("seal"):
+		status_manager.remove_effect("seal", 1)
+		# Skip this intent, wait and decide next
+		await get_tree().create_timer(0.5).timeout
+		_decide_next_intent()
+		return
+	
 	match intent_type:
 		"attack":
 			_execute_attack(value)
 		"heavy_attack":
 			_execute_attack(value)
 		"defend":
-			_execute_defend(value)
+			pass  # Already applied at turn start
 		"buff":
 			_execute_buff(current_intent)
 		"debuff":
@@ -205,16 +253,17 @@ func execute_intent() -> void:
 	# 等待动画
 	await get_tree().create_timer(0.5).timeout
 	
-	# 决定下一个意图
+	# Decide next intent
 	_decide_next_intent()
 
 ## 执行攻击
 func _execute_attack(base_damage: int) -> void:
 	var total_damage := base_damage + strength
 	
-	# 弱化效果
+	# Weaken: reduce strength by stacks (each stack = -1 strength for damage calc)
 	if status_manager.has_effect("weaken"):
-		total_damage = int(total_damage * 0.75)
+		total_damage -= status_manager.get_stacks("weaken")
+		total_damage = maxi(0, total_damage)
 	
 	if battle_manager and battle_manager.has_method("deal_damage_to_player"):
 		battle_manager.deal_damage_to_player(total_damage, self)
@@ -267,17 +316,29 @@ func _execute_special(intent: Dictionary) -> void:
 
 ## 执行召唤
 func _execute_summon(intent: Dictionary) -> void:
-	var summon_id: String = intent.get("summon_id", "")
-	if summon_id.is_empty():
+	# Get children array from enemy_data
+	var children: Array = enemy_data.get("children", [])
+	if children.is_empty():
 		return
 	
-	var summon_data := DataManager.get_enemy(summon_id)
+	# Randomly pick one child to summon
+	var summon_data: Dictionary = children[randi() % children.size()]
 	if summon_data.is_empty():
 		return
 	
-	# 通知战斗场景生成新敌人
-	if battle_manager and battle_manager.has_method("_spawn_enemy"):
-		pass  # 由BattleScene处理
+	# Find the BattleScene and call spawn_summon_enemy
+	var battle_scene := _find_battle_scene()
+	if battle_scene and battle_scene.has_method("spawn_summon_enemy"):
+		battle_scene.spawn_summon_enemy(summon_data)
+	
+	_play_buff_animation()
+
+## Find the BattleScene node in the scene tree
+func _find_battle_scene() -> Node:
+	var node := get_tree().current_scene
+	if node and node.has_method("spawn_summon_enemy"):
+		return node
+	return null
 
 ## 执行治疗
 func _execute_heal(value: int) -> void:
@@ -309,10 +370,25 @@ func set_armor(value: int) -> void:
 func apply_status(effect_type: String, stacks: int = 1) -> void:
 	status_manager.apply_effect(effect_type, stacks)
 	_update_status_display()
+	
+	# Bleed check: if bleed stacks >= current HP, enemy dies immediately
+	if effect_type == "bleed":
+		_check_bleed_death()
 
-## 获取易伤层数
-func get_vulnerable_stacks() -> int:
-	return status_manager.get_stacks("vulnerable")
+## Check if bleed stacks >= current HP, if so enemy dies immediately
+func _check_bleed_death() -> void:
+	if is_dead():
+		return
+	var bleed_stacks := status_manager.get_stacks("bleed")
+	if bleed_stacks > 0 and bleed_stacks >= current_hp:
+		print("[Enemy] %s bleed death! bleed=%d >= hp=%d" % [enemy_name, bleed_stacks, current_hp])
+		current_hp = 0
+		_update_ui()
+		_on_death()
+
+## 获取流血层数
+func get_bleed_stacks() -> int:
+	return status_manager.get_stacks("bleed")
 
 ## 是否有指定状态
 func has_status(effect_type: String) -> bool:
@@ -323,10 +399,11 @@ func is_dead() -> bool:
 	return current_hp <= 0
 
 ## 回合结束结算
+## 护甲每回合重置
 func on_turn_end() -> void:
 	var results := status_manager.on_turn_end()
 	
-	# 灼烧伤害
+	# 灸烧伤害
 	if results.damage > 0:
 		current_hp = maxi(0, current_hp - results.damage)
 	
@@ -334,14 +411,18 @@ func on_turn_end() -> void:
 	if results.heal > 0:
 		current_hp = mini(current_hp + results.heal, max_hp)
 	
-	# 护甲每回合重置（可选）
-	# current_armor = 0
+	# Armor resets every turn
+	current_armor = 0
 	
 	_update_ui()
 	_update_status_display()
 	
 	if current_hp <= 0:
 		_on_death()
+		return
+	
+	# Check bleed death after turn end status settlement
+	_check_bleed_death()
 
 ## 死亡处理
 func _on_death() -> void:
@@ -353,7 +434,14 @@ func _on_death() -> void:
 	var tween := create_tween()
 	tween.tween_property(self, "modulate:a", 0.0, 0.5)
 	await tween.finished
-	queue_free()
+	
+	# Hide all child nodes but keep this node in the tree
+	# so HBoxContainer layout is preserved (other enemies don't shift)
+	for child in get_children():
+		if child is CanvasItem:
+			child.visible = false
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	set_process(false)
 
 ## 更新UI
 func _update_ui() -> void:
@@ -364,8 +452,16 @@ func _update_ui() -> void:
 		hp_bar.value = current_hp
 	if hp_text:
 		hp_text.text = "%d/%d" % [current_hp, max_hp]
+	# Armor display: show on left of HP bar, change HP bar color
 	if armor_label:
-		armor_label.text = "🛡️ %d" % current_armor if current_armor > 0 else ""
+		if current_armor > 0:
+			armor_label.text = "🛡️%d" % current_armor
+			if _hp_fill_armored and hp_bar:
+				hp_bar.add_theme_stylebox_override("fill", _hp_fill_armored)
+		else:
+			armor_label.text = ""
+			if _hp_fill_normal and hp_bar:
+				hp_bar.add_theme_stylebox_override("fill", _hp_fill_normal)
 
 ## 更新意图显示
 func _update_intent_display() -> void:
@@ -378,10 +474,12 @@ func _update_intent_display() -> void:
 	match intent_type:
 		"attack":
 			intent_icon.text = "⚔️"
-			intent_value_label.text = str(value + strength)
+			var atk_total := maxi(0, value + strength - status_manager.get_stacks("weaken"))
+			intent_value_label.text = str(atk_total)
 		"heavy_attack":
 			intent_icon.text = "💀"
-			intent_value_label.text = str(value + strength)
+			var heavy_total := maxi(0, value + strength - status_manager.get_stacks("weaken"))
+			intent_value_label.text = str(heavy_total)
 		"defend":
 			intent_icon.text = "🛡️"
 			intent_value_label.text = str(value)
@@ -395,7 +493,7 @@ func _update_intent_display() -> void:
 			intent_icon.text = "🔮"
 			intent_value_label.text = ""
 		"summon":
-			intent_icon.text = "❓"
+			intent_icon.text = "👻"
 			intent_value_label.text = ""
 		"heal":
 			intent_icon.text = "💚"
@@ -404,7 +502,6 @@ func _update_intent_display() -> void:
 			intent_icon.text = "❓"
 			intent_value_label.text = ""
 
-## 设置意图图标的hover事件
 func _setup_intent_hover() -> void:
 	if intent_icon == null:
 		return
@@ -424,10 +521,10 @@ func _get_intent_description() -> String:
 	
 	match intent_type:
 		"attack":
-			var total := value + strength
+			var total := maxi(0, value + strength - status_manager.get_stacks("weaken"))
 			return "攻击\n造成 %d 点伤害" % total
 		"heavy_attack":
-			var total := value + strength
+			var total := maxi(0, value + strength - status_manager.get_stacks("weaken"))
 			return "重击\n造成 %d 点伤害" % total
 		"defend":
 			return "防御\n获得 %d 点护甲" % value
@@ -448,7 +545,7 @@ func _get_intent_description() -> String:
 				return "特殊技能\n%s" % desc
 			return "特殊技能\n未知效果"
 		"summon":
-			return "召唤\n召唤援军"
+			return "召唤\n召唤虫群助战"
 		"heal":
 			return "治疗\n恢复 %d 点生命" % value
 		_:
@@ -539,7 +636,91 @@ func _update_status_display() -> void:
 		label.text = "%s%d" % [effect.name.left(1), effect.stacks]
 		label.add_theme_color_override("font_color", effect.color)
 		label.add_theme_font_size_override("font_size", 12)
+		label.mouse_filter = Control.MOUSE_FILTER_STOP
+		# Hover tooltip for status effect details
+		var effect_type: String = effect.type
+		var effect_name: String = effect.name
+		var effect_stacks: int = effect.stacks
+		label.mouse_entered.connect(func(): _show_status_tooltip(label, effect_type, effect_name, effect_stacks))
+		label.mouse_exited.connect(func(): _hide_status_tooltip())
 		status_bar.add_child(label)
+
+## Status effect tooltip
+var _status_tooltip: PanelContainer = null
+
+## Status effect descriptions
+const STATUS_DESCRIPTIONS := {
+	"golden_body": "下次受到的伤害降至1点",
+	"regeneration": "每回合恢复生命值，每层+1",
+	"thorns": "受到攻击时，每层对敌方造成伤害+1",
+	"overcharge": "下回合获得额外法力",
+	"agility": "法力消耗减少1",
+	"armor_break": "每层每回合受到攻击时无视护甲的伤害+1",
+	"slow": "每回合出牌数减少",
+	"burn": "每回合受到伤害，每层-1生命",
+	"seal": "每层每回合无法发动1次技能",
+	"bleed": "流血层数≥当前血量时立即死亡",
+	"stun": "无法行动",
+	"counter": "受到伤害时，每层对1个敌人造成等量伤害",
+	"weaken": "每层力量-1",
+}
+
+## Show status effect tooltip
+func _show_status_tooltip(target: Label, effect_type: String, effect_name: String, stacks: int) -> void:
+	_hide_status_tooltip()
+	
+	var desc: String = STATUS_DESCRIPTIONS.get(effect_type, "未知效果")
+	var text := "%s (%d层)\n%s" % [effect_name, stacks, desc]
+	
+	_status_tooltip = PanelContainer.new()
+	_status_tooltip.z_index = 200
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.1, 0.1, 0.15, 0.95)
+	style.border_color = Color(0.5, 0.5, 0.5, 0.8)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(4)
+	style.set_content_margin_all(8)
+	_status_tooltip.add_theme_stylebox_override("panel", style)
+	
+	var label := Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", 12)
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	label.custom_minimum_size = Vector2(150, 0)
+	_status_tooltip.add_child(label)
+	
+	# Add to scene root to avoid clipping
+	var battle_scene := get_tree().current_scene
+	if battle_scene:
+		battle_scene.add_child(_status_tooltip)
+	else:
+		add_child(_status_tooltip)
+	
+	# Position after one frame
+	await get_tree().process_frame
+	if _status_tooltip == null or not is_instance_valid(_status_tooltip):
+		return
+	
+	var tooltip_size := _status_tooltip.size
+	var label_global_pos := target.global_position
+	var pos_x := label_global_pos.x - tooltip_size.x / 2.0 + target.size.x / 2.0
+	var pos_y := label_global_pos.y - tooltip_size.y - 6
+	
+	if pos_y < 0:
+		pos_y = label_global_pos.y + target.size.y + 6
+	
+	var screen_size := get_viewport_rect().size
+	if pos_x < 4: pos_x = 4
+	if pos_x + tooltip_size.x > screen_size.x: pos_x = screen_size.x - tooltip_size.x - 4
+	
+	_status_tooltip.global_position = Vector2(pos_x, pos_y)
+
+## Hide status effect tooltip
+func _hide_status_tooltip() -> void:
+	if _status_tooltip != null and is_instance_valid(_status_tooltip):
+		_status_tooltip.queue_free()
+		_status_tooltip = null
 
 ## 攻击动画
 func _play_attack_animation() -> void:

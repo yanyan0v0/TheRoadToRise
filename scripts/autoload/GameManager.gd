@@ -46,7 +46,7 @@ var current_gold: int = 0
 
 ## 当前卡组（卡牌字典数组，每项含 card_id 和 star_level）
 var current_deck: Array[Dictionary] = []
-## 当前法宝（法宝ID+星级字典数组，法宝无携带上限）
+## 当前法宝（法宝ID+强化值字典数组，法宝无携带上限）
 var current_relics: Array[Dictionary] = []
 ## 当前消耗品（丹药ID数组）
 var current_consumables: Array[String] = []
@@ -65,14 +65,26 @@ var current_map_data: Dictionary = {}
 var current_battle_type: String = "normal"
 ## 当前BOSS ID
 var current_boss_id: String = ""
+## 当前节点分配的敌人ID列表（从地图节点传入，确保战斗敌人与地图显示一致）
+var current_enemy_ids: Array[String] = []
+## Encountered enemy pools (to avoid repeating the same enemy group)
+var encountered_enemy_pools: Array = []
 
 ## 开发者模式
-var dev_mode: bool = false
+var dev_mode: bool = true
 var _dev_gold_click_count: int = 0
 var _dev_gold_click_timer: float = 0.0
 const DEV_GOLD_CLICK_THRESHOLD: int = 5
 const DEV_GOLD_CLICK_TIMEOUT: float = 2.0  # 2秒内连点5次
 const DEV_GOLD_REWARD: int = 100
+var _dev_karma_click_count: int = 0
+var _dev_karma_click_timer: float = 0.0
+const DEV_KARMA_CLICK_THRESHOLD: int = 5
+const DEV_KARMA_CLICK_TIMEOUT: float = 2.0  # 2秒内连点5次
+const DEV_KARMA_REWARD: int = 10
+
+## Total gold earned this run (spending does not reduce this)
+var total_gold_earned: int = 0
 
 ## 本局统计数据
 var stats: Dictionary = {
@@ -164,6 +176,20 @@ func dev_gold_click() -> void:
 		modify_gold(DEV_GOLD_REWARD)
 		print("[开发者模式] 金币 +%d，当前金币: %d" % [DEV_GOLD_REWARD, current_gold])
 
+## 处理开发者模式劫数连点
+func dev_karma_click() -> void:
+	if not dev_mode:
+		return
+	var now := Time.get_ticks_msec() / 1000.0
+	if now - _dev_karma_click_timer > DEV_KARMA_CLICK_TIMEOUT:
+		_dev_karma_click_count = 0
+	_dev_karma_click_timer = now
+	_dev_karma_click_count += 1
+	if _dev_karma_click_count >= DEV_KARMA_CLICK_THRESHOLD:
+		_dev_karma_click_count = 0
+		modify_karma(DEV_KARMA_REWARD)
+		print("[开发者模式] 劫数 +%d，当前劫数: %d" % [DEV_KARMA_REWARD, current_karma])
+
 ## 切换游戏状态
 func change_state(new_state: GameState) -> void:
 	if new_state == current_state:
@@ -185,6 +211,10 @@ func start_new_game(character_id: String) -> void:
 	current_armor = 0
 	current_strength = 0
 	
+	# Reset encountered enemy pools
+	encountered_enemy_pools.clear()
+	current_enemy_ids.clear()
+	
 	# 重置天劫系统
 	current_karma = 0
 	max_karma_reached = 0
@@ -194,6 +224,9 @@ func start_new_game(character_id: String) -> void:
 	max_consumable_slots = 3
 	spirit_capacity = 3
 	
+	# Reset total gold earned
+	total_gold_earned = 0
+	
 	# 重置统计
 	stats = {
 		"enemies_defeated": 0,
@@ -202,6 +235,10 @@ func start_new_game(character_id: String) -> void:
 		"turns_played": 0,
 		"start_time": Time.get_unix_time_from_system(),
 	}
+	
+	# Persistent stats: increment play count for this character
+	SaveManager.increment_stat("games_played_%s" % character_id)
+	SaveManager.save_achievements()
 	
 	# 角色初始化将由CharacterData处理
 	print("[GameManager] 新游戏开始，角色: %s" % character_id)
@@ -232,6 +269,7 @@ func modify_hp(amount: int) -> void:
 	current_hp = clampi(current_hp + amount, 0, max_hp)
 	EventBus.health_changed.emit(current_hp, max_hp)
 	if current_hp <= 0:
+		save_character_persistent_stats()
 		EventBus.game_ended.emit(false)
 
 ## 修改法力
@@ -266,6 +304,8 @@ func modify_strength(amount: int) -> void:
 
 ## 修改金币
 func modify_gold(amount: int) -> void:
+	if amount > 0:
+		total_gold_earned += amount
 	current_gold = maxi(0, current_gold + amount)
 	EventBus.gold_changed.emit(current_gold)
 
@@ -296,9 +336,18 @@ func get_deck_entry(index: int) -> Dictionary:
 		return {}
 	return current_deck[index]
 
-## 添加法宝（支持星级）
-func add_relic(relic_id: String, star_level: int = 1) -> void:
-	current_relics.append({"relic_id": relic_id, "star_level": star_level})
+## 添加法宝（初始强化值为0）
+func add_relic(relic_id: String, enhance_level: int = 0) -> void:
+	current_relics.append({"relic_id": relic_id, "enhance_level": enhance_level})
+
+## 移除法宝（永久失效）
+func remove_relic(relic_id: String) -> void:
+	for i in range(current_relics.size()):
+		if current_relics[i].get("relic_id", "") == relic_id:
+			current_relics.remove_at(i)
+			EventBus.relic_acquired.emit(null)  # Trigger UI refresh
+			print("[GameManager] 法宝已消失: %s" % relic_id)
+			return
 
 ## 检查是否拥有某个法宝
 func has_relic(relic_id: String) -> bool:
@@ -307,59 +356,22 @@ func has_relic(relic_id: String) -> bool:
 			return true
 	return false
 
-## 获取法宝星级
-func get_relic_star(relic_id: String) -> int:
+## 获取法宝强化等级
+func get_relic_enhance(relic_id: String) -> int:
 	for entry in current_relics:
 		if entry is Dictionary and entry.get("relic_id", "") == relic_id:
-			return entry.get("star_level", 1)
+			return entry.get("enhance_level", 0)
 	return 0
 
-## 获取可融合的法宝分组
-func get_fusable_relic_groups() -> Array:
-	var groups: Dictionary = {}  # relic_id+star_level -> {count, indices}
-	for i in range(current_relics.size()):
-		var entry: Dictionary = current_relics[i]
-		var rid: String = entry.get("relic_id", "")
-		var star: int = entry.get("star_level", 1)
-		var key := "%s_%d" % [rid, star]
-		if not groups.has(key):
-			groups[key] = {"relic_id": rid, "star_level": star, "count": 0, "indices": []}
-		groups[key]["count"] += 1
-		groups[key]["indices"].append(i)
-	
-	var result: Array = []
-	for key in groups:
-		var group: Dictionary = groups[key]
-		group["can_fuse"] = group["count"] >= 2 and group["star_level"] < 3
-		var relic_data := DataManager.get_relic(group["relic_id"])
-		group["relic_name"] = relic_data.get("relic_name", "???")
-		result.append(group)
-	return result
-
-## 融合法宝
-func fuse_relics(index1: int, index2: int) -> Dictionary:
-	if index1 < 0 or index2 < 0 or index1 >= current_relics.size() or index2 >= current_relics.size():
-		return {}
-	var entry1: Dictionary = current_relics[index1]
-	var entry2: Dictionary = current_relics[index2]
-	if entry1.get("relic_id", "") != entry2.get("relic_id", ""):
-		return {}
-	if entry1.get("star_level", 1) != entry2.get("star_level", 1):
-		return {}
-	var star: int = entry1.get("star_level", 1)
-	if star >= 3:
-		return {}
-	
-	# 移除两张（先移除较大索引）
-	var max_idx: int = max(index1, index2)
-	var min_idx: int = min(index1, index2)
-	current_relics.remove_at(max_idx)
-	current_relics.remove_at(min_idx)
-	
-	# 添加升星法宝
-	var new_entry := {"relic_id": entry1.get("relic_id", ""), "star_level": star + 1}
-	current_relics.append(new_entry)
-	return new_entry
+## Enhance relic with given success rate (0.0~1.0), success -> enhance_level+1
+func enhance_relic(index: int, success_rate: float = 0.2) -> bool:
+	if index < 0 or index >= current_relics.size():
+		return false
+	var roll := randf()
+	if roll < success_rate:
+		current_relics[index]["enhance_level"] = current_relics[index].get("enhance_level", 0) + 1
+		return true
+	return false
 
 ## 添加消耗品（丹药）——带上限校验
 func add_consumable(consumable_id: String) -> bool:
@@ -399,6 +411,7 @@ func advance_chapter() -> void:
 	current_node_index = 0
 	if current_chapter >= CHAPTER_NAMES.size():
 		# 通关
+		save_character_persistent_stats()
 		change_state(GameState.VICTORY)
 		EventBus.game_ended.emit(true)
 	else:
@@ -407,6 +420,26 @@ func advance_chapter() -> void:
 ## 获取游戏时长（秒）
 func get_play_time() -> int:
 	return int(Time.get_unix_time_from_system() - stats.start_time)
+
+## Get total nodes cleared this run
+func get_nodes_cleared() -> int:
+	return current_chapter * 10 + current_node_index
+
+## Save character persistent stats (call on game end)
+func save_character_persistent_stats() -> void:
+	var char_id := current_character_id
+	if char_id == "":
+		return
+	# Accumulate play time for this character
+	var play_time := get_play_time()
+	SaveManager.increment_stat("play_time_%s" % char_id, play_time)
+	# Update best nodes cleared for this character
+	var nodes := get_nodes_cleared()
+	var best_key := "best_nodes_%s" % char_id
+	var current_best: int = SaveManager.get_stat(best_key, 0)
+	if nodes > current_best:
+		SaveManager.persistent_stats[best_key] = nodes
+	SaveManager.save_achievements()
 
 ## 暂停/恢复游戏
 func toggle_pause() -> void:
@@ -434,6 +467,7 @@ func get_save_data() -> Dictionary:
 		"current_chapter": current_chapter,
 		"current_node_index": current_node_index,
 		"current_map_data": current_map_data,
+		"total_gold_earned": total_gold_earned,
 		"stats": stats,
 		# 天劫系统
 		"current_karma": current_karma,
@@ -463,13 +497,18 @@ func load_save_data(data: Dictionary) -> void:
 	current_relics.clear()
 	for relic_entry in raw_relics:
 		if relic_entry is Dictionary:
+			# Migrate old star_level to enhance_level
+			if relic_entry.has("star_level") and not relic_entry.has("enhance_level"):
+				relic_entry["enhance_level"] = relic_entry.get("star_level", 1) - 1
+				relic_entry.erase("star_level")
 			current_relics.append(relic_entry)
 		elif relic_entry is String:
-			current_relics.append({"relic_id": relic_entry, "star_level": 1})
+			current_relics.append({"relic_id": relic_entry, "enhance_level": 0})
 	current_consumables = Array(data.get("current_consumables", []), TYPE_STRING, "", null)
 	current_chapter = data.get("current_chapter", 0)
 	current_node_index = data.get("current_node_index", 0)
 	current_map_data = data.get("current_map_data", {})
+	total_gold_earned = data.get("total_gold_earned", 0)
 	stats = data.get("stats", stats)
 	# 天劫系统
 	current_karma = data.get("current_karma", 0)

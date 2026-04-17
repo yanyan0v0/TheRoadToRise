@@ -52,15 +52,22 @@ func _execute_relic_effect(relic: Dictionary, context: Dictionary) -> Dictionary
 			result = {"type": "strength", "value": 1, "description": "紧箍圈：力量+1"}
 		
 		"ba_jiao_shan":
-			# 芭蕉扇：攻击时20%概率双倍伤害
-			if randf() < 0.2:
-				result = {"type": "double_damage", "value": 2, "description": "芭蕉扇：双倍伤害！"}
+			# 芭蕉扇：攻击时25%概率对所有敌人造成本次攻击50%的伤害
+			var splash_chance: float = 0.25
+			var splash_percent: float = 0.5
+			# Check enhance level for bonus damage
+			var enhance_level: int = _get_relic_enhance_level("ba_jiao_shan")
+			if randf() < splash_chance:
+				var base_dmg: int = context.get("damage", 0)
+				var splash_dmg := maxi(1, int(base_dmg * splash_percent) + enhance_level)
+				result = {"type": "aoe_splash", "value": splash_dmg, "description": "芭蕉扇：狂风席卷，对所有敌人造成%d点伤害！" % splash_dmg}
 		
 		"guan_yin_ping":
-			# 观音玉瓶：首次致命伤害保留1点生命（一次性）
-			if context.get("lethal", false) and _trigger_counts.get(relic_id, 0) == 0:
+			# 观音玉瓶：致命伤害保留1点生命，触发后永久消失（实际逻辑在BattleManager中处理）
+			if context.get("lethal", false):
 				GameManager.current_hp = 1
-				result = {"type": "prevent_death", "value": 1, "description": "观音玉瓶：免死一次！"}
+				GameManager.remove_relic("guan_yin_yu_ping")
+				result = {"type": "prevent_death", "value": 1, "description": "观音玉瓶：免死一次！法宝已消失。"}
 		
 		"feng_huo_lun":
 			# 风火轮：每场战斗开始获得2点护甲
@@ -73,7 +80,7 @@ func _execute_relic_effect(relic: Dictionary, context: Dictionary) -> Dictionary
 			result = {"type": "armor", "value": 10, "description": "镇妖塔：护甲+10"}
 		
 		"jin_lan_jia_sha":
-			# 金兰袈裟：每回合开始恢复2点生命
+			# 金兰袈裟：每场战斗开始恢复2点生命
 			GameManager.modify_hp(2)
 			result = {"type": "heal", "value": 2, "description": "金兰袈裟：恢复2点生命"}
 		
@@ -85,11 +92,6 @@ func _execute_relic_effect(relic: Dictionary, context: Dictionary) -> Dictionary
 		"bi_huo_zhao":
 			# 避火罩：免疫灼烧效果
 			result = {"type": "immunity", "value": 0, "description": "避火罩：免疫灼烧"}
-		
-		"ding_hai_shen_zhen":
-			# 定海神针：每3回合获得一张额外手牌
-			if context.get("turn_number", 0) % 3 == 0:
-				result = {"type": "draw", "value": 1, "description": "定海神针：额外抽1张牌"}
 		
 		"ru_yi_jin_gu_bang":
 			# 如意金箍棒：力量每增加1点，额外+1伤害
@@ -136,3 +138,10 @@ func get_all_relics() -> Array[Dictionary]:
 ## 获取法宝数量
 func get_relic_count() -> int:
 	return relics.size()
+
+## 获取指定法宝的强化等级（从GameManager.current_relics中读取）
+func _get_relic_enhance_level(relic_id: String) -> int:
+	for entry in GameManager.current_relics:
+		if entry is Dictionary and entry.get("relic_id", "") == relic_id:
+			return entry.get("enhance_level", 0)
+	return 0

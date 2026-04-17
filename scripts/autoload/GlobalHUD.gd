@@ -5,6 +5,7 @@ extends CanvasLayer
 const HIDDEN_SCENES := [
 	"MainMenuScene",
 	"CharacterSelectScene",
+	"AchievementScene",
 ]
 
 var _hud_container: Control = null
@@ -20,8 +21,14 @@ var _relic_container: HBoxContainer = null
 var _consumable_container: HBoxContainer = null
 var _timer_label: Label = null
 var _settings_button: Button = null
+var _map_button: Button = null
+var _deck_button: Button = null
+var _deck_count_label: Label = null
+var _deck_popup: Control = null
 var _settings_popup: PanelContainer = null
+var _settings_panel: Control = null
 var _tooltip: PanelContainer = null
+var _relic_tooltip: PanelContainer = null
 var _avatar_bubble: PanelContainer = null
 var _avatar_btn: TextureRect = null
 var _is_refreshing: bool = false
@@ -29,6 +36,9 @@ var _is_refreshing: bool = false
 ## 缓存当前显示的数据，避免不必要的重建导致频闪
 var _cached_relic_ids: Array = []
 var _cached_consumable_ids: Array = []
+
+## Track current scene name for visibility updates
+var _last_scene_name: String = ""
 
 ## 计时器
 var _elapsed_time: float = 0.0
@@ -62,6 +72,13 @@ func _ready() -> void:
 	_update_visibility()
 
 func _process(delta: float) -> void:
+	# Check for scene changes to update visibility reliably
+	var current_scene := get_tree().current_scene
+	var scene_name: String = current_scene.name if current_scene != null else ""
+	if scene_name != _last_scene_name:
+		_last_scene_name = scene_name
+		_update_visibility()
+	
 	# 更新计时器
 	if _timer_running and _hud_container != null and _hud_container.visible:
 		_elapsed_time += delta
@@ -237,6 +254,7 @@ func _build_hud() -> void:
 	_karma_label.mouse_filter = Control.MOUSE_FILTER_STOP
 	_karma_label.mouse_entered.connect(_on_karma_hover_enter)
 	_karma_label.mouse_exited.connect(_on_karma_hover_exit)
+	_karma_label.gui_input.connect(_on_karma_label_input)
 	top_bar.add_child(_karma_label)
 	
 	# 丹药显示（在劫数后面）
@@ -259,11 +277,70 @@ func _build_hud() -> void:
 	_timer_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	top_bar.add_child(_timer_label)
 	
+	# 地图按钮（计时器和设置按钮之间）
+	_map_button = Button.new()
+	_map_button.custom_minimum_size = Vector2(40, 40)
+	var map_icon := load("res://ui/images/global/map.png") as Texture2D
+	if map_icon != null:
+		_map_button.icon = map_icon
+		_map_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_map_button.expand_icon = true
+	else:
+		_map_button.text = "🗺"
+		_map_button.add_theme_font_size_override("font_size", 20)
+	_map_button.pressed.connect(_on_map_button_pressed)
+	top_bar.add_child(_map_button)
+	
+	# 卡牌按钮（地图按钮右边）
+	_deck_button = Button.new()
+	_deck_button.custom_minimum_size = Vector2(40, 40)
+	var cards_icon := load("res://ui/images/global/cards.png") as Texture2D
+	if cards_icon != null:
+		_deck_button.icon = cards_icon
+		_deck_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_deck_button.expand_icon = true
+	else:
+		_deck_button.text = "📋"
+		_deck_button.add_theme_font_size_override("font_size", 20)
+	_deck_button.pressed.connect(_on_deck_button_pressed)
+	
+	# Deck card count badge (bottom-right corner)
+	_deck_count_label = Label.new()
+	_deck_count_label.text = str(GameManager.current_deck.size())
+	_deck_count_label.add_theme_font_size_override("font_size", 10)
+	_deck_count_label.add_theme_color_override("font_color", Color(1, 1, 1))
+	_deck_count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_deck_count_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_deck_count_label.custom_minimum_size = Vector2(18, 18)
+	_deck_count_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	var badge_bg := Panel.new()
+	badge_bg.name = "DeckBadge"
+	badge_bg.custom_minimum_size = Vector2(18, 18)
+	badge_bg.size = Vector2(18, 18)
+	badge_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var badge_style := StyleBoxFlat.new()
+	badge_style.bg_color = Color(0.8, 0.2, 0.2, 0.9)
+	badge_style.set_corner_radius_all(9)
+	badge_bg.add_theme_stylebox_override("panel", badge_style)
+	badge_bg.add_child(_deck_count_label)
+	_deck_button.add_child(badge_bg)
+	# Position badge at bottom-right of button
+	badge_bg.position = Vector2(22, 22)
+	
+	top_bar.add_child(_deck_button)
+	
 	# 设置按钮
 	_settings_button = Button.new()
-	_settings_button.text = "⚙"
 	_settings_button.custom_minimum_size = Vector2(40, 40)
-	_settings_button.add_theme_font_size_override("font_size", 22)
+	var setting_icon := load("res://ui/images/global/setting.png") as Texture2D
+	if setting_icon != null:
+		_settings_button.icon = setting_icon
+		_settings_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_settings_button.expand_icon = true
+	else:
+		_settings_button.text = "⚙"
+		_settings_button.add_theme_font_size_override("font_size", 22)
 	_settings_button.pressed.connect(_on_settings_pressed)
 	top_bar.add_child(_settings_button)
 	
@@ -292,7 +369,13 @@ func _refresh_all() -> void:
 	_update_karma_display()
 	_update_relic_display()
 	_update_consumable_display()
+	_update_deck_count()
 	_is_refreshing = false
+
+## 更新卡牌数量角标
+func _update_deck_count() -> void:
+	if _deck_count_label != null:
+		_deck_count_label.text = str(GameManager.current_deck.size())
 
 ## 更新HP显示
 func _update_hp_display() -> void:
@@ -342,8 +425,8 @@ func _update_relic_display() -> void:
 	var new_ids: Array = []
 	for entry in GameManager.current_relics:
 		var rid: String = entry.get("relic_id", "") if entry is Dictionary else str(entry)
-		var slv: int = entry.get("star_level", 1) if entry is Dictionary else 1
-		new_ids.append("%s_%d" % [rid, slv])
+		var elv: int = entry.get("enhance_level", 0) if entry is Dictionary else 0
+		new_ids.append("%s_%d" % [rid, elv])
 	if new_ids == _cached_relic_ids:
 		return
 	_cached_relic_ids = new_ids
@@ -356,7 +439,7 @@ func _update_relic_display() -> void:
 	
 	for relic_entry in GameManager.current_relics:
 		var relic_id: String = relic_entry.get("relic_id", "") if relic_entry is Dictionary else str(relic_entry)
-		var star_level: int = relic_entry.get("star_level", 1) if relic_entry is Dictionary else 1
+		var enhance_level: int = relic_entry.get("enhance_level", 0) if relic_entry is Dictionary else 0
 		var relic_data: Dictionary = DataManager.get_relic(relic_id)
 		if relic_data.is_empty():
 			continue
@@ -377,17 +460,11 @@ func _update_relic_display() -> void:
 		relic_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		relic_btn.add_child(relic_label)
 		
-		# hover显示详情
-		var relic_name: String = relic_data.get("relic_name", "")
-		var star_text := ""
-		match star_level:
-			1: star_text = "★☆☆"
-			2: star_text = "★★☆"
-			3: star_text = "★★★"
-		var relic_desc: String = relic_data.get("description", "")
-		var tooltip_text := "%s %s\n%s" % [relic_name, star_text, relic_desc]
-		relic_btn.mouse_entered.connect(func(): _show_tooltip_at(relic_btn, tooltip_text))
-		relic_btn.mouse_exited.connect(func(): _hide_tooltip())
+		# hover显示法宝详情（统一气泡框）
+		var rd: Dictionary = relic_data
+		var el: int = enhance_level
+		relic_btn.mouse_entered.connect(func(): _show_relic_tooltip_at(relic_btn, rd, el))
+		relic_btn.mouse_exited.connect(func(): _hide_relic_tooltip())
 		
 		_relic_container.add_child(relic_btn)
 
@@ -477,7 +554,7 @@ func _get_consumable_use_hint(data: Dictionary) -> String:
 					has_enemy_effect = true
 				"status":
 					var status_type: String = effect.get("status_type", "")
-					if status_type in ["vulnerable", "weak", "burn", "poison"]:
+					if status_type in ["bleed", "weak", "burn", "poison"]:
 						has_enemy_effect = true
 					else:
 						has_self_effect = true
@@ -489,31 +566,44 @@ func _get_consumable_use_hint(data: Dictionary) -> String:
 	else:
 		return "👤 拖拽到角色使用"
 
-## 劫数hover显示详细数据
+## 天劫等级对应的显示颜色
+const TRIBULATION_COLORS := {
+	"清净": "#55efc4",
+	"微劫": "#fdcb6e",
+	"小劫": "#e17055",
+	"大劫": "#d63031",
+	"天罚": "#6c5ce7",
+}
+
+## 劫数hover显示详细数据（富文本，不同等级不同颜色）
 func _on_karma_hover_enter() -> void:
 	var current_level := GameManager.get_tribulation_level()
 	var karma := GameManager.current_karma
+	var cur_color: String = TRIBULATION_COLORS.get(current_level, "#ffffff")
 	
-	var text := "天劫系统详情\n"
-	text += "──────────────\n"
-	text += "当前劫数：%d\n" % karma
-	text += "当前等级：%s\n\n" % current_level
+	var bbcode := "[b]天劫系统详情[/b]\n"
+	bbcode += "──────────────\n"
+	bbcode += "当前劫数：[color=%s]%d[/color]\n" % [cur_color, karma]
+	bbcode += "当前等级：[color=%s]%s[/color]\n\n" % [cur_color, current_level]
 	
 	# 显示所有等级及其效果
-	var levels := ["\u6e05\u51c0", "\u5fae\u52ab", "\u5c0f\u52ab", "\u5927\u52ab", "\u5929\u7f5a"]
+	var levels := ["清净", "微劫", "小劫", "大劫", "天罚"]
 	for level_name in levels:
 		var threshold: int = GameManager.TRIBULATION_LEVELS[level_name]
 		var buff: float = GameManager.TRIBULATION_ENEMY_BUFF[level_name]
 		var buff_percent := int(buff * 100)
+		var lv_color: String = TRIBULATION_COLORS.get(level_name, "#ffffff")
 		var marker := " ◀" if level_name == current_level else ""
-		text += "%s (劫数≥%d) 敌人+%d%%%s\n" % [level_name, threshold, buff_percent, marker]
+		bbcode += "[color=%s]%s[/color] (劫数≥%d) 敌人伤害+%d%%%s\n" % [lv_color, level_name, threshold, buff_percent, marker]
 	
-	text += "\n劫数来源：\n"
-	text += "• 购买卡牌/法宝 +1\n"
-	text += "• 完美通关(未受伤) +2\n"
-	text += "• 渡劫战胜利后归零"
+	bbcode += "\n[color=#b2bec3]劫数来源：[/color]\n"
+	bbcode += "[color=#b2bec3]• 击败普通敌人 +1[/color]\n"
+	bbcode += "[color=#b2bec3]• 击败精英敌人 +2[/color]\n"
+	bbcode += "[color=#b2bec3]• 击败BOSS +5[/color]\n"
+	bbcode += "[color=#b2bec3]• 购买卡牌/法宝 +1[/color]\n"
+	bbcode += "[color=#b2bec3]• 渡劫战胜利后归零[/color]"
 	
-	_show_tooltip_at(_karma_label, text)
+	_show_rich_tooltip_at(_karma_label, bbcode)
 
 func _on_karma_hover_exit() -> void:
 	_hide_tooltip()
@@ -635,6 +725,237 @@ func _on_relic_acquired(_relic_data) -> void:
 	_update_relic_display()
 	_is_refreshing = false
 
+## 地图按钮点击 - 在地图界面回到上一界面，其他界面跳转回地图
+func _on_map_button_pressed() -> void:
+	var current_scene := get_tree().current_scene
+	if current_scene != null and current_scene.name == "MapScene":
+		# Already on map, go back to previous scene based on previous_state
+		var prev_state := GameManager.previous_state
+		match prev_state:
+			GameManager.GameState.BATTLE:
+				SceneTransition.change_scene("res://scenes/battle/BattleScene.tscn")
+			GameManager.GameState.SHOP:
+				SceneTransition.change_scene("res://scenes/shop/ShopScene.tscn")
+			GameManager.GameState.EVENT:
+				SceneTransition.change_scene("res://scenes/event/EventScene.tscn")
+			GameManager.GameState.REST:
+				SceneTransition.change_scene("res://scenes/rest/RestScene.tscn")
+			_:
+				pass  # No previous scene to go back to
+	else:
+		SceneTransition.change_scene("res://scenes/map/MapScene.tscn")
+
+## 卡牌按钮点击 - 弹框查看当前卡组
+func _on_deck_button_pressed() -> void:
+	if _deck_popup != null:
+		_close_deck_popup()
+		return
+	_show_deck_popup()
+
+## 显示卡组弹框
+func _show_deck_popup() -> void:
+	_close_deck_popup()
+	
+	_deck_popup = Control.new()
+	_deck_popup.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_deck_popup.z_index = 150
+	
+	# Dark overlay
+	var overlay := ColorRect.new()
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.color = Color(0, 0, 0, 0.6)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.gui_input.connect(func(event: InputEvent):
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			_close_deck_popup()
+	)
+	_deck_popup.add_child(overlay)
+	
+	# Center panel
+	var panel := PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	var popup_w := 820.0
+	var popup_h := 600.0
+	panel.custom_minimum_size = Vector2(popup_w, popup_h)
+	panel.position = Vector2(-popup_w / 2.0, -popup_h / 2.0)
+	
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.1, 0.1, 0.14, 0.97)
+	panel_style.border_color = Color(0.5, 0.45, 0.3, 0.8)
+	panel_style.set_border_width_all(2)
+	panel_style.set_corner_radius_all(8)
+	panel_style.set_content_margin_all(12)
+	panel.add_theme_stylebox_override("panel", panel_style)
+	_deck_popup.add_child(panel)
+	
+	var main_vbox := VBoxContainer.new()
+	main_vbox.add_theme_constant_override("separation", 8)
+	panel.add_child(main_vbox)
+	
+	# Top bar: title + sort buttons + close
+	var top_bar := HBoxContainer.new()
+	top_bar.add_theme_constant_override("separation", 10)
+	main_vbox.add_child(top_bar)
+	
+	var title := Label.new()
+	title.text = "卡组"
+	title.add_theme_font_size_override("font_size", 20)
+	title.add_theme_color_override("font_color", Color(0.99, 0.85, 0.5))
+	top_bar.add_child(title)
+	
+	# Sort buttons
+	var sort_type_btn := Button.new()
+	sort_type_btn.text = "按类型"
+	sort_type_btn.custom_minimum_size = Vector2(70, 30)
+	top_bar.add_child(sort_type_btn)
+	
+	var sort_rarity_btn := Button.new()
+	sort_rarity_btn.text = "按稀有度"
+	sort_rarity_btn.custom_minimum_size = Vector2(80, 30)
+	top_bar.add_child(sort_rarity_btn)
+	
+	var sort_cost_btn := Button.new()
+	sort_cost_btn.text = "按费用"
+	sort_cost_btn.custom_minimum_size = Vector2(70, 30)
+	top_bar.add_child(sort_cost_btn)
+	
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	top_bar.add_child(spacer)
+	
+	var count_label := Label.new()
+	count_label.add_theme_font_size_override("font_size", 14)
+	count_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	top_bar.add_child(count_label)
+	
+	var close_btn := Button.new()
+	close_btn.text = "✕"
+	close_btn.custom_minimum_size = Vector2(30, 30)
+	close_btn.pressed.connect(func(): _close_deck_popup())
+	top_bar.add_child(close_btn)
+	
+	# Scroll container with card grid
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	main_vbox.add_child(scroll)
+	
+	var card_grid := GridContainer.new()
+	card_grid.columns = 4
+	card_grid.add_theme_constant_override("h_separation", 12)
+	card_grid.add_theme_constant_override("v_separation", 12)
+	card_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(card_grid)
+	
+	# Sort button connections
+	sort_type_btn.pressed.connect(func(): _deck_popup_sort(card_grid, count_label, "type"))
+	sort_rarity_btn.pressed.connect(func(): _deck_popup_sort(card_grid, count_label, "rarity"))
+	sort_cost_btn.pressed.connect(func(): _deck_popup_sort(card_grid, count_label, "cost"))
+	
+	add_child(_deck_popup)
+	
+	# Initial display
+	_deck_popup_sort(card_grid, count_label, "type")
+
+## Sort and display cards in deck popup
+func _deck_popup_sort(card_grid: GridContainer, count_label: Label, sort_by: String) -> void:
+	# Clear old cards
+	var children := card_grid.get_children()
+	for i in range(children.size() - 1, -1, -1):
+		card_grid.remove_child(children[i])
+		children[i].free()
+	
+	# Gather deck data
+	var deck_cards: Array = []
+	for entry in GameManager.current_deck:
+		var card_id: String = entry.get("card_id", "") if entry is Dictionary else str(entry)
+		var star_level: int = entry.get("star_level", 1) if entry is Dictionary else 1
+		var card_data := DataManager.get_card(card_id)
+		if not card_data.is_empty():
+			var display_data: Dictionary = card_data.duplicate(true)
+			display_data["star_level"] = star_level
+			deck_cards.append(display_data)
+	
+	# Sort
+	match sort_by:
+		"type":
+			deck_cards.sort_custom(func(a, b):
+				var a_type = a.get("card_type", "")
+				var b_type = b.get("card_type", "")
+				var a_str: String = ",".join(a_type) if a_type is Array else str(a_type)
+				var b_str: String = ",".join(b_type) if b_type is Array else str(b_type)
+				return a_str < b_str
+			)
+		"rarity":
+			var rarity_order := {"common": 0, "uncommon": 1, "rare": 2, "legendary": 3}
+			deck_cards.sort_custom(func(a, b):
+				return rarity_order.get(a.get("rarity", ""), 0) > rarity_order.get(b.get("rarity", ""), 0)
+			)
+		"cost":
+			deck_cards.sort_custom(func(a, b): return CardData.get_card_energy_cost(a) < CardData.get_card_energy_cost(b))
+	
+	# Display cards
+	for card_data in deck_cards:
+		var card_item := _create_deck_card_display(card_data)
+		card_grid.add_child(card_item)
+	
+	count_label.text = "卡组: %d张" % deck_cards.size()
+
+## Preloaded Card scene for deck popup display
+const CARD_SCENE_PATH := "res://scenes/battle/Card.tscn"
+const DECK_POPUP_CARD_SCALE := 1.0
+
+## Create a card display item for deck popup using battle Card.tscn
+func _create_deck_card_display(card_data: Dictionary) -> Control:
+	var star_level: int = card_data.get("star_level", 1)
+	
+	# Wrapper container to apply scale and clip
+	var wrapper := Control.new()
+	var scaled_w := int(180 * DECK_POPUP_CARD_SCALE)
+	var scaled_h := int(270 * DECK_POPUP_CARD_SCALE)
+	wrapper.custom_minimum_size = Vector2(scaled_w, scaled_h)
+	wrapper.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	wrapper.clip_contents = true
+	
+	# Instantiate the actual Card scene
+	var card_scene := load(CARD_SCENE_PATH) as PackedScene
+	if card_scene == null:
+		# Fallback: simple label if scene not found
+		var fallback := Label.new()
+		fallback.text = card_data.get("card_name", "???")
+		wrapper.add_child(fallback)
+		return wrapper
+	
+	var card_instance: Control = card_scene.instantiate()
+	# Scale down to fit popup grid
+	card_instance.scale = Vector2(DECK_POPUP_CARD_SCALE, DECK_POPUP_CARD_SCALE)
+	# Disable all mouse interaction (view-only)
+	card_instance.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Setup card data
+	card_instance.setup(card_data, star_level)
+	# Disable dragging and interaction
+	card_instance.is_playable = false
+	
+	wrapper.add_child(card_instance)
+	
+	# Recursively disable mouse on all children to prevent hover/drag
+	_disable_mouse_recursive(card_instance)
+	
+	return wrapper
+
+## Recursively disable mouse filter on all children
+func _disable_mouse_recursive(node: Node) -> void:
+	if node is Control:
+		node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for child in node.get_children():
+		_disable_mouse_recursive(child)
+
+## 关闭卡组弹框
+func _close_deck_popup() -> void:
+	if _deck_popup != null:
+		_deck_popup.queue_free()
+		_deck_popup = null
+
 ## 设置按钮
 func _on_settings_pressed() -> void:
 	if _settings_popup != null:
@@ -671,15 +992,15 @@ func _on_settings_pressed() -> void:
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 8)
 	
-	# 查看卡组
-	var deck_btn := Button.new()
-	deck_btn.text = "📋 查看卡组"
-	deck_btn.custom_minimum_size = Vector2(150, 35)
-	deck_btn.pressed.connect(func():
+	# 设置（音量、全屏等）
+	var settings_btn := Button.new()
+	settings_btn.text = "⚙ 设置"
+	settings_btn.custom_minimum_size = Vector2(150, 35)
+	settings_btn.pressed.connect(func():
 		_close_settings_popup()
-		SceneTransition.change_scene("res://scenes/deck_view/DeckViewScene.tscn")
+		show_settings_panel()
 	)
-	vbox.add_child(deck_btn)
+	vbox.add_child(settings_btn)
 	
 	# 战斗场景特有选项：认输和重打
 	var current_scene := get_tree().current_scene
@@ -741,10 +1062,201 @@ func _remove_settings_overlay() -> void:
 	if overlay != null:
 		overlay.queue_free()
 
+## 显示设置面板（音量、全屏等）
+func show_settings_panel() -> void:
+	if _settings_panel != null:
+		_settings_panel.queue_free()
+		_settings_panel = null
+		return
+	
+	_settings_panel = Control.new()
+	_settings_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_settings_panel.z_index = 150
+	
+	# Dark overlay
+	var overlay := ColorRect.new()
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.color = Color(0, 0, 0, 0.5)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.gui_input.connect(func(event: InputEvent):
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			_close_settings_panel()
+	)
+	_settings_panel.add_child(overlay)
+	
+	# Center panel
+	var panel := PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.custom_minimum_size = Vector2(400, 0)
+	panel.position = Vector2(-200, -160)
+	
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.12, 0.14, 0.18, 0.95)
+	panel_style.border_color = Color(0.5, 0.45, 0.3, 0.8)
+	panel_style.set_border_width_all(2)
+	panel_style.set_corner_radius_all(8)
+	panel_style.set_content_margin_all(20)
+	panel.add_theme_stylebox_override("panel", panel_style)
+	_settings_panel.add_child(panel)
+	
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 20)
+	panel.add_child(vbox)
+	
+	# Title
+	var title := Label.new()
+	title.text = "设置"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 28)
+	title.add_theme_color_override("font_color", Color(0.99, 0.8, 0.43))
+	vbox.add_child(title)
+	
+	# BGM volume
+	var bgm_box := HBoxContainer.new()
+	var bgm_label := Label.new()
+	bgm_label.text = "音乐音量"
+	bgm_label.custom_minimum_size = Vector2(100, 0)
+	bgm_box.add_child(bgm_label)
+	
+	var bgm_slider := HSlider.new()
+	bgm_slider.min_value = 0.0
+	bgm_slider.max_value = 1.0
+	bgm_slider.step = 0.05
+	bgm_slider.value = AudioManager.bgm_volume
+	bgm_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var bgm_grabber_style := StyleBoxFlat.new()
+	bgm_grabber_style.bg_color = Color(0, 1, 0.6, 1)
+	bgm_grabber_style.set_corner_radius_all(4)
+	bgm_slider.add_theme_stylebox_override("grabber_area", bgm_grabber_style)
+	bgm_slider.value_changed.connect(func(value: float):
+		AudioManager.bgm_volume = value
+		AudioManager.save_volume_settings()
+	)
+	bgm_box.add_child(bgm_slider)
+	vbox.add_child(bgm_box)
+	
+	# SFX volume
+	var sfx_box := HBoxContainer.new()
+	var sfx_label := Label.new()
+	sfx_label.text = "音效音量"
+	sfx_label.custom_minimum_size = Vector2(100, 0)
+	sfx_box.add_child(sfx_label)
+	
+	var sfx_slider := HSlider.new()
+	sfx_slider.min_value = 0.0
+	sfx_slider.max_value = 1.0
+	sfx_slider.step = 0.05
+	sfx_slider.value = AudioManager.sfx_volume
+	sfx_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var sfx_grabber_style := StyleBoxFlat.new()
+	sfx_grabber_style.bg_color = Color(0, 1, 0.6, 1)
+	sfx_grabber_style.set_corner_radius_all(4)
+	sfx_slider.add_theme_stylebox_override("grabber_area", sfx_grabber_style)
+	sfx_slider.value_changed.connect(func(value: float):
+		AudioManager.sfx_volume = value
+		AudioManager.save_volume_settings()
+	)
+	sfx_box.add_child(sfx_slider)
+	vbox.add_child(sfx_box)
+	
+	# Fullscreen toggle
+	var fullscreen_check := CheckButton.new()
+	fullscreen_check.text = "全屏模式"
+	fullscreen_check.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
+	fullscreen_check.toggled.connect(func(is_fullscreen: bool):
+		if is_fullscreen:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		else:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	)
+	vbox.add_child(fullscreen_check)
+	
+	# Developer mode toggle
+	var dev_check := CheckButton.new()
+	dev_check.text = "开发者模式"
+	dev_check.button_pressed = GameManager.dev_mode
+	dev_check.toggled.connect(func(enabled: bool):
+		GameManager.dev_mode = enabled
+		EventBus.dev_mode_changed.emit(enabled)
+		if enabled:
+			print("[开发者模式] 已开启")
+		else:
+			print("[开发者模式] 已关闭")
+	)
+	vbox.add_child(dev_check)
+	
+	# Close button
+	var close_btn := Button.new()
+	close_btn.text = "关闭"
+	close_btn.custom_minimum_size = Vector2(0, 40)
+	close_btn.pressed.connect(func(): _close_settings_panel())
+	vbox.add_child(close_btn)
+	
+	# Add to self (CanvasLayer) instead of _hud_container, so it works even in HIDDEN_SCENES
+	add_child(_settings_panel)
+
+## 关闭设置面板
+func _close_settings_panel() -> void:
+	if _settings_panel != null:
+		_settings_panel.queue_free()
+		_settings_panel = null
+
 ## 获取HUD总高度（供其他场景计算布局用）
 func get_hud_height() -> float:
 	# 第一行54px + 第二行法宝栏30px = 84px
 	return 84.0
+
+## 显示富文本tooltip（支持BBCode，默认右侧显示，超出屏幕则自动调整）
+func _show_rich_tooltip_at(target: Control, bbcode: String) -> void:
+	_hide_tooltip()
+	
+	_tooltip = PanelContainer.new()
+	_tooltip.z_index = 200
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.1, 0.1, 0.15, 0.95)
+	style.border_color = Color(0.5, 0.5, 0.5, 0.8)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(4)
+	style.set_content_margin_all(8)
+	_tooltip.add_theme_stylebox_override("panel", style)
+	
+	var rich_label := RichTextLabel.new()
+	rich_label.bbcode_enabled = true
+	rich_label.text = bbcode
+	rich_label.add_theme_font_size_override("normal_font_size", 12)
+	rich_label.add_theme_font_size_override("bold_font_size", 13)
+	rich_label.fit_content = true
+	rich_label.scroll_active = false
+	rich_label.custom_minimum_size = Vector2(200, 0)
+	rich_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_tooltip.add_child(rich_label)
+	
+	_hud_container.add_child(_tooltip)
+	
+	# Wait one frame for size calculation then position
+	await get_tree().process_frame
+	if _tooltip == null or not is_instance_valid(_tooltip):
+		return
+	
+	var screen_size := _hud_container.get_viewport_rect().size
+	var tooltip_size := _tooltip.size
+	var target_pos := target.global_position
+	var target_size := target.size
+	
+	var pos_x := target_pos.x + target_size.x + 8
+	var pos_y := target_pos.y
+	
+	if pos_x + tooltip_size.x > screen_size.x:
+		pos_x = target_pos.x - tooltip_size.x - 8
+	if pos_x < 0:
+		pos_x = 4
+	if pos_y + tooltip_size.y > screen_size.y:
+		pos_y = screen_size.y - tooltip_size.y - 4
+	if pos_y < 0:
+		pos_y = 4
+	
+	_tooltip.position = Vector2(pos_x, pos_y)
 
 ## 显示tooltip（默认右侧显示，超出屏幕则自动调整）
 func _show_tooltip_at(target: Control, text: String) -> void:
@@ -809,6 +1321,27 @@ func _hide_tooltip() -> void:
 		_tooltip.queue_free()
 		_tooltip = null
 
+## 显示法宝专用tooltip（统一格式）
+func _show_relic_tooltip_at(target: Control, relic_data: Dictionary, enhance_level: int = 0) -> void:
+	_hide_relic_tooltip()
+	
+	_relic_tooltip = RelicTooltip.build_tooltip(relic_data, enhance_level)
+	_hud_container.add_child(_relic_tooltip)
+	
+	# Wait one frame for size calculation
+	await get_tree().process_frame
+	if _relic_tooltip == null or not is_instance_valid(_relic_tooltip):
+		return
+	
+	var screen_size := _hud_container.get_viewport_rect().size
+	RelicTooltip.position_tooltip(_relic_tooltip, target, screen_size)
+
+## 隐藏法宝tooltip
+func _hide_relic_tooltip() -> void:
+	if _relic_tooltip != null:
+		_relic_tooltip.queue_free()
+		_relic_tooltip = null
+
 ## 更新角色头像纹理
 func _update_avatar_texture() -> void:
 	if _avatar_btn == null:
@@ -852,8 +1385,25 @@ func _show_avatar_bubble() -> void:
 		return
 	
 	var char_name: String = char_data.get("character_name", "")
-	var passive_name: String = char_data.get("passive_name", "")
-	var passive_desc: String = char_data.get("passive_description", "")
+	
+	# Gather statistics
+	var games_played: int = SaveManager.get_stat("games_played_%s" % char_id, 0)
+	var total_play_time: int = SaveManager.get_stat("play_time_%s" % char_id, 0)
+	var current_nodes: int = GameManager.get_nodes_cleared()
+	var best_nodes: int = SaveManager.get_stat("best_nodes_%s" % char_id, 0)
+	var gold_earned: int = GameManager.total_gold_earned
+	var relic_count: int = GameManager.current_relics.size()
+	var consumable_count: int = GameManager.current_consumables.size()
+	
+	# Format total play time (hours:minutes:seconds)
+	var total_hours: int = total_play_time / 3600
+	var total_minutes: int = (total_play_time % 3600) / 60
+	var total_seconds: int = total_play_time % 60
+	var time_str: String
+	if total_hours > 0:
+		time_str = "%d时%02d分%02d秒" % [total_hours, total_minutes, total_seconds]
+	else:
+		time_str = "%d分%02d秒" % [total_minutes, total_seconds]
 	
 	_avatar_bubble = PanelContainer.new()
 	_avatar_bubble.z_index = 200
@@ -868,7 +1418,7 @@ func _show_avatar_bubble() -> void:
 	_avatar_bubble.add_theme_stylebox_override("panel", style)
 	
 	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 6)
+	vbox.add_theme_constant_override("separation", 4)
 	
 	# 角色姓名
 	var name_label := Label.new()
@@ -883,21 +1433,38 @@ func _show_avatar_bubble() -> void:
 	separator.add_theme_constant_override("separation", 2)
 	vbox.add_child(separator)
 	
-	# 被动技能名称
-	var passive_title := Label.new()
-	passive_title.text = "被动：%s" % passive_name
-	passive_title.add_theme_font_size_override("font_size", 13)
-	passive_title.add_theme_color_override("font_color", Color(0.9, 0.8, 0.5))
-	vbox.add_child(passive_title)
+	# Statistics entries
+	var stat_entries: Array[Array] = [
+		["游戏次数", str(games_played)],
+		["累计时间", time_str],
+		["当前通关", str(current_nodes)],
+		["最高通关", str(best_nodes)],
+		["获取金币", str(gold_earned)],
+		["法宝数量", str(relic_count)],
+		["丹药数量", str(consumable_count)],
+	]
 	
-	# 被动技能描述
-	var desc_label := Label.new()
-	desc_label.text = passive_desc
-	desc_label.add_theme_font_size_override("font_size", 12)
-	desc_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
-	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	desc_label.custom_minimum_size = Vector2(180, 0)
-	vbox.add_child(desc_label)
+	for entry in stat_entries:
+		var hbox := HBoxContainer.new()
+		hbox.add_theme_constant_override("separation", 8)
+		hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		
+		var key_label := Label.new()
+		key_label.text = entry[0]
+		key_label.add_theme_font_size_override("font_size", 12)
+		key_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+		key_label.custom_minimum_size = Vector2(65, 0)
+		key_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hbox.add_child(key_label)
+		
+		var val_label := Label.new()
+		val_label.text = entry[1]
+		val_label.add_theme_font_size_override("font_size", 12)
+		val_label.add_theme_color_override("font_color", Color(0.95, 0.9, 0.75))
+		val_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hbox.add_child(val_label)
+		
+		vbox.add_child(hbox)
 	
 	_avatar_bubble.add_child(vbox)
 	_hud_container.add_child(_avatar_bubble)
@@ -936,3 +1503,8 @@ func _hide_avatar_bubble() -> void:
 func _on_gold_label_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		GameManager.dev_gold_click()
+
+## 开发者模式：劫数连点回调（连点5次增加10点劫数）
+func _on_karma_label_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		GameManager.dev_karma_click()

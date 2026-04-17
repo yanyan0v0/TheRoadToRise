@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cv0jblff7mahn" path="res://scenes/battle/BattleScene.gd" id="1"]
 [ext_resource type="Script" uid="uid://d2o0olnpjs12w" path="res://scripts/cards/HandManager.gd" id="2"]
 [ext_resource type="PackedScene" uid="uid://cpause001" path="res://ui/components/PauseMenu.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://dse6w7cv4a85d" path="res://ui/images/battle/enter_trun.png" id="4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
 bg_color = Color(0.8, 0.15, 0.15, 1)
@@ -20,7 +21,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="ColorRect" parent="." unique_id=2095100135]
+[node name="Background" type="TextureRect" parent="." unique_id=2095100135]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,7 +29,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.12, 0.14, 0.15, 1)
+expand_mode = 1
+stretch_mode = 6
 
 [node name="BattleArea" type="Control" parent="." unique_id=1709318584]
 layout_mode = 1
@@ -45,13 +47,15 @@ mouse_filter = 2
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.1
-anchor_top = 0.2
-anchor_right = 0.4
-anchor_bottom = 1.0
-alignment = 1
+anchor_top = 0.35
+anchor_right = 0.29500002
+anchor_bottom = 1.039
+offset_right = 0.39996338
+offset_bottom = -0.16000366
+alignment = 2
 
 [node name="PlayerSprite" type="TextureRect" parent="BattleArea/PlayerArea" unique_id=2120837675]
-custom_minimum_size = Vector2(200, 200)
+custom_minimum_size = Vector2(250, 250)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
@@ -74,16 +78,31 @@ grow_vertical = 2
 text = "取经人"
 horizontal_alignment = 1
 
-[node name="PlayerHPBar" type="ProgressBar" parent="BattleArea/PlayerArea" unique_id=446183833]
-custom_minimum_size = Vector2(150, 8)
+[node name="PlayerHPRow" type="HBoxContainer" parent="BattleArea/PlayerArea" unique_id=959704527]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 0
+theme_override_constants/separation = 4
+
+[node name="ArmorLabel" type="Label" parent="BattleArea/PlayerArea/PlayerHPRow" unique_id=1564424276]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.3, 0.75, 0.85, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="PlayerHPBar" type="ProgressBar" parent="BattleArea/PlayerArea/PlayerHPRow" unique_id=446183833]
+custom_minimum_size = Vector2(150, 6)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
 theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
 max_value = 70.0
 value = 70.0
 show_percentage = false
 
-[node name="PlayerHPText" type="Label" parent="BattleArea/PlayerArea/PlayerHPBar" unique_id=1442761156]
+[node name="PlayerHPText" type="Label" parent="BattleArea/PlayerArea/PlayerHPRow/PlayerHPBar" unique_id=1442761156]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -96,30 +115,22 @@ text = "70/70"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ArmorLabel" type="Label" parent="BattleArea/PlayerArea" unique_id=1564424276]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.454902, 0.811765, 0.890196, 1)
-theme_override_font_sizes/font_size = 14
-text = "护甲: 0"
-horizontal_alignment = 1
-
-[node name="StatusBar" type="HBoxContainer" parent="BattleArea/PlayerArea" unique_id=747388245]
-custom_minimum_size = Vector2(150, 25)
-layout_mode = 2
-
 [node name="PlayerStatusBar" type="HBoxContainer" parent="BattleArea/PlayerArea" unique_id=1880073995]
 custom_minimum_size = Vector2(150, 25)
 layout_mode = 2
+size_flags_horizontal = 4
 
 [node name="EnemyArea" type="HBoxContainer" parent="BattleArea" unique_id=2051454872]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.2
+anchor_top = 0.35
 anchor_right = 0.9
-anchor_bottom = 1.0
+anchor_bottom = 1.039
+offset_top = -30.0
+offset_bottom = -30.0
 theme_override_constants/separation = 20
-alignment = 1
+alignment = 2
 
 [node name="HandArea" type="Control" parent="." unique_id=426635858]
 layout_mode = 1
@@ -127,21 +138,27 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -240.0
+offset_top = -220.0
+offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 0
 script = ExtResource("2")
 
-[node name="EndTurnButton" type="Button" parent="." unique_id=1282178120]
+[node name="EndTurnButton" type="TextureButton" parent="." unique_id=1282178120]
 z_index = 10
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.85
-anchor_top = 0.7
-anchor_right = 0.95
-anchor_bottom = 0.78
-theme_override_font_sizes/font_size = 18
-text = "结束回合"
+anchor_left = 0.87000006
+anchor_top = 0.72200006
+anchor_right = 0.9480001
+anchor_bottom = 0.86100006
+offset_left = -0.00012207031
+offset_top = 0.15997314
+offset_right = 0.15991211
+offset_bottom = 0.079956055
+texture_normal = ExtResource("4")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="DrawPileLabel" type="Label" parent="." unique_id=440973355]
 layout_mode = 1

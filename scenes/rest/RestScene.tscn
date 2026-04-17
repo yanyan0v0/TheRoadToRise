@@ -25,6 +25,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 54.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -71,11 +72,11 @@ theme_override_font_sizes/font_size = 20
 [node name="EnlightenButton" type="Button" parent="CenterContainer/VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(300, 60)
-text = "🧘 悟道 (消耗10劫数升星)"
+text = "🧘 悟道 (消耗10劫数升星卡牌)"
 theme_override_font_sizes/font_size = 20
 
 [node name="FuseButton" type="Button" parent="CenterContainer/VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(300, 60)
-text = "🔮 融合卡牌/法宝"
+text = "🔮 融合卡牌"
 theme_override_font_sizes/font_size = 20

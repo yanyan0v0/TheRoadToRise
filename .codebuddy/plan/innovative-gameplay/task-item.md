@@ -34,12 +34,13 @@
    - 修改 `scenes/shop/ShopScene.gd`，在商店中添加1-2颗随机丹药供购买
    - _需求：3.3, 3.4, 3.5, 3.9_
 
-- [ ] 5. 法宝星级系统与炼器坊节点
-   - 修改 `scripts/relics/RelicData.gd`，新增 `star_level: int`（1-3）属性，新增 `star_2_effects` 和 `star_3_effects` 字段，新增 `get_star_display()` 方法
-   - 修改 `data/relics.json`，为每件法宝补充2星和3星效果数据（紫金铃、避火罩、定风珠、乾坤袋、炼丹瓶等）
-   - 修改 `scripts/autoload/GameManager.gd`，将 `current_relics: Array[String]` 改为支持星级信息的结构（如 `Array[Dictionary]`，含 `relic_id` 和 `star_level`），法宝无携带上限
-   - 修改 `scripts/map/MapGenerator.gd`，在 `NodeType` 枚举中新增 `FORGE`（炼器坊），添加对应颜色/名称/图标配置，修改 `_decide_node_type()` 使炼器坊在中后期出现
-   - 新建 `scenes/forge/ForgeScene.gd` 和 `scenes/forge/ForgeScene.tscn`，实现炼器坊界面：「锻造新法宝」（3档金币60/100/150，随机生成1星法宝）和「融合法宝」（显示可融合法宝组，预览升星结果，确认融合）
+- [ ] 5. 法宝强化系统与炼器坊节点
+   - 修改 `scripts/relics/RelicData.gd`，取消 `star_level` 属性，新增 `enhance_level: int`（初始0，无上限）属性，新增 `get_enhanced_effects()` 方法（每层强化数值效果+1，不提升百分比）
+   - 修改 `data/relics.json`，移除所有 `star_2_effects`、`star_3_effects`、`star_2_description`、`star_3_description` 字段
+   - 修改 `scripts/autoload/GameManager.gd`，将 `current_relics` 中的 `star_level` 改为 `enhance_level`，移除融合相关方法，新增 `enhance_relic()` 方法（成功率0.2）
+   - 修改 `scripts/map/MapGenerator.gd`，在 `NodeType` 枚举中新增 `FORGE`（炼器坊），添加对应颜色/名称/图标配置
+   - 修改 `scenes/forge/ForgeScene.gd`，移除融合功能，仅保留强化功能：花费金币强化法宝，每次成功概率为0.2
+   - 修改 `scenes/reward/RewardScene.gd`，法宝获取改为击败敌人掉落：普通0.2/精英0.5/BOSS 1.0
    - 修改 `scenes/map/MapScene.gd`，在节点点击逻辑中添加炼器坊节点的跳转处理
    - _需求：4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 4.10, 4.11_
 

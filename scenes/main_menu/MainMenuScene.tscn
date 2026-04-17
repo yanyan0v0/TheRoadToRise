@@ -1,24 +1,9 @@
 [gd_scene format=3 uid="uid://cmainmenu001"]
 
 [ext_resource type="Script" uid="uid://j7m4yprsy1np" path="res://scenes/main_menu/MainMenuScene.gd" id="1"]
-[ext_resource type="Script" uid="uid://n22dshps80uw" path="res://ui/components/SettingsPanel.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://dsme6gwfnfa10" path="res://ui/images/main/start_bg.jpg" id="2_mp6ew"]
 [ext_resource type="Texture2D" uid="uid://cnf4r16nj4p31" path="res://ui/images/main/start_title.png" id="3_oyeog"]
 [ext_resource type="Texture2D" uid="uid://2kwji3r5qmns" path="res://ui/images/main/start_subtitle.png" id="4_7sf0f"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oyeog"]
-bg_color = Color(0, 1, 0.6, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7sf0f"]
-bg_color = Color(0, 1, 0.6, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
 
 [node name="MainMenuScene" type="Control" unique_id=1961063375]
 layout_mode = 3
@@ -114,93 +99,3 @@ custom_minimum_size = Vector2(240, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "退出游戏"
-
-[node name="SettingsPanel" type="Control" parent="." unique_id=880163120]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("2")
-
-[node name="Overlay" type="ColorRect" parent="SettingsPanel" unique_id=1025969563]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 0.5)
-
-[node name="PanelContainer" type="PanelContainer" parent="SettingsPanel" unique_id=376262663]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -200.0
-offset_right = 200.0
-offset_bottom = 201.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="VBox" type="VBoxContainer" parent="SettingsPanel/PanelContainer" unique_id=1146207772]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="Title" type="Label" parent="SettingsPanel/PanelContainer/VBox" unique_id=2062746099]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.992157, 0.796078, 0.431373, 1)
-theme_override_font_sizes/font_size = 28
-text = "设置"
-horizontal_alignment = 1
-
-[node name="BGMContainer" type="HBoxContainer" parent="SettingsPanel/PanelContainer/VBox" unique_id=1376519018]
-layout_mode = 2
-
-[node name="BGMLabel" type="Label" parent="SettingsPanel/PanelContainer/VBox/BGMContainer" unique_id=1261662598]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-text = "音乐音量"
-
-[node name="BGMSlider" type="HSlider" parent="SettingsPanel/PanelContainer/VBox/BGMContainer" unique_id=863363455]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/grabber_area = SubResource("StyleBoxFlat_oyeog")
-max_value = 1.0
-step = 0.05
-value = 0.8
-
-[node name="SFXContainer" type="HBoxContainer" parent="SettingsPanel/PanelContainer/VBox" unique_id=810127243]
-layout_mode = 2
-
-[node name="SFXLabel" type="Label" parent="SettingsPanel/PanelContainer/VBox/SFXContainer" unique_id=732957861]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-text = "音效音量"
-
-[node name="SFXSlider" type="HSlider" parent="SettingsPanel/PanelContainer/VBox/SFXContainer" unique_id=1470426671]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/grabber_area = SubResource("StyleBoxFlat_7sf0f")
-max_value = 1.0
-step = 0.05
-value = 0.8
-
-[node name="FullscreenCheck" type="CheckButton" parent="SettingsPanel/PanelContainer/VBox" unique_id=1999541707]
-layout_mode = 2
-theme_override_colors/font_pressed_color = Color(0.9490196, 0.9490196, 0.9490196, 1)
-text = "全屏模式"
-
-[node name="DevModeCheck" type="CheckButton" parent="SettingsPanel/PanelContainer/VBox" unique_id=710115864]
-layout_mode = 2
-text = "开发者模式"
-
-[node name="CloseButton" type="Button" parent="SettingsPanel/PanelContainer/VBox" unique_id=1564914135]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "关闭"

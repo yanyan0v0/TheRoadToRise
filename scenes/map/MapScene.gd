@@ -143,12 +143,23 @@ func _render_map() -> void:
 	
 	var nodes: Array = map_data.get("nodes", [])
 	
-	# 先绘制连接线
+	# 构建已走路径的边集合（visited -> visited 的连接）
+	var visited_edges: Dictionary = {}  # "from_id->to_id" -> true
+	for node in nodes:
+		if node.visited:
+			for conn_id in node.connections:
+				var target_node := _find_node(nodes, conn_id)
+				if target_node and target_node.visited:
+					visited_edges["%d->%d" % [node.id, conn_id]] = true
+	
+	# 先绘制连接线（区分已走路径和其他分支）
 	for node in nodes:
 		for conn_id in node.connections:
 			var target_node := _find_node(nodes, conn_id)
 			if target_node:
-				_draw_connection_line(node.position, target_node.position)
+				var edge_key := "%d->%d" % [node.id, conn_id]
+				var is_visited_edge: bool = visited_edges.has(edge_key)
+				_draw_connection_line(node.position, target_node.position, is_visited_edge)
 	
 	# 再绘制节点
 	for node in nodes:
@@ -157,8 +168,8 @@ func _render_map() -> void:
 	# 更新可达状态
 	_update_reachable_nodes()
 
-## 节点按钮尺寸（使用bg图片，压缩显示为100x100）
-const NODE_BUTTON_SIZE := Vector2(100, 100)
+## 节点按钮尺寸
+const NODE_BUTTON_SIZE := Vector2(40, 40)
 
 ## 节点类型描述（用于hover气泡框）
 const NODE_DESCRIPTIONS := {
@@ -171,7 +182,7 @@ const NODE_DESCRIPTIONS := {
 	MapGenerator.NodeType.BOSS: "挑战本章最终BOSS",
 	MapGenerator.NodeType.START: "旅途的起点",
 	MapGenerator.NodeType.ALCHEMY: "炼制丹药，提升属性",
-	MapGenerator.NodeType.FORGE: "锻造和融合法宝",
+	MapGenerator.NodeType.FORGE: "锻造强化法宝",
 	MapGenerator.NodeType.TRIBULATION: "渡劫试炼，突破修为瓶颈",
 }
 
@@ -356,7 +367,8 @@ func _apply_visited_border(button: Button) -> void:
 	
 	# 判断是否为BOSS节点
 	var is_boss: bool = abs(btn_size.x - btn_size.y) > 1.0 or btn_size.x > NODE_BUTTON_SIZE.x + 10
-	var base_corner: int = 8 if is_boss else int(btn_size.x / 2.0)
+	if is_boss:
+		return
 	
 	var visited_panel := Panel.new()
 	visited_panel.name = "VisitedBorder_" + btn_idx
@@ -366,7 +378,7 @@ func _apply_visited_border(button: Button) -> void:
 	visited_style.border_width_bottom = 3
 	visited_style.border_width_left = 3
 	visited_style.border_width_right = 3
-	visited_style.border_color = Color(0.5, 0.5, 0.5, 0.7)  # 灰色边框
+	visited_style.border_color = Color(0.1, 0.1, 0.1, 0.5)  # 黑色边框
 	var border_radius: int = (base_corner + 1) if is_boss else int((btn_size.x + 6) / 2.0)
 	visited_style.corner_radius_top_left = border_radius
 	visited_style.corner_radius_top_right = border_radius
@@ -526,8 +538,8 @@ func _hide_node_tooltip(_button: Variant) -> void:
 		_current_tooltip = null
 		_tooltip_target_button = null
 
-## 绘制连接线（加粗虚线）
-func _draw_connection_line(from_pos: Vector2, to_pos: Vector2) -> void:
+## 绘制连接线（加粗虚线，已走路径高亮，其他分支变浅）
+func _draw_connection_line(from_pos: Vector2, to_pos: Vector2, is_visited_edge: bool = false) -> void:
 	# 直接使用像素坐标
 	var actual_from := from_pos
 	var actual_to := to_pos
@@ -539,6 +551,16 @@ func _draw_connection_line(from_pos: Vector2, to_pos: Vector2) -> void:
 	var total_length := direction.length()
 	var dir_normalized := direction.normalized()
 	
+	# 已走路径：正常亮度；其他分支：变浅
+	var line_color: Color
+	var line_width: float
+	if is_visited_edge:
+		line_color = Color(0.7, 0.65, 0.4, 0.8)  # 金色偏暖，已走路径
+		line_width = 3.5
+	else:
+		line_color = Color(0.4, 0.4, 0.4, 0.2)  # 浅灰半透明，未走分支
+		line_width = 2.0
+	
 	var current_dist := 0.0
 	while current_dist < total_length:
 		var seg_start := actual_from + dir_normalized * current_dist
@@ -548,8 +570,8 @@ func _draw_connection_line(from_pos: Vector2, to_pos: Vector2) -> void:
 		var line := Line2D.new()
 		line.add_point(seg_start)
 		line.add_point(seg_end)
-		line.width = 3.0  # 加粗
-		line.default_color = Color(0.5, 0.5, 0.5, 0.5)
+		line.width = line_width
+		line.default_color = line_color
 		lines_container.add_child(line)
 		
 		current_dist += dash_length + gap_length
@@ -601,18 +623,12 @@ func _update_reachable_nodes() -> void:
 		node.reachable = false
 		if node_buttons.has(node.id):
 			var btn: Button = node_buttons[node.id]
-			if node.visited:
-				# 起点节点不置灰，其他已访问节点置灰
-				if node.node_type == MapGenerator.NodeType.START:
-					btn.modulate = Color.WHITE
-				else:
-					btn.modulate = Color(0.4, 0.4, 0.4, 1.0)
-					# 添加灰色圆形边框
-					_apply_visited_border(btn)
-			else:
-				# 不可访问节点：正常颜色，不置灰
-				btn.modulate = Color.WHITE
-			# 移除旧的发光效果
+			# All nodes keep normal color (no gray mask)
+			btn.modulate = Color.WHITE
+			if node.visited and node.node_type != MapGenerator.NodeType.START:
+				# Visited nodes: add black circular border mark
+				_apply_visited_border(btn)
+			# Remove old glow effect
 			_remove_glow_effect(btn)
 	
 	# 只有当前节点直接连线的、未访问的下一层节点可达
@@ -701,11 +717,21 @@ func _enter_node(node: MapGenerator.MapNode) -> void:
 func _enter_battle(node: MapGenerator.MapNode) -> void:
 	# 设置战斗敌人
 	GameManager.current_battle_type = "normal"
+	# Pass the pre-assigned enemy_ids from the map node to ensure battle matches map display
+	var enemy_ids: Array[String] = []
+	for eid in node.encounter_data.get("enemy_ids", []):
+		enemy_ids.append(eid)
+	GameManager.current_enemy_ids = enemy_ids
 	SceneTransition.change_scene("res://scenes/battle/BattleScene.tscn")
 
 ## 进入精英战斗
 func _enter_elite_battle(node: MapGenerator.MapNode) -> void:
 	GameManager.current_battle_type = "elite"
+	# Pass the pre-assigned enemy_ids from the map node to ensure battle matches map display
+	var enemy_ids: Array[String] = []
+	for eid in node.encounter_data.get("enemy_ids", []):
+		enemy_ids.append(eid)
+	GameManager.current_enemy_ids = enemy_ids
 	SceneTransition.change_scene("res://scenes/battle/BattleScene.tscn")
 
 ## 进入BOSS战斗
@@ -713,6 +739,9 @@ func _enter_boss_battle(node: MapGenerator.MapNode) -> void:
 	GameManager.current_battle_type = "boss"
 	var boss_id: String = node.encounter_data.get("boss_id", "")
 	GameManager.current_boss_id = boss_id
+	# Also set current_enemy_ids for consistency
+	var enemy_ids: Array[String] = [boss_id]
+	GameManager.current_enemy_ids = enemy_ids
 	SceneTransition.change_scene("res://scenes/battle/BattleScene.tscn")
 
 ## 序列化地图数据（用于存档）

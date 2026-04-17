@@ -40,17 +40,12 @@ func _on_fullscreen_toggled(is_fullscreen: bool) -> void:
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 
-## Toggle developer mode and unlock all characters if enabled
+## Toggle developer mode
 func _on_dev_mode_toggled(enabled: bool) -> void:
 	GameManager.dev_mode = enabled
+	EventBus.dev_mode_changed.emit(enabled)
 	if enabled:
-		# Unlock all characters
-		var all_characters := DataManager.get_all_characters()
-		for char_data in all_characters:
-			var char_id: String = char_data.get("character_id", "")
-			if char_id != "" and not SaveManager.is_character_unlocked(char_id):
-				SaveManager.unlock_character(char_id)
-		print("[开发者模式] 已开启，全部角色已解锁")
+		print("[开发者模式] 已开启")
 	else:
 		print("[开发者模式] 已关闭")
 

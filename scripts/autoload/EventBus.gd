@@ -119,6 +119,10 @@ signal achievement_unlocked(achievement_id: String, achievement_name: String)
 ## 角色解锁
 signal character_unlocked(character_id: String)
 
+# ===== 设置信号 =====
+## 开发者模式切换
+signal dev_mode_changed(enabled: bool)
+
 # ===== UI信号 =====
 ## 显示飘字
 signal floating_text_requested(position: Vector2, text: String, color: Color)

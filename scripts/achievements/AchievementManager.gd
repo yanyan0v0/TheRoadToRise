@@ -10,110 +10,12 @@ enum AchievementCategory {
 	CHALLENGE, # 挑战
 }
 
-## 成就定义（扩展版）
-const ACHIEVEMENTS := {
-	# ===== 战斗类 =====
-	"first_game": {
-		"name": "初窥门径",
-		"description": "使用默认角色游玩一局",
-		"category": "battle",
-		"unlock_character": "zhu_bajie",
-	},
-	"perfect_battle": {
-		"name": "毫发无伤",
-		"description": "在一场战斗中未受到任何伤害",
-		"category": "battle",
-		"unlock_type": "new_card",
-		"unlock_content": "jin_zhong_zhao",
-	},
-	"spirit_hunter": {
-		"name": "妖灵猎人",
-		"description": "累计收服3只妖灵",
-		"category": "battle",
-		"unlock_type": "new_card",
-		"unlock_content": "spirit_hu_xian",
-	},
-	"tribulation_survivor": {
-		"name": "渡劫成功",
-		"description": "成功完成一次渡劫",
-		"category": "battle",
-		"unlock_type": "new_relic",
-		"unlock_content": "du_jie_zhu",
-	},
-	
-	# ===== 探索类 =====
-	"floor_18": {
-		"name": "18层地狱",
-		"description": "任意角色通关第18关",
-		"category": "explore",
-		"unlock_character": "sha_wujing",
-	},
-	"true_scripture": {
-		"name": "取得真经",
-		"description": "任意角色完成通关",
-		"category": "explore",
-		"unlock_character": "tang_seng",
-	},
-	"alchemy_master": {
-		"name": "丹道宗师",
-		"description": "累计炼制10颗丹药",
-		"category": "explore",
-		"unlock_type": "new_pill",
-		"unlock_content": "jiu_zhuan_jin_dan",
-	},
-	"forge_master": {
-		"name": "炼器大师",
-		"description": "累计锻造5件法宝",
-		"category": "explore",
-		"unlock_type": "new_relic",
-		"unlock_content": "hun_tian_ling",
-	},
-	
-	# ===== 收集类 =====
-	"star_master": {
-		"name": "满星大师",
-		"description": "将一张卡牌升至3星",
-		"category": "collect",
-		"unlock_type": "new_card",
-		"unlock_content": "tian_gang_36",
-	},
-	"relic_collector": {
-		"name": "法宝收藏家",
-		"description": "同时持有5件以上法宝",
-		"category": "collect",
-		"unlock_type": "new_relic",
-		"unlock_content": "bai_bao_nang",
-	},
-	"pill_hoarder": {
-		"name": "丹药囤积者",
-		"description": "同时携带满上限的丹药",
-		"category": "collect",
-		"unlock_type": "new_pill",
-		"unlock_content": "da_huan_dan",
-	},
-	
-	# ===== 挑战类 =====
-	"ten_clears": {
-		"name": "十全十美",
-		"description": "任意角色累计通关10次",
-		"category": "challenge",
-		"unlock_mode": "infinite",
-	},
-	"high_karma": {
-		"name": "天罚降临",
-		"description": "劫数达到天罚等级（50点）",
-		"category": "challenge",
-		"unlock_type": "new_event",
-		"unlock_content": "tian_fa_event",
-	},
-	"no_shop": {
-		"name": "苦行僧",
-		"description": "不进入商店完成一次通关",
-		"category": "challenge",
-		"unlock_type": "new_card",
-		"unlock_content": "ku_xing_seng",
-	},
-}
+## 成就定义（从DataManager加载）
+static var ACHIEVEMENTS: Dictionary = {}
+
+## 初始化成就数据（由DataManager调用）
+static func init_achievements(data: Dictionary) -> void:
+	ACHIEVEMENTS = data
 
 ## 检查所有成就条件
 static func check_achievements() -> void:
@@ -150,6 +52,13 @@ static func check_achievements() -> void:
 		for entry in GameManager.current_deck:
 			if entry is Dictionary and entry.get("star_level", 1) >= 3:
 				_unlock_with_content("star_master", "满星大师")
+				break
+	
+	# 强化大师：检查是否有法宝强化等级达到5
+	if not SaveManager.is_achievement_unlocked("enhance_master"):
+		for entry in GameManager.current_relics:
+			if entry is Dictionary and entry.get("enhance_level", 0) >= 5:
+				_unlock_with_content("enhance_master", "强化大师")
 				break
 	
 	# 法宝收藏家

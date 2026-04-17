@@ -3,27 +3,23 @@ class_name DamageCalculator
 extends RefCounted
 
 ## 计算最终伤害
-## 公式：最终伤害 = 基础伤害 × (1+增伤%) × (1+易伤%) × (1-减伤%)
+## 公式：最终伤害 = (基础伤害 + 力量 + 额外加成) × (1+增伤%) × (1-减伤%)
 ## 护甲抵消 = min(护甲值, 最终伤害)
 ## 实际承受 = 最终伤害 - 护甲抵消
 static func calculate_damage(
 	base_damage: int,
 	strength: int = 0,
 	damage_bonus_percent: float = 0.0,
-	vulnerable_stacks: int = 0,
+	_bleed_stacks: int = 0,  # Unused, kept for API compatibility
 	damage_reduction_percent: float = 0.0,
 	target_armor: int = 0,
 	extra_strength_bonus: int = 0
 ) -> Dictionary:
-	# 基础伤害 + 力量加成
+	# 基础伤害 + 力量加成 + 额外加成（连击等）
 	var raw_damage: float = float(base_damage + strength + extra_strength_bonus)
 	
 	# 增伤百分比
 	raw_damage *= (1.0 + damage_bonus_percent)
-	
-	# 易伤加成（每层+1伤害，然后乘以百分比）
-	if vulnerable_stacks > 0:
-		raw_damage += vulnerable_stacks
 	
 	# 减伤百分比
 	raw_damage *= (1.0 - damage_reduction_percent)

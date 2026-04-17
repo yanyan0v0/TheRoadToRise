@@ -1,590 +1,374 @@
-## 炼器坊场景脚本 - 锻造新法宝或融合法宝升星
+## Forge scene script - Enhance relics
 extends Control
 
-## 锻造档位配置
-const FORGE_TIERS := {
-	"low": {"cost": 60, "name": "初级锻造", "desc": "花费60金币，大概率获得普通法宝", "probs": {"common": 0.65, "uncommon": 0.25, "rare": 0.08, "legendary": 0.02}},
-	"mid": {"cost": 100, "name": "中级锻造", "desc": "花费100金币，较高概率获得优秀法宝", "probs": {"common": 0.30, "uncommon": 0.40, "rare": 0.22, "legendary": 0.08}},
-	"high": {"cost": 150, "name": "高级锻造", "desc": "花费150金币，有机会获得稀有法宝", "probs": {"common": 0.10, "uncommon": 0.30, "rare": 0.40, "legendary": 0.20}},
+## Base enhancement cost (for enhance_level 0 -> 1)
+const BASE_ENHANCE_COST: int = 10
+## Cost increment per enhance level
+const COST_INCREMENT: int = 10
+## Base success rate (for enhance_level 0 -> 1)
+const BASE_SUCCESS_RATE: float = 1.0
+## Success rate decrement per enhance level
+const RATE_DECREMENT: float = 0.1
+## Minimum success rate floor
+const MIN_SUCCESS_RATE: float = 0.2
+
+## Rarity cost multiplier: higher rarity = higher cost
+const RARITY_COST_MULTIPLIER := {
+	"common": 1.0,
+	"uncommon": 1.5,
+	"rare": 2.0,
+	"legendary": 3.0,
+}
+## Rarity rate penalty: higher rarity = lower success rate
+const RARITY_RATE_PENALTY := {
+	"common": 0.0,
+	"uncommon": 0.05,
+	"rare": 0.1,
+	"legendary": 0.15,
 }
 
-var _result_popup: Control = null
-var _current_tab: String = "forge"  # "forge" 或 "fuse"
+## Cached node references (unique names)
+@onready var _gold_label: Label = %GoldLabel
+@onready var _relic_grid: GridContainer = %RelicGrid
+@onready var _empty_hint: CenterContainer = %EmptyHint
+@onready var _leave_button: Button = %LeaveButton
+
+@onready var _enhance_popup: Control = %EnhancePopup
+@onready var _compare_hbox: HBoxContainer = %CompareHBox
+@onready var _cost_label: Label = %CostLabel
+@onready var _enhance_button: Button = %EnhanceButton
+@onready var _cancel_button: Button = $EnhancePopup/Panel/VBox/ButtonHBox/CancelButton
+@onready var _enhance_overlay: ColorRect = $EnhancePopup/Overlay
+
+
+
+@onready var _description_label: Label = $CenterContainer/MainVBox/Description
+
+## Currently selected relic index for enhancement
+var _current_enhance_index: int = -1
+
+## Calculate enhancement cost based on current enhance_level and rarity
+func _get_enhance_cost(enhance_level: int, rarity: String) -> int:
+	var base := BASE_ENHANCE_COST + enhance_level * COST_INCREMENT
+	var multiplier: float = RARITY_COST_MULTIPLIER.get(rarity, 1.0)
+	return int(ceil(base * multiplier))
+
+## Calculate success rate based on current enhance_level and rarity
+func _get_success_rate(enhance_level: int, rarity: String) -> float:
+	var rate := BASE_SUCCESS_RATE - enhance_level * RATE_DECREMENT
+	var penalty: float = RARITY_RATE_PENALTY.get(rarity, 0.0)
+	rate -= penalty
+	return maxf(rate, MIN_SUCCESS_RATE)
 
 func _ready() -> void:
 	GameManager.change_state(GameManager.GameState.REST)
-	_build_ui()
-
-## 构建界面
-func _build_ui() -> void:
-	# 背景
-	var bg := ColorRect.new()
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0.08, 0.06, 0.04, 1.0)
-	add_child(bg)
-	
-	# 中心容器
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(center)
-	
-	var main_vbox := VBoxContainer.new()
-	main_vbox.add_theme_constant_override("separation", 15)
-	center.add_child(main_vbox)
-	
-	# 标题
-	var title := Label.new()
-	title.text = "🔨 炼器坊"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 32)
-	title.add_theme_color_override("font_color", Color("E67E22"))
-	main_vbox.add_child(title)
-	
-	# 金币信息
-	var gold_label := Label.new()
-	gold_label.name = "GoldLabel"
-	gold_label.text = "💰 金币: %d" % GameManager.current_gold
-	gold_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	gold_label.add_theme_font_size_override("font_size", 18)
-	main_vbox.add_child(gold_label)
-	
-	# 标签页切换
-	var tab_hbox := HBoxContainer.new()
-	tab_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	tab_hbox.add_theme_constant_override("separation", 10)
-	main_vbox.add_child(tab_hbox)
-	
-	var forge_tab := Button.new()
-	forge_tab.text = "🔨 锻造新法宝"
-	forge_tab.custom_minimum_size = Vector2(180, 40)
-	forge_tab.add_theme_font_size_override("font_size", 16)
-	forge_tab.disabled = (_current_tab == "forge")
-	forge_tab.pressed.connect(func():
-		_current_tab = "forge"
-		_refresh_ui()
-	)
-	tab_hbox.add_child(forge_tab)
-	
-	var fuse_tab := Button.new()
-	fuse_tab.text = "🔮 融合法宝"
-	fuse_tab.custom_minimum_size = Vector2(180, 40)
-	fuse_tab.add_theme_font_size_override("font_size", 16)
-	fuse_tab.disabled = (_current_tab == "fuse")
-	fuse_tab.pressed.connect(func():
-		_current_tab = "fuse"
-		_refresh_ui()
-	)
-	tab_hbox.add_child(fuse_tab)
-	
-	# 内容区域
-	var content := VBoxContainer.new()
-	content.name = "ContentArea"
-	content.add_theme_constant_override("separation", 10)
-	main_vbox.add_child(content)
-	
-	if _current_tab == "forge":
-		_build_forge_content(content)
-	else:
-		_build_fuse_content(content)
-	
-	# 离开按钮
-	var leave_spacer := Control.new()
-	leave_spacer.custom_minimum_size = Vector2(0, 15)
-	main_vbox.add_child(leave_spacer)
-	
-	var leave_btn := Button.new()
-	leave_btn.text = "离开炼器坊"
-	leave_btn.custom_minimum_size = Vector2(200, 50)
-	leave_btn.add_theme_font_size_override("font_size", 18)
-	leave_btn.pressed.connect(_on_leave_pressed)
-	
-	var leave_center := CenterContainer.new()
-	leave_center.add_child(leave_btn)
-	main_vbox.add_child(leave_center)
-
-## 构建锻造内容
-func _build_forge_content(container: VBoxContainer) -> void:
-	var desc := Label.new()
-	desc.text = "消耗金币锻造一件全新的1星法宝"
-	desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	desc.add_theme_font_size_override("font_size", 14)
-	desc.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
-	container.add_child(desc)
-	
-	var tiers_hbox := HBoxContainer.new()
-	tiers_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	tiers_hbox.add_theme_constant_override("separation", 20)
-	container.add_child(tiers_hbox)
-	
-	for tier_key in ["low", "mid", "high"]:
-		var tier_data: Dictionary = FORGE_TIERS[tier_key]
-		var tier_panel := _create_forge_tier_panel(tier_key, tier_data)
-		tiers_hbox.add_child(tier_panel)
-
-## 创建锻造档位面板
-func _create_forge_tier_panel(tier_key: String, tier_data: Dictionary) -> PanelContainer:
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(220, 260)
-	
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.14, 0.18, 0.95)
-	style.set_corner_radius_all(8)
-	style.set_content_margin_all(15)
-	match tier_key:
-		"low": style.border_color = Color.WHITE
-		"mid": style.border_color = Color("0984E3")
-		"high": style.border_color = Color("FDCB6E")
-	style.set_border_width_all(2)
-	panel.add_theme_stylebox_override("panel", style)
-	
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 8)
-	panel.add_child(vbox)
-	
-	var name_label := Label.new()
-	name_label.text = tier_data["name"]
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.add_theme_font_size_override("font_size", 20)
-	match tier_key:
-		"low": name_label.add_theme_color_override("font_color", Color.WHITE)
-		"mid": name_label.add_theme_color_override("font_color", Color("0984E3"))
-		"high": name_label.add_theme_color_override("font_color", Color("FDCB6E"))
-	vbox.add_child(name_label)
-	
-	var cost_label := Label.new()
-	cost_label.text = "💰 %d 金币" % tier_data["cost"]
-	cost_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	cost_label.add_theme_font_size_override("font_size", 14)
-	vbox.add_child(cost_label)
-	
-	var sep := HSeparator.new()
-	vbox.add_child(sep)
-	
-	var probs: Dictionary = tier_data["probs"]
-	var prob_text := "普通: %d%%\n优秀: %d%%\n稀有: %d%%\n传说: %d%%" % [
-		int(probs["common"] * 100),
-		int(probs["uncommon"] * 100),
-		int(probs["rare"] * 100),
-		int(probs["legendary"] * 100),
-	]
-	var prob_label := Label.new()
-	prob_label.text = prob_text
-	prob_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	prob_label.add_theme_font_size_override("font_size", 13)
-	prob_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
-	vbox.add_child(prob_label)
-	
-	var btn_spacer := Control.new()
-	btn_spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	vbox.add_child(btn_spacer)
-	
-	var forge_btn := Button.new()
-	forge_btn.text = "锻造"
-	forge_btn.custom_minimum_size = Vector2(0, 45)
-	forge_btn.add_theme_font_size_override("font_size", 16)
-	forge_btn.disabled = GameManager.current_gold < tier_data["cost"]
-	if forge_btn.disabled:
-		forge_btn.tooltip_text = "金币不足"
-	forge_btn.pressed.connect(func(): _on_forge_pressed(tier_key))
-	vbox.add_child(forge_btn)
-	
-	return panel
-
-## 构建融合内容
-func _build_fuse_content(container: VBoxContainer) -> void:
-	var desc := Label.new()
-	desc.text = "将2件相同星级的相同法宝融合为更高星级（最高3星）"
-	desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	desc.add_theme_font_size_override("font_size", 14)
-	desc.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
-	container.add_child(desc)
-	
-	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(700, 350)
-	container.add_child(scroll)
-	
-	var list := VBoxContainer.new()
-	list.add_theme_constant_override("separation", 8)
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(list)
-	
-	var groups := GameManager.get_fusable_relic_groups()
-	var has_fusable := false
-	
-	for group in groups:
-		if not group.get("can_fuse", false):
-			continue
-		has_fusable = true
-		
-		var relic_id: String = group.get("relic_id", "")
-		var relic_name: String = group.get("relic_name", "???")
-		var star_level: int = group.get("star_level", 1)
-		var count: int = group.get("count", 0)
-		var indices: Array = group.get("indices", [])
-		var new_star: int = star_level + 1
-		
-		var row := _create_relic_fuse_row(relic_id, relic_name, star_level, new_star, count, indices)
-		list.add_child(row)
-	
-	if not has_fusable:
-		var empty_label := Label.new()
-		empty_label.text = "没有可融合的法宝"
-		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		empty_label.add_theme_font_size_override("font_size", 16)
-		empty_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
-		list.add_child(empty_label)
-
-## 创建法宝融合行
-func _create_relic_fuse_row(relic_id: String, relic_name: String, star_level: int, new_star: int, count: int, indices: Array) -> PanelContainer:
-	var panel := PanelContainer.new()
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.15, 0.17, 0.22, 0.9)
-	style.set_corner_radius_all(6)
-	style.set_content_margin_all(10)
-	panel.add_theme_stylebox_override("panel", style)
-	
-	var hbox := HBoxContainer.new()
-	hbox.add_theme_constant_override("separation", 15)
-	panel.add_child(hbox)
-	
-	var info_vbox := VBoxContainer.new()
-	info_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var star_text := _get_star_text(star_level)
-	var new_star_text := _get_star_text(new_star)
-	
-	var name_label := Label.new()
-	name_label.text = "%s %s → %s" % [relic_name, star_text, new_star_text]
-	name_label.add_theme_font_size_override("font_size", 16)
-	name_label.add_theme_color_override("font_color", Color("E67E22"))
-	info_vbox.add_child(name_label)
-	
-	var count_label := Label.new()
-	count_label.text = "持有: %d件  |  可融合: %d次" % [count, count / 2]
-	count_label.add_theme_font_size_override("font_size", 12)
-	count_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
-	info_vbox.add_child(count_label)
-	
-	# 显示升星后效果预览
-	var relic_data := DataManager.get_relic(relic_id)
-	var preview_desc := ""
-	if new_star == 2:
-		preview_desc = relic_data.get("star_2_description", "")
-	elif new_star == 3:
-		preview_desc = relic_data.get("star_3_description", "")
-	if not preview_desc.is_empty():
-		var preview_label := Label.new()
-		preview_label.text = "融合后: " + preview_desc
-		preview_label.add_theme_font_size_override("font_size", 11)
-		preview_label.add_theme_color_override("font_color", Color("A29BFE"))
-		preview_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-		info_vbox.add_child(preview_label)
-	
-	hbox.add_child(info_vbox)
-	
-	var fuse_btn := Button.new()
-	fuse_btn.text = "融合"
-	fuse_btn.custom_minimum_size = Vector2(80, 40)
-	fuse_btn.pressed.connect(func():
-		_execute_relic_fusion(relic_id, star_level, indices)
-	)
-	hbox.add_child(fuse_btn)
-	
-	return panel
-
-## 获取星级文本
-func _get_star_text(star: int) -> String:
-	match star:
-		1: return "★☆☆"
-		2: return "★★☆"
-		3: return "★★★"
-	return "★☆☆"
-
-## 锻造按钮点击
-func _on_forge_pressed(tier_key: String) -> void:
-	var tier_data: Dictionary = FORGE_TIERS[tier_key]
-	var cost: int = tier_data["cost"]
-	
-	if GameManager.current_gold < cost:
-		return
-	
-	GameManager.modify_gold(-cost)
-	
-	# 根据概率决定稀有度
-	var probs: Dictionary = tier_data["probs"]
-	var roll := randf()
-	var rarity: String = "common"
-	var cumulative := 0.0
-	for r in ["legendary", "rare", "uncommon", "common"]:
-		cumulative += probs.get(r, 0.0)
-		if roll < cumulative:
-			rarity = r
-			break
-	
-	# 从对应稀有度的法宝中随机选取
-	var relic := _get_random_relic(rarity)
-	if relic.is_empty():
-		relic = _get_random_relic("common")
-	
-	if not relic.is_empty():
-		var relic_id: String = relic.get("relic_id", "")
-		GameManager.add_relic(relic_id, 1)
-		_show_forge_result(relic, rarity)
-	
+	_setup_panel_styles()
+	_connect_signals()
 	_refresh_ui()
 
-## 获取随机法宝
-func _get_random_relic(rarity: String) -> Dictionary:
-	var all_relics: Array = DataManager.get_all_relics()
-	var candidates: Array = []
-	for r in all_relics:
-		if r.get("rarity", "common") == rarity:
-			candidates.append(r)
-	if candidates.is_empty():
-		return {}
-	return candidates[randi() % candidates.size()]
+## Apply custom StyleBox to popup panels (cannot be done in tscn easily)
+func _setup_panel_styles() -> void:
+	# Enhance popup panel style
+	var enhance_panel: PanelContainer = $EnhancePopup/Panel
+	var enhance_style := StyleBoxFlat.new()
+	enhance_style.bg_color = Color(0.10, 0.08, 0.05, 0.98)
+	enhance_style.border_color = Color("E67E22")
+	enhance_style.set_border_width_all(2)
+	enhance_style.set_corner_radius_all(10)
+	enhance_style.set_content_margin_all(20)
+	enhance_panel.add_theme_stylebox_override("panel", enhance_style)
 
-## 显示锻造结果
-func _show_forge_result(relic: Dictionary, rarity: String) -> void:
-	if _result_popup != null:
-		_result_popup.queue_free()
-	
-	_result_popup = Control.new()
-	_result_popup.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_result_popup.z_index = 50
-	
-	var overlay := ColorRect.new()
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	overlay.color = Color(0, 0, 0, 0.5)
-	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-	_result_popup.add_child(overlay)
-	
-	var panel := PanelContainer.new()
-	panel.set_anchors_preset(Control.PRESET_CENTER)
-	panel.custom_minimum_size = Vector2(350, 200)
-	panel.position = Vector2(-175, -100)
-	
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.14, 0.18, 0.95)
-	style.set_corner_radius_all(8)
-	style.set_content_margin_all(20)
-	match rarity:
-		"common": style.border_color = Color.WHITE
-		"uncommon": style.border_color = Color("00B894")
-		"rare": style.border_color = Color("0984E3")
-		"legendary": style.border_color = Color("FDCB6E")
-	style.set_border_width_all(2)
-	panel.add_theme_stylebox_override("panel", style)
-	_result_popup.add_child(panel)
-	
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 12)
-	panel.add_child(vbox)
-	
-	var result_title := Label.new()
-	result_title.text = "⚒️ 锻造成功！"
-	result_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	result_title.add_theme_font_size_override("font_size", 22)
-	result_title.add_theme_color_override("font_color", Color("E67E22"))
-	vbox.add_child(result_title)
-	
-	var relic_name := Label.new()
-	var rarity_text := ""
-	match rarity:
-		"common": rarity_text = "[普通]"
-		"uncommon": rarity_text = "[优秀]"
-		"rare": rarity_text = "[稀有]"
-		"legendary": rarity_text = "[传说]"
-	relic_name.text = "%s %s ★☆☆" % [rarity_text, relic.get("relic_name", "???")]
-	relic_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	relic_name.add_theme_font_size_override("font_size", 18)
-	match rarity:
-		"uncommon": relic_name.add_theme_color_override("font_color", Color("00B894"))
-		"rare": relic_name.add_theme_color_override("font_color", Color("0984E3"))
-		"legendary": relic_name.add_theme_color_override("font_color", Color("FDCB6E"))
-	vbox.add_child(relic_name)
-	
-	var relic_desc := Label.new()
-	relic_desc.text = relic.get("description", "")
-	relic_desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	relic_desc.add_theme_font_size_override("font_size", 14)
-	relic_desc.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
-	relic_desc.autowrap_mode = TextServer.AUTOWRAP_WORD
-	vbox.add_child(relic_desc)
-	
-	# 显示法宝效果属性
-	var effects: Array = relic.get("effects", [])
-	if not effects.is_empty():
-		var effect_text := _build_relic_effect_text(effects)
-		var effect_label := Label.new()
-		effect_label.text = "效果: " + effect_text
-		effect_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		effect_label.add_theme_font_size_override("font_size", 13)
-		effect_label.add_theme_color_override("font_color", Color("00B894"))
-		effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-		vbox.add_child(effect_label)
-	
-	# 显示触发条件
-	var trigger: String = relic.get("trigger_type", "")
-	if not trigger.is_empty():
-		var trigger_name := ""
-		match trigger:
-			"on_battle_start": trigger_name = "战斗开始时"
-			"on_turn_start": trigger_name = "回合开始时"
-			"on_attack": trigger_name = "攻击时"
-			"on_fatal_damage": trigger_name = "受到致命伤害时"
-			"passive": trigger_name = "被动生效"
-			_: trigger_name = trigger
-		var trigger_label := Label.new()
-		trigger_label.text = "📋 触发: " + trigger_name
-		trigger_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		trigger_label.add_theme_font_size_override("font_size", 12)
-		trigger_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.7))
-		vbox.add_child(trigger_label)
-	
-	var ok_btn := Button.new()
-	ok_btn.text = "确定"
-	ok_btn.custom_minimum_size = Vector2(100, 35)
-	ok_btn.pressed.connect(func():
-		_result_popup.queue_free()
-		_result_popup = null
-	)
-	var btn_center := CenterContainer.new()
-	btn_center.add_child(ok_btn)
-	vbox.add_child(btn_center)
-	
-	add_child(_result_popup)
+## Connect all button signals
+func _connect_signals() -> void:
+	_leave_button.pressed.connect(_on_leave_pressed)
+	_enhance_button.pressed.connect(_on_enhance_pressed)
+	_cancel_button.pressed.connect(_close_enhance_popup)
+	_enhance_overlay.gui_input.connect(_on_enhance_overlay_input)
 
-## 执行法宝融合
-func _execute_relic_fusion(relic_id: String, star_level: int, indices: Array) -> void:
-	var match_indices: Array = []
-	for idx in indices:
-		if idx < GameManager.current_relics.size():
-			var entry = GameManager.current_relics[idx]
-			var rid: String = entry.get("relic_id", "") if entry is Dictionary else str(entry)
-			var star: int = entry.get("star_level", 1) if entry is Dictionary else 1
-			if rid == relic_id and star == star_level:
-				match_indices.append(idx)
-				if match_indices.size() >= 2:
-					break
-	
-	if match_indices.size() < 2:
-		return
-	
-	var result := GameManager.fuse_relics(match_indices[0], match_indices[1])
-	if not result.is_empty():
-		var new_star: int = result.get("star_level", 2)
-		var relic_data := DataManager.get_relic(relic_id)
-		_show_fuse_result(relic_data, relic_id, new_star)
-		_refresh_ui()
-
-## 刷新界面
+## Refresh the entire UI (gold label + relic grid)
 func _refresh_ui() -> void:
-	for child in get_children():
+	_gold_label.text = "💰 金币: %d" % GameManager.current_gold
+
+	# Clear old relic cards
+	for child in _relic_grid.get_children():
 		child.queue_free()
-	_build_ui()
 
-## 离开
-func _on_leave_pressed() -> void:
-	SceneTransition.change_scene("res://scenes/map/MapScene.tscn")
-
-## 显示融合结果弹窗
-func _show_fuse_result(relic: Dictionary, relic_id: String, new_star: int) -> void:
-	if _result_popup != null:
-		_result_popup.queue_free()
-	
-	_result_popup = Control.new()
-	_result_popup.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_result_popup.z_index = 50
-	
-	var overlay := ColorRect.new()
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	overlay.color = Color(0, 0, 0, 0.5)
-	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-	_result_popup.add_child(overlay)
-	
-	var panel := PanelContainer.new()
-	panel.set_anchors_preset(Control.PRESET_CENTER)
-	panel.custom_minimum_size = Vector2(380, 230)
-	panel.position = Vector2(-190, -115)
-	
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.14, 0.18, 0.95)
-	style.set_corner_radius_all(8)
-	style.set_content_margin_all(20)
-	style.border_color = Color("A29BFE")
-	style.set_border_width_all(2)
-	panel.add_theme_stylebox_override("panel", style)
-	_result_popup.add_child(panel)
-	
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 10)
-	panel.add_child(vbox)
-	
-	var result_title := Label.new()
-	result_title.text = "🔮 融合成功！"
-	result_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	result_title.add_theme_font_size_override("font_size", 22)
-	result_title.add_theme_color_override("font_color", Color("A29BFE"))
-	vbox.add_child(result_title)
-	
-	var star_text := _get_star_text(new_star)
-	var name_label := Label.new()
-	name_label.text = "%s %s" % [relic.get("relic_name", "???"), star_text]
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.add_theme_font_size_override("font_size", 18)
-	match new_star:
-		3: name_label.add_theme_color_override("font_color", Color("FF6B6B"))
-		2: name_label.add_theme_color_override("font_color", Color("74B9FF"))
-		_: name_label.add_theme_color_override("font_color", Color("E67E22"))
-	vbox.add_child(name_label)
-	
-	# 显示升星后的描述
-	var desc_text := ""
-	if new_star == 2:
-		desc_text = relic.get("star_2_description", relic.get("description", ""))
-	elif new_star == 3:
-		desc_text = relic.get("star_3_description", relic.get("description", ""))
+	if GameManager.current_relics.is_empty():
+		_empty_hint.visible = true
 	else:
-		desc_text = relic.get("description", "")
-	
+		_empty_hint.visible = false
+		for i in range(GameManager.current_relics.size()):
+			var entry: Dictionary = GameManager.current_relics[i]
+			var relic_id: String = entry.get("relic_id", "")
+			var enhance_level: int = entry.get("enhance_level", 0)
+			var relic_data: Dictionary = DataManager.get_relic(relic_id)
+			if relic_data.is_empty():
+				continue
+			var card := _create_relic_card(i, relic_data, enhance_level)
+			_relic_grid.add_child(card)
+
+## Create a relic card button for the grid list
+func _create_relic_card(index: int, relic_data: Dictionary, enhance_level: int) -> Control:
+	var btn := Button.new()
+	btn.custom_minimum_size = Vector2(150	, 150)
+	btn.flat = false
+	btn.focus_mode = Control.FOCUS_NONE
+
+	var rarity: String = relic_data.get("rarity", "common")
+	var rarity_color: Color = RelicTooltip.get_rarity_color(rarity)
+	var relic_name: String = relic_data.get("relic_name", "???")
+
+	# Custom button styles
+	var normal_style := StyleBoxFlat.new()
+	normal_style.bg_color = Color(0.15, 0.17, 0.22, 0.9)
+	normal_style.border_color = rarity_color.darkened(0.3)
+	normal_style.set_border_width_all(2)
+	normal_style.set_corner_radius_all(6)
+	normal_style.set_content_margin_all(8)
+	btn.add_theme_stylebox_override("normal", normal_style)
+
+	var hover_style := normal_style.duplicate() as StyleBoxFlat
+	hover_style.bg_color = Color(0.20, 0.22, 0.28, 0.95)
+	hover_style.border_color = rarity_color
+	btn.add_theme_stylebox_override("hover", hover_style)
+
+	var pressed_style := normal_style.duplicate() as StyleBoxFlat
+	pressed_style.bg_color = Color(0.12, 0.14, 0.18, 0.95)
+	btn.add_theme_stylebox_override("pressed", pressed_style)
+
+	# Button content
+	var vbox := VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vbox.offset_left = 10
+	vbox.offset_top = 6
+	vbox.offset_right = -10
+	vbox.offset_bottom = -6
+	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.add_theme_constant_override("separation", 2)
+	btn.add_child(vbox)
+
+	# Name + enhance level
+	var name_label := Label.new()
+	var prefix := "[+%d] " % enhance_level if enhance_level > 0 else ""
+	name_label.text = "%s%s" % [prefix, relic_name]
+	name_label.add_theme_font_size_override("font_size", 15)
+	name_label.add_theme_color_override("font_color", rarity_color)
+	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.add_child(name_label)
+
+	# Short description
 	var desc_label := Label.new()
-	desc_label.text = desc_text
-	desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	desc_label.add_theme_font_size_override("font_size", 14)
+	desc_label.text = RelicTooltip.get_enhanced_description(relic_data, enhance_level)
+	desc_label.add_theme_font_size_override("font_size", 10)
 	desc_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
 	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(desc_label)
-	
-	var ok_btn := Button.new()
-	ok_btn.text = "确定"
-	ok_btn.custom_minimum_size = Vector2(100, 35)
-	ok_btn.pressed.connect(func():
-		_result_popup.queue_free()
-		_result_popup = null
-	)
-	var btn_center := CenterContainer.new()
-	btn_center.add_child(ok_btn)
-	vbox.add_child(btn_center)
-	
-	add_child(_result_popup)
 
-## 构建法宝效果文本
-func _build_relic_effect_text(effects: Array) -> String:
-	var parts: Array[String] = []
-	for effect in effects:
-		var etype: String = effect.get("type", "")
-		var value: int = effect.get("value", 0)
-		match etype:
-			"armor": parts.append("获得%d护甲" % value)
-			"heal": parts.append("恢复%d生命" % value)
-			"damage": parts.append("造成%d伤害" % value)
-			"draw": parts.append("抽%d张牌" % value)
-			"energy": parts.append("获得%d能量" % value)
-			"strength": parts.append("力量+%d" % value)
-			"max_hp": parts.append("最大生命+%d" % value)
-			"revive": parts.append("复活并恢复%d%%生命" % value)
-			_:
-				if value != 0:
-					parts.append("%s: %d" % [etype, value])
-	return ", ".join(parts) if not parts.is_empty() else "无"
+	var idx := index
+	btn.pressed.connect(func(): _on_relic_clicked(idx))
+	return btn
+
+## Relic card clicked - open enhance popup
+func _on_relic_clicked(index: int) -> void:
+	if index < 0 or index >= GameManager.current_relics.size():
+		return
+	_show_enhance_popup(index)
+
+## Show the enhance comparison popup
+func _show_enhance_popup(index: int) -> void:
+	_current_enhance_index = index
+
+	var entry: Dictionary = GameManager.current_relics[index]
+	var relic_id: String = entry.get("relic_id", "")
+	var enhance_level: int = entry.get("enhance_level", 0)
+	var relic_data: Dictionary = DataManager.get_relic(relic_id)
+	if relic_data.is_empty():
+		return
+
+	# Clear old comparison content
+	for child in _compare_hbox.get_children():
+		child.queue_free()
+
+	# Build comparison: current | arrow | enhanced
+	var old_section := _build_compare_section("当前", relic_data, enhance_level, Color(0.8, 0.8, 0.8))
+	_compare_hbox.add_child(old_section)
+
+	# Arrow
+	var arrow_center := CenterContainer.new()
+	arrow_center.custom_minimum_size = Vector2(40, 0)
+	var arrow_label := Label.new()
+	arrow_label.text = "➜"
+	arrow_label.add_theme_font_size_override("font_size", 32)
+	arrow_label.add_theme_color_override("font_color", Color("E67E22"))
+	arrow_center.add_child(arrow_label)
+	_compare_hbox.add_child(arrow_center)
+
+	# Enhanced version
+	var new_section := _build_compare_section("强化后", relic_data, enhance_level + 1, Color("00B894"))
+	_compare_hbox.add_child(new_section)
+
+	# Calculate dynamic cost and rate
+	var rarity: String = relic_data.get("rarity", "common")
+	var cost := _get_enhance_cost(enhance_level, rarity)
+	var rate := _get_success_rate(enhance_level, rarity)
+
+	# Update cost label and enhance button
+	_cost_label.text = "花费: 💰%d    成功率: %d%%" % [cost, int(rate * 100)]
+	_enhance_button.text = "⚒️ 强化 💰%d" % cost
+	_enhance_button.disabled = GameManager.current_gold < cost
+	if _enhance_button.disabled:
+		_enhance_button.tooltip_text = "金币不足"
+	else:
+		_enhance_button.tooltip_text = ""
+
+	_enhance_popup.visible = true
+
+## Build one side of the comparison display (uses RelicTooltip style)
+func _build_compare_section(section_title: String, relic_data: Dictionary, enhance_level: int, title_color: Color) -> Control:
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 6)
+
+	# Section title
+	var label := Label.new()
+	label.text = section_title
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 14)
+	label.add_theme_color_override("font_color", title_color)
+	vbox.add_child(label)
+
+	# Use unified tooltip builder
+	var tooltip_panel := RelicTooltip.build_tooltip(relic_data, enhance_level)
+	vbox.add_child(tooltip_panel)
+
+	return vbox
+
+## Close enhance popup
+func _close_enhance_popup() -> void:
+	_enhance_popup.visible = false
+
+## Enhance overlay click - close popup
+func _on_enhance_overlay_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_close_enhance_popup()
+
+## Enhance button pressed
+func _on_enhance_pressed() -> void:
+	if _current_enhance_index < 0:
+		return
+
+	var entry: Dictionary = GameManager.current_relics[_current_enhance_index]
+	var relic_id: String = entry.get("relic_id", "")
+	var enhance_level: int = entry.get("enhance_level", 0)
+	var relic_data: Dictionary = DataManager.get_relic(relic_id)
+	var rarity: String = relic_data.get("rarity", "common")
+
+	var cost := _get_enhance_cost(enhance_level, rarity)
+	var rate := _get_success_rate(enhance_level, rarity)
+
+	if GameManager.current_gold < cost:
+		return
+
+	GameManager.modify_gold(-cost)
+
+	var success := GameManager.enhance_relic(_current_enhance_index, rate)
+	# Re-read entry after enhancement (enhance_level may have changed)
+	entry = GameManager.current_relics[_current_enhance_index]
+	enhance_level = entry.get("enhance_level", 0)
+
+	# Track forge count for achievements
+	SaveManager.increment_stat("relics_forged")
+	AchievementManager.check_forge_achievement()
+
+	# Show floating result hint on the compare popup (do NOT close it)
+	_show_floating_result(success, relic_data, enhance_level)
+
+	# If success, refresh the compare popup content to reflect new level
+	if success:
+		_refresh_compare_popup()
+
+	# Recalculate cost/rate after enhancement for button state
+	var new_cost := _get_enhance_cost(enhance_level, rarity)
+	var new_rate := _get_success_rate(enhance_level, rarity)
+	_cost_label.text = "花费: 💰%d    成功率: %d%%" % [new_cost, int(new_rate * 100)]
+	_enhance_button.text = "⚒️ 强化 💰%d" % new_cost
+	_enhance_button.disabled = GameManager.current_gold < new_cost
+	if _enhance_button.disabled:
+		_enhance_button.tooltip_text = "金币不足"
+	else:
+		_enhance_button.tooltip_text = ""
+
+	# Refresh background relic grid and gold label
+	_refresh_ui()
+
+## Refresh the compare popup content with current enhance data
+func _refresh_compare_popup() -> void:
+	if _current_enhance_index < 0 or _current_enhance_index >= GameManager.current_relics.size():
+		return
+	var entry: Dictionary = GameManager.current_relics[_current_enhance_index]
+	var relic_id: String = entry.get("relic_id", "")
+	var enhance_level: int = entry.get("enhance_level", 0)
+	var relic_data: Dictionary = DataManager.get_relic(relic_id)
+	if relic_data.is_empty():
+		return
+
+	# Clear old comparison content
+	for child in _compare_hbox.get_children():
+		child.queue_free()
+
+	# Rebuild comparison: current | arrow | enhanced
+	var old_section := _build_compare_section("当前", relic_data, enhance_level, Color(0.8, 0.8, 0.8))
+	_compare_hbox.add_child(old_section)
+
+	var arrow_center := CenterContainer.new()
+	arrow_center.custom_minimum_size = Vector2(40, 0)
+	var arrow_label := Label.new()
+	arrow_label.text = "➜"
+	arrow_label.add_theme_font_size_override("font_size", 32)
+	arrow_label.add_theme_color_override("font_color", Color("E67E22"))
+	arrow_center.add_child(arrow_label)
+	_compare_hbox.add_child(arrow_center)
+
+	var new_section := _build_compare_section("强化后", relic_data, enhance_level + 1, Color("00B894"))
+	_compare_hbox.add_child(new_section)
+
+	# Update cost label with dynamic values
+	var rarity: String = relic_data.get("rarity", "common")
+	var cost := _get_enhance_cost(enhance_level, rarity)
+	var rate := _get_success_rate(enhance_level, rarity)
+	_cost_label.text = "花费: 💰%d    成功率: %d%%" % [cost, int(rate * 100)]
+	_enhance_button.text = "⚒️ 强化 💰%d" % cost
+
+## Show a floating result hint label on the compare popup
+func _show_floating_result(success: bool, relic_data: Dictionary, enhance_level: int) -> void:
+	var hint_label := Label.new()
+	if success:
+		hint_label.text = "✨ 强化成功！%s +%d" % [relic_data.get("relic_name", ""), enhance_level]
+		hint_label.add_theme_color_override("font_color", Color("FDCB6E"))
+	else:
+		hint_label.text = "❌ 强化失败..."
+		hint_label.add_theme_color_override("font_color", Color("D63031"))
+	hint_label.add_theme_font_size_override("font_size", 22)
+	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	# Add to scene root with top z_index so it renders above everything
+	hint_label.z_index = 200
+	hint_label.top_level = true
+	add_child(hint_label)
+
+	# Position at the center of the enhance panel
+	var enhance_panel: PanelContainer = $EnhancePopup/Panel
+	await get_tree().process_frame
+	var panel_center := enhance_panel.global_position + enhance_panel.size * 0.5
+	hint_label.global_position = Vector2(panel_center.x - hint_label.size.x * 0.5, panel_center.y - hint_label.size.y * 0.5)
+
+	# Animate: float up and fade out
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(hint_label, "global_position:y", hint_label.global_position.y - 50, 1.5).set_ease(Tween.EASE_OUT)
+	tween.tween_property(hint_label, "modulate:a", 0.0, 1.5).set_delay(0.6)
+	tween.chain().tween_callback(hint_label.queue_free)
+
+## Leave forge
+func _on_leave_pressed() -> void:
+	SceneTransition.change_scene("res://scenes/map/MapScene.tscn")

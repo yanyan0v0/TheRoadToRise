@@ -6,35 +6,47 @@
       "rarity": "common",
       "trigger_type": "on_battle_start",
       "description": "战斗开始时，若法力≥3，抽1张牌。",
-      "effects": [{"type": "draw", "value": 1, "condition": "mana_gte_3"}],
-      "star_2_effects": [{"type": "draw", "value": 2, "condition": "mana_gte_3"}],
-      "star_2_description": "战斗开始时，若法力≥3，抽2张牌。",
-      "star_3_effects": [{"type": "draw", "value": 2, "condition": "mana_gte_2"}],
-      "star_3_description": "战斗开始时，若法力≥2，抽2张牌。"
+      "source": "观音菩萨",
+      "effects": [
+        {
+          "type": "draw",
+          "value": 1,
+          "condition": "mana_gte_3"
+        }
+      ],
+      "sell_price": 15
     },
     {
       "relic_id": "ba_jiao_shan",
       "relic_name": "芭蕉扇",
       "rarity": "uncommon",
       "trigger_type": "on_attack",
-      "description": "攻击时有20%概率造成双倍伤害。",
-      "effects": [{"type": "double_damage", "chance": 0.2}],
-      "star_2_effects": [{"type": "double_damage", "chance": 0.3}],
-      "star_2_description": "攻击时有30%概率造成双倍伤害。",
-      "star_3_effects": [{"type": "double_damage", "chance": 0.4}],
-      "star_3_description": "攻击时有40%概率造成双倍伤害。"
+      "description": "攻击时有25%概率掀起狂风，对所有敌人造成本次攻击50%的伤害。",
+      "effects": [
+        {
+          "type": "aoe_splash",
+          "chance": 0.25,
+          "damage_percent": 0.5
+        }
+      ],
+      "source": "铁扇公主",
+      "sell_price": 30
     },
     {
       "relic_id": "guan_yin_yu_ping",
       "relic_name": "观音玉瓶",
       "rarity": "rare",
       "trigger_type": "on_fatal_damage",
-      "description": "首次受到致命伤害时，保留1点生命。每场战斗限一次。",
-      "effects": [{"type": "prevent_death", "value": 1, "once_per_battle": true}],
-      "star_2_effects": [{"type": "prevent_death", "value": 1, "once_per_battle": true}, {"type": "heal", "value": 10}],
-      "star_2_description": "首次受到致命伤害时，保留1点生命并恢复10点生命。每场战斗限一次。",
-      "star_3_effects": [{"type": "prevent_death", "value": 1, "once_per_battle": true}, {"type": "heal", "value": 20}, {"type": "armor", "value": 10}],
-      "star_3_description": "首次受到致命伤害时，保留1点生命，恢复20点生命并获得10点护甲。每场战斗限一次。"
+      "description": "受到致命伤害时，保留1点生命。触发后法宝消失。",
+      "effects": [
+        {
+          "type": "prevent_death",
+          "value": 1,
+          "consume_on_trigger": true
+        }
+      ],
+      "source": "观音菩萨",
+      "sell_price": 50
     },
     {
       "relic_id": "feng_huo_lun",
@@ -42,11 +54,14 @@
       "rarity": "rare",
       "trigger_type": "on_attack",
       "description": "每次攻击有20%概率多触发一次。",
-      "effects": [{"type": "extra_attack", "chance": 0.2}],
-      "star_2_effects": [{"type": "extra_attack", "chance": 0.3}],
-      "star_2_description": "每次攻击有30%概率多触发一次。",
-      "star_3_effects": [{"type": "extra_attack", "chance": 0.4}],
-      "star_3_description": "每次攻击有40%概率多触发一次。"
+      "effects": [
+        {
+          "type": "extra_attack",
+          "chance": 0.2
+        }
+      ],
+      "source": "哪吒",
+      "sell_price": 50
     },
     {
       "relic_id": "zhen_yao_ta",
@@ -55,19 +70,19 @@
       "trigger_type": "on_battle_start",
       "description": "战斗开始获得10点护甲，每击败一个敌人+3。",
       "effects": [
-        {"type": "armor", "value": 10, "trigger": "battle_start"},
-        {"type": "armor", "value": 3, "trigger": "on_kill"}
+        {
+          "type": "armor",
+          "value": 10,
+          "trigger": "battle_start"
+        },
+        {
+          "type": "armor",
+          "value": 3,
+          "trigger": "on_kill"
+        }
       ],
-      "star_2_effects": [
-        {"type": "armor", "value": 15, "trigger": "battle_start"},
-        {"type": "armor", "value": 5, "trigger": "on_kill"}
-      ],
-      "star_2_description": "战斗开始获得15点护甲，每击败一个敌人+5。",
-      "star_3_effects": [
-        {"type": "armor", "value": 20, "trigger": "battle_start"},
-        {"type": "armor", "value": 8, "trigger": "on_kill"}
-      ],
-      "star_3_description": "战斗开始获得20点护甲，每击败一个敌人+8。"
+      "source": "托塔天王李靖",
+      "sell_price": 80
     },
     {
       "relic_id": "ru_yi_huan",
@@ -75,11 +90,14 @@
       "rarity": "common",
       "trigger_type": "on_turn_start",
       "description": "每回合开始时获得1点护甲。",
-      "effects": [{"type": "armor", "value": 1}],
-      "star_2_effects": [{"type": "armor", "value": 2}],
-      "star_2_description": "每回合开始时获得2点护甲。",
-      "star_3_effects": [{"type": "armor", "value": 3}],
-      "star_3_description": "每回合开始时获得3点护甲。"
+      "effects": [
+        {
+          "type": "armor",
+          "value": 1
+        }
+      ],
+      "source": "太上老君",
+      "sell_price": 15
     },
     {
       "relic_id": "bi_huo_zhao",
@@ -87,23 +105,14 @@
       "rarity": "uncommon",
       "trigger_type": "passive",
       "description": "灼烧伤害减半。",
-      "effects": [{"type": "burn_reduction", "value": 0.5}],
-      "star_2_effects": [{"type": "burn_reduction", "value": 0.7}],
-      "star_2_description": "灼烧伤害减少70%。",
-      "star_3_effects": [{"type": "burn_reduction", "value": 1.0}],
-      "star_3_description": "免疫灼烧伤害。"
-    },
-    {
-      "relic_id": "ding_hai_shen_zhen",
-      "relic_name": "定海神针",
-      "rarity": "legendary",
-      "trigger_type": "on_turn_start",
-      "description": "每回合开始时获得1点力量。",
-      "effects": [{"type": "strength", "value": 1}],
-      "star_2_effects": [{"type": "strength", "value": 1}, {"type": "armor", "value": 2}],
-      "star_2_description": "每回合开始时获得1点力量和2点护甲。",
-      "star_3_effects": [{"type": "strength", "value": 2}, {"type": "armor", "value": 3}],
-      "star_3_description": "每回合开始时获得2点力量和3点护甲。"
+      "effects": [
+        {
+          "type": "burn_reduction",
+          "value": 0.5
+        }
+      ],
+      "source": "太上老君",
+      "sell_price": 30
     },
     {
       "relic_id": "jin_lan_jia_sha",
@@ -111,11 +120,15 @@
       "rarity": "rare",
       "trigger_type": "on_battle_start",
       "description": "战斗开始时获得3层治愈。",
-      "effects": [{"type": "status", "status_type": "regeneration", "value": 3}],
-      "star_2_effects": [{"type": "status", "status_type": "regeneration", "value": 5}],
-      "star_2_description": "战斗开始时获得5层治愈。",
-      "star_3_effects": [{"type": "status", "status_type": "regeneration", "value": 5}, {"type": "armor", "value": 5}],
-      "star_3_description": "战斗开始时获得5层治愈和5点护甲。"
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "regeneration",
+          "value": 3
+        }
+      ],
+      "source": "唐僧（如来佛祖所赐）",
+      "sell_price": 50
     },
     {
       "relic_id": "zi_jin_bo",
@@ -123,11 +136,14 @@
       "rarity": "uncommon",
       "trigger_type": "on_battle_start",
       "description": "战斗开始时获得1点额外法力。",
-      "effects": [{"type": "mana", "value": 1}],
-      "star_2_effects": [{"type": "mana", "value": 1}, {"type": "draw", "value": 1}],
-      "star_2_description": "战斗开始时获得1点额外法力和抽1张牌。",
-      "star_3_effects": [{"type": "mana", "value": 2}, {"type": "draw", "value": 1}],
-      "star_3_description": "战斗开始时获得2点额外法力和抽1张牌。"
+      "effects": [
+        {
+          "type": "mana",
+          "value": 1
+        }
+      ],
+      "source": "唐僧（如来佛祖所赐）",
+      "sell_price": 30
     },
     {
       "relic_id": "lian_dan_ping",
@@ -135,11 +151,996 @@
       "rarity": "rare",
       "trigger_type": "passive",
       "description": "丹药携带上限+3（从3提升至6）。",
-      "effects": [{"type": "consumable_capacity", "value": 3}],
-      "star_2_effects": [{"type": "consumable_capacity", "value": 3}, {"type": "pill_quality_bonus", "value": 0.1}],
-      "star_2_description": "丹药携带上限+3，炼丹时稀有品质概率+10%。",
-      "star_3_effects": [{"type": "consumable_capacity", "value": 3}, {"type": "pill_quality_bonus", "value": 0.2}],
-      "star_3_description": "丹药携带上限+3，炼丹时稀有品质概率+20%。"
+      "effects": [
+        {
+          "type": "consumable_capacity",
+          "value": 3
+        }
+      ],
+      "source": "太上老君",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "hun_tian_ling",
+      "relic_name": "混天绫",
+      "rarity": "uncommon",
+      "trigger_type": "on_turn_start",
+      "description": "每回合开始时有25%概率使一个随机敌人眩晕1回合。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "stun",
+          "value": 1,
+          "target": "random_enemy",
+          "chance": 0.25
+        }
+      ],
+      "source": "哪吒",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "tian_gang_fu",
+      "relic_name": "天罡符",
+      "rarity": "common",
+      "trigger_type": "on_card_play",
+      "description": "每打出1张牌，获得1点护甲。",
+      "effects": [
+        {
+          "type": "armor",
+          "value": 1,
+          "trigger_count": 3
+        }
+      ],
+      "source": "天庭",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "long_lin_jia",
+      "relic_name": "龙鳞甲",
+      "rarity": "rare",
+      "trigger_type": "passive",
+      "description": "受到伤害超过10点时，减少3点伤害。",
+      "effects": [
+        {
+          "type": "damage_reduction",
+          "value": 3,
+          "threshold": 10
+        }
+      ],
+      "source": "东海龙王",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "yao_wang_ding",
+      "relic_name": "药王鼎",
+      "rarity": "uncommon",
+      "trigger_type": "passive",
+      "description": "治疗效果提升30%。",
+      "effects": [
+        {
+          "type": "heal_bonus",
+          "value": 0.3
+        }
+      ],
+      "source": "药王孙思邈",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "po_mo_jian",
+      "relic_name": "破魔简",
+      "rarity": "common",
+      "trigger_type": "on_attack",
+      "description": "攻击时有15%概率移除敌人1层增益。",
+      "effects": [
+        {
+          "type": "dispel_buff",
+          "value": 1,
+          "chance": 0.15
+        }
+      ],
+      "source": "天庭",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "tong_tian_jue",
+      "relic_name": "通天诀",
+      "rarity": "rare",
+      "trigger_type": "on_turn_end",
+      "description": "回合结束时，若手牌为0，抽2张牌。",
+      "effects": [
+        {
+          "type": "draw",
+          "value": 2,
+          "condition": "empty_hand"
+        }
+      ],
+      "source": "菩提祖师",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "jin_gu_bang",
+      "relic_name": "如意金箍棒",
+      "rarity": "legendary",
+      "trigger_type": "on_attack",
+      "character_exclusive": "sun_wukong",
+      "description": "每次攻击有20%概率增加1点力量。",
+      "effects": [
+        {
+          "type": "gain_strength",
+          "chance": 0.2,
+          "value": 1
+        }
+      ],
+      "source": "孙悟空（东海龙宫定海神针）",
+      "sell_price": 80
+    },
+    {
+      "relic_id": "jiu_chi_ding_pa",
+      "relic_name": "九齿钉耙",
+      "rarity": "rare",
+      "trigger_type": "on_battle_start",
+      "character_exclusive": "zhu_bajie",
+      "description": "战斗开始时获得3点体力。",
+      "effects": [
+        {
+          "type": "stamina",
+          "value": 3
+        }
+      ],
+      "source": "猪八戒（太上老君锻造）",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "xiang_mo_zhang",
+      "relic_name": "降魔宝杖",
+      "rarity": "legendary",
+      "trigger_type": "on_turn_start",
+      "character_exclusive": "sha_wujing",
+      "description": "每一名敌人，回合开始时额外抽取卡牌数+1。",
+      "effects": [
+        {
+          "type": "draw_per_enemy",
+          "value": 1
+        }
+      ],
+      "source": "沙悟净（月宫宝树所制）",
+      "sell_price": 80
+    },
+    {
+      "relic_id": "jin_chan_she_li",
+      "relic_name": "金蝉舍利",
+      "rarity": "legendary",
+      "trigger_type": "on_turn_start",
+      "character_exclusive": "tang_seng",
+      "description": "每回合开始时，白龙马恢复1点生命。",
+      "effects": [
+        {
+          "type": "bailongma_heal",
+          "value": 1
+        }
+      ],
+      "source": "唐僧（金蝉子转世）",
+      "sell_price": 80
+    },
+    {
+      "relic_id": "zhen_huang_dao",
+      "relic_name": "镇荒刀",
+      "rarity": "common",
+      "trigger_type": "on_attack",
+      "description": "混世魔王的武器，攻击时有15%概率造成额外3点伤害。",
+      "effects": [
+        {
+          "type": "bonus_damage",
+          "chance": 0.15,
+          "value": 3
+        }
+      ],
+      "source": "混世魔王",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "kai_shan_dao",
+      "relic_name": "开山刀",
+      "rarity": "common",
+      "trigger_type": "on_attack",
+      "description": "寅将军的武器，攻击时有20%概率无视2点护甲。",
+      "effects": [
+        {
+          "type": "armor_pierce",
+          "chance": 0.2,
+          "value": 2
+        }
+      ],
+      "source": "寅将军",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "lie_shan_bang",
+      "relic_name": "裂山棒",
+      "rarity": "common",
+      "trigger_type": "on_attack",
+      "description": "熊山君的武器，攻击时有15%概率使敌人减少1点护甲。",
+      "effects": [
+        {
+          "type": "reduce_armor",
+          "chance": 0.15,
+          "value": 1
+        }
+      ],
+      "source": "熊山君",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "han_shan_fu",
+      "relic_name": "撼山斧",
+      "rarity": "common",
+      "trigger_type": "on_attack",
+      "description": "特处士的武器，攻击时有10%概率造成双倍伤害。",
+      "effects": [
+        {
+          "type": "critical_hit",
+          "chance": 0.1
+        }
+      ],
+      "source": "特处士",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "hei_ying_qiang",
+      "relic_name": "黑樱枪",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "黑风怪的武器，攻击时有20%概率偷取敌人2点护甲。",
+      "effects": [
+        {
+          "type": "steal_armor",
+          "chance": 0.2,
+          "value": 2
+        }
+      ],
+      "source": "黑风怪",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "zui_hua_shan",
+      "relic_name": "醉花扇",
+      "rarity": "common",
+      "trigger_type": "on_attack",
+      "description": "白衣秀士的武器，攻击时有15%概率施加1层灼烧。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "burn",
+          "value": 1,
+          "chance": 0.15
+        }
+      ],
+      "source": "白衣秀士",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "shuang_tou_lang_ya_bang",
+      "relic_name": "双头狼牙棒",
+      "rarity": "common",
+      "trigger_type": "on_attack",
+      "description": "凌虚子的武器，攻击时有15%概率多造成一次2点伤害。",
+      "effects": [
+        {
+          "type": "extra_hit",
+          "chance": 0.15,
+          "value": 2
+        }
+      ],
+      "source": "凌虚子",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "bai_gu_ming_zhang",
+      "relic_name": "白骨冥杖",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "白骨精的武器，攻击时有20%概率施加1层虚弱。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "weaken",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "白骨精",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "san_gu_gang_cha",
+      "relic_name": "三股钢叉",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "黄风怪的武器，攻击时有20%概率施加1层眩晕。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "stun",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "黄风怪",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "xuan_tie_dao",
+      "relic_name": "玄铁刀",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "黄袍怪的武器，攻击时有20%概率造成额外5点伤害。",
+      "effects": [
+        {
+          "type": "bonus_damage",
+          "chance": 0.2,
+          "value": 5
+        }
+      ],
+      "source": "黄袍怪",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "qi_xing_bao_jian",
+      "relic_name": "七星宝剑",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "银角大王的武器，攻击时有15%概率造成额外4点伤害并施加1层封印。",
+      "effects": [
+        {
+          "type": "bonus_damage",
+          "chance": 0.15,
+          "value": 4
+        },
+        {
+          "type": "status",
+          "status_type": "seal",
+          "value": 1,
+          "chance": 0.15
+        }
+      ],
+      "source": "银角大王",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "yang_zhi_yu_jing_ping",
+      "relic_name": "羊脂玉净瓶",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "银角大王的法宝，攻击时有15%概率施加2层封印。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "seal",
+          "value": 2,
+          "chance": 0.15
+        }
+      ],
+      "source": "银角大王（原为观音菩萨）",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "zi_jin_hong_hu_lu",
+      "relic_name": "紫金红葫芦",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "金角大王的法宝，攻击时有15%概率施加2层封印并造成额外5点伤害。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "seal",
+          "value": 2,
+          "chance": 0.15
+        },
+        {
+          "type": "bonus_damage",
+          "chance": 0.15,
+          "value": 5
+        }
+      ],
+      "source": "金角大王（原为太上老君）",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "huang_jin_sheng",
+      "relic_name": "幌金绳",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "金角大王的法宝，攻击时有20%概率施加1层减速和1层眩晕。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "slow",
+          "value": 1,
+          "chance": 0.2
+        },
+        {
+          "type": "status",
+          "status_type": "stun",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "金角大王（原为太上老君）",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "po_mo_chui",
+      "relic_name": "破魔锤",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "狮猁怪的武器，攻击时有20%概率移除敌人1层增益。",
+      "effects": [
+        {
+          "type": "dispel_buff",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "狮猁怪",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "huo_jian_qiang",
+      "relic_name": "火尖枪",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "红孩儿的武器，攻击时有25%概率施加2层灼烧。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "burn",
+          "value": 2,
+          "chance": 0.25
+        }
+      ],
+      "source": "红孩儿",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "zhu_jie_gang_bian",
+      "relic_name": "竹节钢鞭",
+      "rarity": "common",
+      "trigger_type": "on_attack",
+      "description": "鼍龙的武器，攻击时有15%概率施加1层减速。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "slow",
+          "value": 1,
+          "chance": 0.15
+        }
+      ],
+      "source": "鼍龙",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "tao_mu_jian",
+      "relic_name": "桃木剑",
+      "rarity": "common",
+      "trigger_type": "on_attack",
+      "description": "虎力大仙的武器，攻击时有15%概率恢复2点生命。",
+      "effects": [
+        {
+          "type": "lifesteal",
+          "chance": 0.15,
+          "value": 2
+        }
+      ],
+      "source": "虎力大仙",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "ba_gua_pai",
+      "relic_name": "八卦牌",
+      "rarity": "common",
+      "trigger_type": "on_turn_start",
+      "description": "虎力大仙的法器，每回合开始时有30%概率获得2点护甲。",
+      "effects": [
+        {
+          "type": "armor",
+          "value": 2,
+          "chance": 0.3
+        }
+      ],
+      "source": "虎力大仙",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "fu_chen",
+      "relic_name": "拂尘",
+      "rarity": "common",
+      "trigger_type": "on_turn_start",
+      "description": "鹿力大仙的法器，每回合开始时有20%概率获得1层治愈。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "regeneration",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "鹿力大仙",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "tong_xin_pei",
+      "relic_name": "同心佩",
+      "rarity": "common",
+      "trigger_type": "passive",
+      "description": "鹿力大仙的饰品，受到伤害时有15%概率减少2点伤害。",
+      "effects": [
+        {
+          "type": "damage_reduction",
+          "value": 2,
+          "chance": 0.15
+        }
+      ],
+      "source": "鹿力大仙",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "wu_lei_zhang",
+      "relic_name": "五雷杖",
+      "rarity": "common",
+      "trigger_type": "on_attack",
+      "description": "羊力大仙的武器，攻击时有15%概率造成额外3点伤害。",
+      "effects": [
+        {
+          "type": "bonus_damage",
+          "chance": 0.15,
+          "value": 3
+        }
+      ],
+      "source": "羊力大仙",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "yang_li_dao_zhu_lian",
+      "relic_name": "羊力道珠链",
+      "rarity": "common",
+      "trigger_type": "on_turn_start",
+      "description": "羊力大仙的饰品，每回合开始时有20%概率获得1点护甲。",
+      "effects": [
+        {
+          "type": "armor",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "羊力大仙",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "jin_gang_zhuo_relic",
+      "relic_name": "金刚琢",
+      "rarity": "legendary",
+      "trigger_type": "on_attack",
+      "description": "青牛大王的法宝，攻击时有20%概率施加2层封印并偷取5点护甲。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "seal",
+          "value": 2,
+          "chance": 0.2
+        },
+        {
+          "type": "steal_armor",
+          "chance": 0.2,
+          "value": 5
+        }
+      ],
+      "source": "青牛大王（原为太上老君）",
+      "sell_price": 80
+    },
+    {
+      "relic_id": "dian_gang_qiang",
+      "relic_name": "点钢枪",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "青牛大王的武器，攻击时有20%概率无视3点护甲。",
+      "effects": [
+        {
+          "type": "armor_pierce",
+          "chance": 0.2,
+          "value": 3
+        }
+      ],
+      "source": "青牛大王",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "ru_yi_gou",
+      "relic_name": "如意钩",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "如意真仙的武器，攻击时有20%概率施加1层减速。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "slow",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "如意真仙",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "yu_shi_pi_pa",
+      "relic_name": "玉石琵琶",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "琵琶精的武器，攻击时有20%概率施加1层眩晕和1层虚弱。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "stun",
+          "value": 1,
+          "chance": 0.2
+        },
+        {
+          "type": "status",
+          "status_type": "weaken",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "琵琶精（蝎子精）",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "sui_xin_tie_gan_bing",
+      "relic_name": "随心铁杆兵",
+      "rarity": "legendary",
+      "trigger_type": "on_attack",
+      "description": "六耳猕猴的武器，攻击时有25%概率多触发一次攻击。",
+      "effects": [
+        {
+          "type": "extra_attack",
+          "chance": 0.25
+        }
+      ],
+      "source": "六耳猕猴",
+      "sell_price": 80
+    },
+    {
+      "relic_id": "yu_mei_shan",
+      "relic_name": "玉媚扇",
+      "rarity": "common",
+      "trigger_type": "on_attack",
+      "description": "玉面狐狸的武器，攻击时有20%概率施加1层虚弱。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "weaken",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "玉面狐狸",
+      "sell_price": 15
+    },
+    {
+      "relic_id": "hun_tie_gun",
+      "relic_name": "混铁棍",
+      "rarity": "legendary",
+      "trigger_type": "on_attack",
+      "description": "牛魔王的武器，攻击时有20%概率造成额外8点伤害并施加1层眩晕。",
+      "effects": [
+        {
+          "type": "bonus_damage",
+          "chance": 0.2,
+          "value": 8
+        },
+        {
+          "type": "status",
+          "status_type": "stun",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "牛魔王",
+      "sell_price": 80
+    },
+    {
+      "relic_id": "ruan_bing_shuang_qiang",
+      "relic_name": "软柄双枪",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "蟒蛇精的武器，攻击时有20%概率多造成一次4点伤害。",
+      "effects": [
+        {
+          "type": "extra_hit",
+          "chance": 0.2,
+          "value": 4
+        }
+      ],
+      "source": "蟒蛇精",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "jin_nao_relic",
+      "relic_name": "金铙",
+      "rarity": "legendary",
+      "trigger_type": "on_attack",
+      "description": "黄眉大王的法宝，攻击时有20%概率施加3层封印。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "seal",
+          "value": 3,
+          "chance": 0.2
+        }
+      ],
+      "source": "黄眉大王（原为弥勒佛）",
+      "sell_price": 80
+    },
+    {
+      "relic_id": "hou_tian_dai",
+      "relic_name": "后天袋",
+      "rarity": "legendary",
+      "trigger_type": "on_attack",
+      "description": "黄眉大王的法宝，攻击时有20%概率偷取敌人8点护甲并施加2层虚弱。",
+      "effects": [
+        {
+          "type": "steal_armor",
+          "chance": 0.2,
+          "value": 8
+        },
+        {
+          "type": "status",
+          "status_type": "weaken",
+          "value": 2,
+          "chance": 0.2
+        }
+      ],
+      "source": "黄眉大王（原为弥勒佛）",
+      "sell_price": 80
+    },
+    {
+      "relic_id": "po_jie_jian",
+      "relic_name": "破界剑",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "百眼魔君的武器，攻击时有20%概率施加2层封印和1层减速。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "seal",
+          "value": 2,
+          "chance": 0.2
+        },
+        {
+          "type": "status",
+          "status_type": "slow",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "百眼魔君",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "da_han_dao",
+      "relic_name": "大捍刀",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "狮大王的武器，攻击时有20%概率造成额外6点伤害并恢复3点生命。",
+      "effects": [
+        {
+          "type": "bonus_damage",
+          "chance": 0.2,
+          "value": 6
+        },
+        {
+          "type": "lifesteal",
+          "chance": 0.2,
+          "value": 3
+        }
+      ],
+      "source": "狮驼王（青狮）",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "tun_tian_qiang",
+      "relic_name": "吞天枪",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "象大王的武器，攻击时有20%概率施加2层减速和1层虚弱。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "slow",
+          "value": 2,
+          "chance": 0.2
+        },
+        {
+          "type": "status",
+          "status_type": "weaken",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "象大王（白象）",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "hua_gan_fang_tian_ji",
+      "relic_name": "画杆方天戟",
+      "rarity": "legendary",
+      "trigger_type": "on_attack",
+      "description": "大鹏金翅雕的武器，攻击时有25%概率造成额外10点伤害并施加1层眩晕。",
+      "effects": [
+        {
+          "type": "bonus_damage",
+          "chance": 0.25,
+          "value": 10
+        },
+        {
+          "type": "status",
+          "status_type": "stun",
+          "value": 1,
+          "chance": 0.25
+        }
+      ],
+      "source": "大鹏金翅雕",
+      "sell_price": 80
+    },
+    {
+      "relic_id": "yin_yang_er_qi_ping",
+      "relic_name": "阴阳二气瓶",
+      "rarity": "legendary",
+      "trigger_type": "on_attack",
+      "description": "大鹏金翅雕的法宝，攻击时有20%概率施加3层封印。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "seal",
+          "value": 3,
+          "chance": 0.2
+        }
+      ],
+      "source": "大鹏金翅雕",
+      "sell_price": 80
+    },
+    {
+      "relic_id": "shi_ling_zhang",
+      "relic_name": "噬灵杖",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "白鹿怪的武器，攻击时有20%概率吸取3点生命。",
+      "effects": [
+        {
+          "type": "lifesteal",
+          "chance": 0.2,
+          "value": 3
+        }
+      ],
+      "source": "白鹿怪",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "xuan_tie_chu",
+      "relic_name": "玄铁杵",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "南山大王的武器，攻击时有20%概率施加1层虚弱并获得2点护甲。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "weaken",
+          "value": 1,
+          "chance": 0.2
+        },
+        {
+          "type": "armor",
+          "value": 2,
+          "chance": 0.2
+        }
+      ],
+      "source": "南山大王",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "si_ming_chan",
+      "relic_name": "四明铲",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "黄狮精的武器，攻击时有20%概率施加1层封印和1层虚弱。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "seal",
+          "value": 1,
+          "chance": 0.2
+        },
+        {
+          "type": "status",
+          "status_type": "weaken",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "黄狮精",
+      "sell_price": 30
+    },
+    {
+      "relic_id": "yue_fu",
+      "relic_name": "钺斧",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "辟寒大王的武器，攻击时有20%概率施加1层减速和1层虚弱。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "slow",
+          "value": 1,
+          "chance": 0.2
+        },
+        {
+          "type": "status",
+          "status_type": "weaken",
+          "value": 1,
+          "chance": 0.2
+        }
+      ],
+      "source": "辟寒大王",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "lie_yan_dao",
+      "relic_name": "烈炎刀",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "辟暑大王的武器，攻击时有25%概率施加2层灼烧。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "burn",
+          "value": 2,
+          "chance": 0.25
+        }
+      ],
+      "source": "辟暑大王",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "qi_ta_teng",
+      "relic_name": "奇挞藤",
+      "rarity": "rare",
+      "trigger_type": "on_attack",
+      "description": "辟尘大王的武器，攻击时有20%概率施加2层封印。",
+      "effects": [
+        {
+          "type": "status",
+          "status_type": "seal",
+          "value": 2,
+          "chance": 0.2
+        }
+      ],
+      "source": "辟尘大王",
+      "sell_price": 50
+    },
+    {
+      "relic_id": "dao_yao_chu",
+      "relic_name": "捣药杵",
+      "rarity": "uncommon",
+      "trigger_type": "on_attack",
+      "description": "玉兔精的武器，攻击时有25%概率多造成一次4点伤害。",
+      "effects": [
+        {
+          "type": "extra_hit",
+          "chance": 0.25,
+          "value": 4
+        }
+      ],
+      "source": "玉兔精",
+      "sell_price": 30
     }
   ]
 }

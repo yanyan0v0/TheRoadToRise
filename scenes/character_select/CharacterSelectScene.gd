@@ -31,6 +31,24 @@ func _ready() -> void:
 	# 默认选择第一个角色
 	if _character_cards.size() > 0:
 		_on_card_selected(0)
+	# Listen for dev_mode changes to refresh card unlock states
+	EventBus.dev_mode_changed.connect(_on_dev_mode_changed)
+
+func _exit_tree() -> void:
+	if EventBus.dev_mode_changed.is_connected(_on_dev_mode_changed):
+		EventBus.dev_mode_changed.disconnect(_on_dev_mode_changed)
+
+## Refresh character cards when dev_mode is toggled
+func _on_dev_mode_changed(_enabled: bool) -> void:
+	_selected_index = -1
+	start_button.disabled = true
+	_create_character_cards()
+	# Auto-select first unlocked character (dev_mode check is inside _on_card_selected)
+	for i in range(CHARACTER_IDS.size()):
+		var char_id := CHARACTER_IDS[i]
+		if SaveManager.is_character_unlocked(char_id) or GameManager.dev_mode:
+			_on_card_selected(i)
+			break
 
 ## 创建角色卡片
 func _create_character_cards() -> void:
@@ -74,7 +92,7 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 	card.clip_contents = true
 	
 	var char_id: String = char_data.get("character_id", "")
-	var is_unlocked := SaveManager.is_character_unlocked(char_id)
+	var is_unlocked := SaveManager.is_character_unlocked(char_id) or GameManager.dev_mode
 	
 	# 设置卡片样式（无边框）
 	var card_style := _create_card_style()
@@ -255,35 +273,39 @@ func _create_card(char_data: Dictionary, index: int) -> Panel:
 		lock_desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		info_container.add_child(lock_desc_label)
 	
-	# 被动技能名称
-	var passive_label := Label.new()
-	passive_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	passive_label.add_theme_font_size_override("font_size", 16)
-	passive_label.add_theme_constant_override("outline_size", 2)
-	passive_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
-	passive_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Starter relic name
+	var relic_label := Label.new()
+	relic_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	relic_label.add_theme_font_size_override("font_size", 16)
+	relic_label.add_theme_constant_override("outline_size", 2)
+	relic_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+	relic_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if is_unlocked:
-		passive_label.text = char_data.get("passive_name", "")
-		passive_label.add_theme_color_override("font_color", Color(0.99, 0.8, 0.43))
+		var starter_relic_id: String = char_data.get("starter_relic", "")
+		var relic_data: Dictionary = DataManager.get_relic(starter_relic_id) if starter_relic_id != "" else {}
+		relic_label.text = relic_data.get("relic_name", "")
+		relic_label.add_theme_color_override("font_color", Color(0.99, 0.8, 0.43))
 	else:
-		passive_label.text = ""
-		passive_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
-	info_container.add_child(passive_label)
+		relic_label.text = ""
+		relic_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+	info_container.add_child(relic_label)
 	
-	# 被动技能描述
-	var passive_desc_label := Label.new()
-	passive_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	passive_desc_label.add_theme_font_size_override("font_size", 14)
-	passive_desc_label.add_theme_constant_override("outline_size", 2)
-	passive_desc_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
-	passive_desc_label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.85))
-	passive_desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	passive_desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Starter relic description
+	var relic_desc_label := Label.new()
+	relic_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	relic_desc_label.add_theme_font_size_override("font_size", 14)
+	relic_desc_label.add_theme_constant_override("outline_size", 2)
+	relic_desc_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.7))
+	relic_desc_label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.85))
+	relic_desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	relic_desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if is_unlocked:
-		passive_desc_label.text = char_data.get("passive_description", "")
+		var starter_relic_id2: String = char_data.get("starter_relic", "")
+		var relic_data2: Dictionary = DataManager.get_relic(starter_relic_id2) if starter_relic_id2 != "" else {}
+		relic_desc_label.text = RelicTooltip.get_enhanced_description(relic_data2)
 	else:
-		passive_desc_label.text = ""
-	info_container.add_child(passive_desc_label)
+		relic_desc_label.text = ""
+	info_container.add_child(relic_desc_label)
 	
 	# 设置pivot_offset为卡片中心，使缩放从中心进行
 	card.pivot_offset = CARD_SIZE / 2.0
@@ -344,18 +366,6 @@ func _get_unlock_info(achievement_id: String) -> Dictionary:
 			"name": ach_data.get("name", "???"),
 			"description": ach_data.get("description", ""),
 		}
-	# 兼容旧的 achievement_id 映射
-	match achievement_id:
-		"first_play":
-			if AchievementManager.ACHIEVEMENTS.has("first_game"):
-				var ach_data: Dictionary = AchievementManager.ACHIEVEMENTS["first_game"]
-				return {"name": ach_data.get("name", "初窥门径"), "description": ach_data.get("description", "使用默认角色游玩一局")}
-			return {"name": "初窥门径", "description": "使用默认角色游玩一局"}
-		"clear_game":
-			if AchievementManager.ACHIEVEMENTS.has("true_scripture"):
-				var ach_data: Dictionary = AchievementManager.ACHIEVEMENTS["true_scripture"]
-				return {"name": ach_data.get("name", "取得真经"), "description": ach_data.get("description", "任意角色完成通关")}
-			return {"name": "取得真经", "description": "任意角色完成通关"}
 	return {"name": "???", "description": ""}
 
 ## 对卡片执行缩放动画
@@ -372,6 +382,13 @@ func _animate_card_scale(card: Panel, target_scale: Vector2) -> void:
 
 ## 角色卡片选中
 func _on_card_selected(index: int) -> void:
+	# Check if the character is actually unlocked
+	var char_id := CHARACTER_IDS[index]
+	var is_unlocked := SaveManager.is_character_unlocked(char_id) or GameManager.dev_mode
+	if not is_unlocked:
+		_show_locked_tip(_character_cards[index])
+		return
+	
 	# 取消之前的选中 —— 缩小回默认大小
 	if _selected_index >= 0 and _selected_index < _character_cards.size():
 		var prev_card := _character_cards[_selected_index]
@@ -401,6 +418,15 @@ func _on_start_pressed() -> void:
 		return
 	
 	var char_id := CHARACTER_IDS[_selected_index]
+	
+	# Check if character is actually unlocked (dev_mode may have been toggled off)
+	var is_unlocked := SaveManager.is_character_unlocked(char_id) or GameManager.dev_mode
+	if not is_unlocked:
+		_show_locked_tip(_character_cards[_selected_index])
+		start_button.disabled = true
+		_selected_index = -1
+		return
+	
 	var char_data: Dictionary = DataManager.get_character(char_id)
 	var character := CharacterData.from_dict(char_data)
 	character.apply_to_game()

@@ -131,7 +131,7 @@
       "description": "一位白发仙人出现在你面前，他手持拂尘，仙气飘飘。",
       "options": [
         {
-          "text": "请求指点卡牌融合",
+          "text": "请求指点",
           "results": [
             {"type": "card_fusion", "chance": 1.0, "description": "仙人施展法术，帮你融合了一组卡牌！（自动融合一组可融合的卡牌）"}
           ]

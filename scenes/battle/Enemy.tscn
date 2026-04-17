@@ -4,20 +4,25 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_to56m"]
 bg_color = Color(0.8, 0.14901961, 0.14901961, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [node name="Enemy" type="Control" unique_id=1672692056]
-custom_minimum_size = Vector2(150, 280)
+custom_minimum_size = Vector2(200, 350)
 layout_mode = 3
 anchors_preset = 0
-offset_right = 150.0
-offset_bottom = 280.0
+offset_right = 208.0
+offset_bottom = 350.0
 script = ExtResource("1")
 
 [node name="IntentIcon" type="Label" parent="." unique_id=438330201]
 layout_mode = 0
-offset_left = 45.0
-offset_right = 105.0
-offset_bottom = 30.0
+offset_left = 57.0
+offset_top = 2.0
+offset_right = 117.0
+offset_bottom = 32.0
 theme_override_font_sizes/font_size = 20
 text = "⚔️"
 horizontal_alignment = 1
@@ -25,21 +30,24 @@ vertical_alignment = 1
 
 [node name="IntentValueLabel" type="Label" parent="." unique_id=974440832]
 layout_mode = 0
-offset_left = 105.0
-offset_right = 150.0
-offset_bottom = 30.0
+offset_left = 117.0
+offset_top = 2.0
+offset_right = 162.0
+offset_bottom = 32.0
 theme_override_colors/font_color = Color(0.839216, 0.192157, 0.192157, 1)
 theme_override_font_sizes/font_size = 16
 text = "8"
 vertical_alignment = 1
 
-[node name="Sprite" type="ColorRect" parent="." unique_id=1797016965]
+[node name="Sprite" type="TextureRect" parent="." unique_id=1797016965]
 layout_mode = 0
-offset_left = 15.0
-offset_top = 35.0
-offset_right = 135.0
-offset_bottom = 175.0
-color = Color(0.839216, 0.192157, 0.192157, 1)
+offset_left = 1.0
+offset_top = 25.0
+offset_right = 251.0
+offset_bottom = 275.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="SpriteLabel" type="Label" parent="Sprite" unique_id=1472531520]
 layout_mode = 1
@@ -61,50 +69,56 @@ vertical_alignment = 1
 
 [node name="NameLabel" type="Label" parent="." unique_id=1313147624]
 layout_mode = 0
-offset_top = 180.0
-offset_right = 150.0
-offset_bottom = 200.0
+offset_top = 274.0
+offset_right = 250.0
+offset_bottom = 294.0
 theme_override_font_sizes/font_size = 14
 text = "敌人名称"
 horizontal_alignment = 1
 
-[node name="HPBar" type="ProgressBar" parent="." unique_id=1143954514]
+[node name="HPRow" type="HBoxContainer" parent="." unique_id=1941400430]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 205.0
-offset_right = 140.0
-offset_bottom = 211.0
+offset_top = 290.0
+offset_right = 196.0
+offset_bottom = 310.0
+theme_override_constants/separation = 3
+alignment = 1
+
+[node name="ArmorLabel" type="Label" parent="HPRow" unique_id=1426383166]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.3, 0.75, 0.85, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="HPBar" type="ProgressBar" parent="HPRow" unique_id=1143954514]
+custom_minimum_size = Vector2(140, 6)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
 theme_override_styles/fill = SubResource("StyleBoxFlat_to56m")
 max_value = 30.0
 value = 30.0
 show_percentage = false
 
-[node name="HPText" type="Label" parent="HPBar" unique_id=809130707]
+[node name="HPText" type="Label" parent="HPRow/HPBar" unique_id=809130707]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -5.0
-offset_bottom = 6.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 12
 text = "30/30"
 horizontal_alignment = 1
 
-[node name="ArmorLabel" type="Label" parent="." unique_id=1426383166]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 242.0
-offset_right = 140.0
-offset_bottom = 258.0
-theme_override_colors/font_color = Color(0.454902, 0.811765, 0.890196, 1)
-theme_override_font_sizes/font_size = 12
-horizontal_alignment = 1
-
 [node name="StatusBar" type="HBoxContainer" parent="." unique_id=1719785568]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 260.0
-offset_right = 140.0
-offset_bottom = 280.0
+offset_left = 56.0
+offset_top = 310.0
+offset_right = 195.0
+offset_bottom = 327.0

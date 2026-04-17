@@ -3,1029 +3,3133 @@
     {
       "enemy_id": "hun_shi_mo_wang",
       "enemy_name": "混世魔王",
+      "chapter": 0,
       "enemy_type": "normal",
       "max_hp": 20,
       "base_armor": 0,
-      "description": "花果山的霸占者。",
+      "description": "趁悟空外出学艺，率众妖霸占水帘洞的独角鬼王。凶悍蛮横，是悟空归来后斩杀的第一个妖怪。",
       "intent_pattern": [
-        {"type": "attack", "value": 5},
-        {"type": "attack", "value": 6},
-        {"type": "defend", "value": 3}
+        {
+          "type": "attack",
+          "value": 5
+        },
+        {
+          "type": "attack",
+          "value": 6
+        },
+        {
+          "type": "defend",
+          "value": 3
+        }
+      ],
+      "relics": [
+        "zhen_huang_dao"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 3, "gold_max": 8}
+      "drops": {
+        "gold_min": 3,
+        "gold_max": 8
+      }
     },
     {
       "enemy_id": "yin_jiang_jun",
       "enemy_name": "寅将军",
+      "chapter": 0,
       "enemy_type": "normal",
       "max_hp": 22,
       "base_armor": 0,
-      "description": "唐僧出长安后遇到的第一拨妖怪之一，生吃了唐僧的两个随从。",
+      "description": "华北虎精，巩州城三怪之首。凶猛异常，与熊山君、特处士结拜为兄弟，盘踞双叉岭为害一方，曾掳走唐僧的随从。",
       "intent_pattern": [
-        {"type": "attack", "value": 7},
-        {"type": "attack", "value": 5},
-        {"type": "heavy_attack", "value": 10}
+        {
+          "type": "attack",
+          "value": 7
+        },
+        {
+          "type": "attack",
+          "value": 5
+        },
+        {
+          "type": "heavy_attack",
+          "value": 10
+        }
+      ],
+      "relics": [
+        "kai_shan_dao"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 3, "gold_max": 8}
+      "drops": {
+        "gold_min": 3,
+        "gold_max": 8
+      }
     },
     {
       "enemy_id": "xiong_shan_jun",
       "enemy_name": "熊山君",
+      "chapter": 0,
       "enemy_type": "normal",
       "max_hp": 24,
       "base_armor": 2,
-      "description": "唐僧出长安后遇到的第一拨妖怪之一，凶残嗜血。",
+      "description": "熊罴成精，巩州城三怪之一。体型魁梧，力大无穷，与寅将军、特处士结拜为兄弟。",
       "intent_pattern": [
-        {"type": "attack", "value": 6},
-        {"type": "defend", "value": 4},
-        {"type": "attack", "value": 8}
+        {
+          "type": "attack",
+          "value": 6
+        },
+        {
+          "type": "defend",
+          "value": 4
+        },
+        {
+          "type": "attack",
+          "value": 8
+        }
+      ],
+      "relics": [
+        "lie_shan_bang"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 3, "gold_max": 8}
+      "drops": {
+        "gold_min": 3,
+        "gold_max": 8
+      }
     },
     {
       "enemy_id": "te_chu_shi",
       "enemy_name": "特处士",
+      "chapter": 0,
       "enemy_type": "normal",
       "max_hp": 22,
       "base_armor": 0,
-      "description": "唐僧出长安后遇到的第一拨妖怪之一，与寅将军、熊山君同伙。",
+      "description": "野牛成精，巩州城三怪之一。性情暴躁，蛮力惊人，与寅将军、熊山君结拜为兄弟。",
       "intent_pattern": [
-        {"type": "attack", "value": 6},
-        {"type": "attack", "value": 7},
-        {"type": "attack", "value": 5}
+        {
+          "type": "attack",
+          "value": 6
+        },
+        {
+          "type": "attack",
+          "value": 7
+        },
+        {
+          "type": "attack",
+          "value": 5
+        }
+      ],
+      "relics": [
+        "han_shan_fu"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 3, "gold_max": 8}
+      "drops": {
+        "gold_min": 3,
+        "gold_max": 8
+      }
     },
     {
       "enemy_id": "hei_feng_guai",
       "enemy_name": "黑风怪",
+      "chapter": 0,
       "enemy_type": "normal",
       "max_hp": 55,
       "base_armor": 5,
-      "description": "黑风山的熊罴精，趁火打劫偷走锦阑袈裟。",
+      "description": "黑风山黑风洞的熊罴精，修行多年颇通道术。趁观音院大火之际偷走唐僧的锦斓袈裟，后被观音菩萨收为守山大神。",
       "intent_pattern": [
-        {"type": "attack", "value": 10},
-        {"type": "defend", "value": 10},
-        {"type": "heavy_attack", "value": 14},
-        {"type": "defend", "value": 8}
+        {
+          "type": "attack",
+          "value": 10
+        },
+        {
+          "type": "defend",
+          "value": 10
+        },
+        {
+          "type": "heavy_attack",
+          "value": 14
+        },
+        {
+          "type": "defend",
+          "value": 8
+        }
+      ],
+      "relics": [
+        "hei_ying_qiang"
       ],
       "skills": [
-        {"skill_id": "steal", "name": "趁火打劫", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]}
+        {
+          "skill_id": "steal",
+          "name": "趁火打劫",
+          "intent_type": "debuff",
+          "effects": [
+            {
+              "type": "steal_armor",
+              "value": 5
+            },
+            {
+              "type": "status",
+              "status_type": "burn",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 12, "gold_max": 25}
+      "drops": {
+        "gold_min": 12,
+        "gold_max": 25
+      }
     },
     {
       "enemy_id": "bai_yi_xiu_shi",
       "enemy_name": "白衣秀士",
+      "chapter": 0,
       "enemy_type": "normal",
       "max_hp": 18,
       "base_armor": 0,
-      "description": "黑风怪的朋友，白花蛇精。",
+      "description": "白花蛇修炼成精，化作白衣文士模样。与黑风怪、凌虚子交好，常聚于黑风山谈经论道，被悟空一棒打死于佛衣会上。",
       "intent_pattern": [
-        {"type": "attack", "value": 5},
-        {"type": "debuff", "value": 0, "status_type": "burn", "stacks": 2},
-        {"type": "attack", "value": 6}
+        {
+          "type": "attack",
+          "value": 5
+        },
+        {
+          "type": "debuff",
+          "value": 0,
+          "status_type": "burn",
+          "stacks": 2
+        },
+        {
+          "type": "attack",
+          "value": 6
+        }
+      ],
+      "relics": [
+        "zui_hua_shan"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 4, "gold_max": 10}
+      "drops": {
+        "gold_min": 4,
+        "gold_max": 10
+      }
     },
     {
       "enemy_id": "ling_xu_zi",
       "enemy_name": "凌虚子",
+      "chapter": 0,
       "enemy_type": "normal",
       "max_hp": 18,
       "base_armor": 0,
-      "description": "黑风怪的朋友，苍狼精。",
+      "description": "苍狼修炼成精，化作道人模样自号凌虚子。与黑风怪、白衣秀士交好，常聚于黑风山论道，被悟空一棒打死于佛衣会上。",
       "intent_pattern": [
-        {"type": "attack", "value": 6},
-        {"type": "attack", "value": 7},
-        {"type": "attack", "value": 5}
+        {
+          "type": "attack",
+          "value": 6
+        },
+        {
+          "type": "attack",
+          "value": 7
+        },
+        {
+          "type": "attack",
+          "value": 5
+        }
+      ],
+      "relics": [
+        "shuang_tou_lang_ya_bang"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 4, "gold_max": 10}
+      "drops": {
+        "gold_min": 4,
+        "gold_max": 10
+      }
     },
     {
       "enemy_id": "huang_feng_guai",
       "enemy_name": "黄风怪",
+      "chapter": 1,
       "enemy_type": "normal",
-      "max_hp": 55,
+      "max_hp": 60,
       "base_armor": 3,
-      "description": "灵山脚下的黄毛貂鼠成精，偷了琉璃盏清油得道，拥有沙尘暴绝招。",
+      "description": "灵山脚下的黄毛貂鼠精，偷吃琉璃盏中清油后得道成妖。盘踞黄风岭黄风洞，最厉害的绝招是三昧神风，能吹瞎人眼，后被灵吉菩萨收服。",
       "intent_pattern": [
-        {"type": "attack", "value": 8},
-        {"type": "special", "value": 0},
-        {"type": "attack", "value": 10},
-        {"type": "defend", "value": 8}
+        {
+          "type": "attack",
+          "value": 10
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "defend",
+          "value": 10
+        }
+      ],
+      "relics": [
+        "san_gu_gang_cha"
       ],
       "skills": [
-        {"skill_id": "sandstorm", "name": "沙尘暴", "intent_type": "special", "effects": [{"type": "damage", "value": 12, "target": "player"}, {"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]}
+        {
+          "skill_id": "sandstorm",
+          "name": "三昧神风",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 8,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "stun",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 12, "gold_max": 25}
+      "drops": {
+        "gold_min": 12,
+        "gold_max": 25
+      }
     },
     {
       "enemy_id": "bai_gu_jing",
       "enemy_name": "白骨精",
+      "chapter": 0,
       "enemy_type": "boss",
       "max_hp": 35,
       "base_armor": 0,
-      "description": "善于变化的女妖精，诡计多端。",
+      "description": "白虎岭上的尸魔，本是一堆白骨修炼成精。诡计多端善于变化，先后化作村姑、老妇、老翁三戏唐僧，离间师徒关系，最终被悟空三打识破真身。",
       "intent_pattern": [
-        {"type": "special", "value": 0},
-        {"type": "attack", "value": 7},
-        {"type": "debuff", "value": 0},
-        {"type": "attack", "value": 9}
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 7
+        },
+        {
+          "type": "debuff",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 9
+        }
+      ],
+      "relics": [
+        "bai_gu_ming_zhang"
       ],
       "skills": [
-        {"skill_id": "disguise", "name": "变化术", "intent_type": "special", "effects": [{"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]},
-        {"skill_id": "soul_drain", "name": "摄魂", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "slow", "value": 1, "target": "player"}]}
+        {
+          "skill_id": "disguise",
+          "name": "三变迷踪",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "armor",
+              "value": 5
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "soul_drain",
+          "name": "摄魂",
+          "intent_type": "debuff",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "slow",
+              "value": 1,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 8, "gold_max": 18}
+      "drops": {
+        "gold_min": 8,
+        "gold_max": 18
+      }
     },
     {
       "enemy_id": "huang_pao_guai",
-      "enemy_name": "黄袍怪（奎木狼）",
+      "enemy_name": "黄袍怪",
+      "chapter": 1,
       "enemy_type": "normal",
-      "max_hp": 58,
+      "max_hp": 62,
       "base_armor": 5,
-      "description": "二十八宿之奎木狼下凡，把真国王推入井中的乌鸡国假国王。",
+      "description": "二十八宿之奎木狼下凡，盘踞碗子山波月洞。与披香殿侍香玉女有私情，将宝象国三公主掳为压寨夫人十三年。武艺高强，能施妖法将人变为猛虎，后被天庭召回罚去兜率宫烧火。",
       "intent_pattern": [
-        {"type": "attack", "value": 10},
-        {"type": "defend", "value": 10},
-        {"type": "heavy_attack", "value": 16},
-        {"type": "attack", "value": 12}
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "defend",
+          "value": 12
+        },
+        {
+          "type": "heavy_attack",
+          "value": 19
+        },
+        {
+          "type": "attack",
+          "value": 14
+        }
+      ],
+      "relics": [
+        "xuan_tie_dao"
       ],
       "skills": [
-        {"skill_id": "star_power", "name": "星宿之力", "intent_type": "buff", "effects": [{"type": "strength", "value": 2}]}
+        {
+          "skill_id": "star_power",
+          "name": "奎星附体",
+          "intent_type": "buff",
+          "effects": [
+            {
+              "type": "strength",
+              "value": 2
+            },
+            {
+              "type": "armor",
+              "value": 5
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 12, "gold_max": 25}
+      "drops": {
+        "gold_min": 12,
+        "gold_max": 25
+      }
     },
     {
-      "enemy_id": "yin_jiao",
+      "enemy_id": "yin_jiao_da_wang",
       "enemy_name": "银角大王",
+      "chapter": 1,
       "enemy_type": "normal",
-      "max_hp": 55,
+      "max_hp": 60,
       "base_armor": 3,
-      "description": "平顶山莲花洞妖怪，太上老君的童子下凡，依仗法宝作恶。",
+      "description": "平顶山莲花洞妖怪，太上老君看银炉的童子下凡。与金角大王合力为害，后被太上老君收回。",
       "intent_pattern": [
-        {"type": "attack", "value": 10},
-        {"type": "special", "value": 0},
-        {"type": "defend", "value": 8},
-        {"type": "heavy_attack", "value": 16}
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "defend",
+          "value": 10
+        },
+        {
+          "type": "heavy_attack",
+          "value": 19
+        }
+      ],
+      "relics": [
+        "qi_xing_bao_jian",
+        "yang_zhi_yu_jing_ping"
       ],
       "skills": [
-        {"skill_id": "jade_bottle", "name": "羊脂玉净瓶", "intent_type": "special", "effects": [{"type": "status", "status_type": "seal", "value": 1, "target": "player"}]}
+        {
+          "skill_id": "jade_bottle",
+          "name": "净瓶吸魂",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "seal",
+              "value": 1,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 12, "gold_max": 25}
+      "drops": {
+        "gold_min": 12,
+        "gold_max": 25
+      }
+    },
+    {
+      "enemy_id": "jin_jiao_da_wang",
+      "enemy_name": "金角大王",
+      "chapter": 1,
+      "enemy_type": "boss",
+      "max_hp": 90,
+      "base_armor": 5,
+      "description": "平顶山莲花洞妖怪，太上老君看金炉的童子下凡。法力高强，后被太上老君收回。",
+      "intent_pattern": [
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "defend",
+          "value": 10
+        },
+        {
+          "type": "heavy_attack",
+          "value": 20
+        },
+        {
+          "type": "special",
+          "value": 0
+        }
+      ],
+      "relics": [
+        "zi_jin_hong_hu_lu",
+        "ba_jiao_shan",
+        "huang_jin_sheng"
+      ],
+      "skills": [
+        {
+          "skill_id": "red_gourd",
+          "name": "葬魂葬魄",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "seal",
+              "value": 2,
+              "target": "player"
+            },
+            {
+              "type": "damage",
+              "value": 12,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "golden_rope",
+          "name": "缚仙索",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "slow",
+              "value": 2,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "stun",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
+      ],
+      "phase_thresholds": [
+        {
+          "threshold": 0.5,
+          "phase": 2,
+          "description": "金角大王祭出紫金红葫芦",
+          "buff": {
+            "type": "strength",
+            "value": 4
+          }
+        },
+        {
+          "threshold": 0.25,
+          "phase": 3,
+          "description": "金角大王使出全部法宝",
+          "buff": {
+            "type": "strength",
+            "value": 6,
+            "armor": 15
+          }
+        }
+      ],
+      "drops": {
+        "gold_min": 30,
+        "gold_max": 55,
+        "relics_chance": 0.5
+      }
     },
     {
       "enemy_id": "jing_xi_gui",
       "enemy_name": "精细鬼",
+      "chapter": 1,
       "enemy_type": "normal",
-      "max_hp": 15,
+      "max_hp": 18,
       "base_armor": 0,
-      "description": "金角银角的手下小妖。",
+      "description": "金角银角大王的手下小妖，与伶俐虫搭档。奉命携紫金红葫芦去捉唐僧，却被悟空用计骗走了法宝，愚笨可笑。",
       "intent_pattern": [
-        {"type": "attack", "value": 4},
-        {"type": "attack", "value": 5},
-        {"type": "attack", "value": 4}
+        {
+          "type": "attack",
+          "value": 6
+        },
+        {
+          "type": "attack",
+          "value": 7
+        },
+        {
+          "type": "attack",
+          "value": 6
+        }
+      ],
+      "relics": [
+        "zi_jin_hong_hu_lu"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 2, "gold_max": 6}
+      "drops": {
+        "gold_min": 2,
+        "gold_max": 6
+      }
     },
     {
       "enemy_id": "ling_li_chong",
       "enemy_name": "伶俐虫",
+      "chapter": 1,
       "enemy_type": "normal",
-      "max_hp": 15,
+      "max_hp": 18,
       "base_armor": 0,
-      "description": "金角银角的手下小妖。",
+      "description": "金角银角大王的手下小妖，与精细鬼搭档。自以为机灵，奉命携紫金红葫芦去捉唐僧，却同样被悟空用计戏耍，丢了法宝。",
       "intent_pattern": [
-        {"type": "attack", "value": 5},
-        {"type": "attack", "value": 4},
-        {"type": "attack", "value": 5}
+        {
+          "type": "attack",
+          "value": 7
+        },
+        {
+          "type": "attack",
+          "value": 6
+        },
+        {
+          "type": "attack",
+          "value": 7
+        }
+      ],
+      "relics": [
+        "zi_jin_hong_hu_lu"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 2, "gold_max": 6}
+      "drops": {
+        "gold_min": 2,
+        "gold_max": 6
+      }
     },
     {
       "enemy_id": "shi_li_guai",
       "enemy_name": "狮猁怪",
+      "chapter": 1,
       "enemy_type": "normal",
-      "max_hp": 55,
+      "max_hp": 60,
       "base_armor": 3,
-      "description": "文殊菩萨的青毛狮子，乌鸡国假国王，善于变化伪装。",
+      "description": "文殊菩萨的坐骑青毛狮子下凡。化作全真道人推乌鸡国王入井，自己变化为国王模样篡位三年。善于变化伪装，武艺不俗，后被文殊菩萨收回。",
       "intent_pattern": [
-        {"type": "attack", "value": 9},
-        {"type": "special", "value": 0},
-        {"type": "defend", "value": 8},
-        {"type": "attack", "value": 12}
+        {
+          "type": "attack",
+          "value": 11
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "defend",
+          "value": 10
+        },
+        {
+          "type": "attack",
+          "value": 14
+        }
+      ],
+      "relics": [
+        "po_mo_chui"
       ],
       "skills": [
-        {"skill_id": "impersonate", "name": "假冒伪装", "intent_type": "special", "effects": [{"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]}
+        {
+          "skill_id": "impersonate",
+          "name": "箙国弄权",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "strength",
+              "value": 2
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 12, "gold_max": 25}
+      "drops": {
+        "gold_min": 12,
+        "gold_max": 25
+      }
     },
     {
-      "enemy_id": "sheng_ying_da_wang",
-      "enemy_name": "圣婴大王",
+      "enemy_id": "hong_hai_er",
+      "enemy_name": "红孩儿",
+      "chapter": 1,
       "enemy_type": "boss",
       "max_hp": 85,
       "base_armor": 0,
-      "description": "红孩儿，牛魔王之子，善用三昧真火。",
+      "description": "牛魔王与铁扇公主之子，号圣婴大王，盘踞枯松涧火云洞。在火焰山修炼三百年，练就三昧真火，手持火尖枪，连悟空也奈何不得。后被观音菩萨用玉净瓶降服，收为善财童子。",
       "intent_pattern": [
-        {"type": "attack", "value": 12},
-        {"type": "special", "value": 0},
-        {"type": "heavy_attack", "value": 22},
-        {"type": "defend", "value": 8},
-        {"type": "special", "value": 0}
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "heavy_attack",
+          "value": 22
+        },
+        {
+          "type": "defend",
+          "value": 8
+        },
+        {
+          "type": "special",
+          "value": 0
+        }
+      ],
+      "relics": [
+        "huo_jian_qiang"
       ],
       "skills": [
-        {"skill_id": "samadhi_fire", "name": "三昧真火", "intent_type": "special", "effects": [{"type": "status", "status_type": "burn", "value": 6, "target": "player"}]},
-        {"skill_id": "fire_spear_2", "name": "火尖枪", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 22, "target": "player"}]}
+        {
+          "skill_id": "samadhi_fire",
+          "name": "三昧真火",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "burn",
+              "value": 6,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "fire_spear_2",
+          "name": "火尖刺",
+          "intent_type": "heavy_attack",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 16,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "burn",
+              "value": 3,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.4, "phase": 2, "description": "圣婴大王释放真火护体", "buff": {"type": "thorns", "value": 4}}
+        {
+          "threshold": 0.4,
+          "phase": 2,
+          "description": "红孩儿释放真火护体",
+          "buff": {
+            "type": "thorns",
+            "value": 4
+          }
+        }
       ],
-      "drops": {"gold_min": 25, "gold_max": 50, "relic_chance": 0.4}
+      "drops": {
+        "gold_min": 25,
+        "gold_max": 50,
+        "relics_chance": 0.4
+      }
     },
     {
       "enemy_id": "tuo_long",
       "enemy_name": "鼍龙",
+      "chapter": 1,
       "enemy_type": "normal",
-      "max_hp": 28,
+      "max_hp": 32,
       "base_armor": 2,
-      "description": "西海龙王敖顺的外甥。",
+      "description": "西海龙王敖顺的外甥，泾河龙王之子。因父亲被斩后流落黑水河为妖，善使水战，能翻江倒海，后被摩昂太子收服带回西海。",
       "intent_pattern": [
-        {"type": "attack", "value": 7},
-        {"type": "defend", "value": 5},
-        {"type": "attack", "value": 8},
-        {"type": "attack", "value": 6}
+        {
+          "type": "attack",
+          "value": 9
+        },
+        {
+          "type": "defend",
+          "value": 7
+        },
+        {
+          "type": "attack",
+          "value": 10
+        },
+        {
+          "type": "attack",
+          "value": 8
+        }
+      ],
+      "relics": [
+        "zhu_jie_gang_bian"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 5, "gold_max": 12}
+      "drops": {
+        "gold_min": 5,
+        "gold_max": 12
+      }
     },
     {
       "enemy_id": "hu_li_da_xian",
       "enemy_name": "虎力大仙",
+      "chapter": 2,
       "enemy_type": "normal",
-      "max_hp": 40,
+      "max_hp": 46,
       "base_armor": 3,
-      "description": "车迟国三大仙之一。",
+      "description": "车迟国三大仙之首，虎精成道。会云梯显圣、祸水浸金、隔板猜果等术法，实则皆为小道。与悟空比试砸头时被斩首，现出虎形原身。",
       "intent_pattern": [
-        {"type": "attack", "value": 8},
-        {"type": "defend", "value": 6},
-        {"type": "special", "value": 0},
-        {"type": "attack", "value": 10}
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "defend",
+          "value": 10
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 14
+        }
+      ],
+      "relics": [
+        "tao_mu_jian",
+        "ba_gua_pai"
       ],
       "skills": [
-        {"skill_id": "pray_rain", "name": "祈雨术", "intent_type": "special", "effects": [{"type": "heal", "value": 8}]}
+        {
+          "skill_id": "pray_rain",
+          "name": "祈雨术",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "heal",
+              "value": 8
+            },
+            {
+              "type": "status",
+              "status_type": "regeneration",
+              "value": 2,
+              "target": "self"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 8, "gold_max": 18}
+      "drops": {
+        "gold_min": 8,
+        "gold_max": 18
+      }
     },
     {
       "enemy_id": "lu_li_da_xian",
       "enemy_name": "鹿力大仙",
+      "chapter": 2,
       "enemy_type": "normal",
-      "max_hp": 38,
+      "max_hp": 44,
       "base_armor": 2,
-      "description": "车迟国三大仙之一。",
+      "description": "车迟国三大仙之一，鹿精成道。与悟空比试剖腹剥肠时被悟空用计杀死，现出白鹿原身。擅长辟谷之术，能多日不食。",
       "intent_pattern": [
-        {"type": "attack", "value": 7},
-        {"type": "defend", "value": 7},
-        {"type": "attack", "value": 9},
-        {"type": "attack", "value": 7}
+        {
+          "type": "attack",
+          "value": 11
+        },
+        {
+          "type": "defend",
+          "value": 11
+        },
+        {
+          "type": "attack",
+          "value": 13
+        },
+        {
+          "type": "attack",
+          "value": 11
+        }
+      ],
+      "relics": [
+        "fu_chen",
+        "tong_xin_pei"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 8, "gold_max": 18}
+      "drops": {
+        "gold_min": 8,
+        "gold_max": 18
+      }
     },
     {
       "enemy_id": "yang_li_da_xian",
       "enemy_name": "羊力大仙",
+      "chapter": 2,
       "enemy_type": "normal",
-      "max_hp": 36,
+      "max_hp": 42,
       "base_armor": 2,
-      "description": "车迟国三大仙之一。",
+      "description": "车迟国三大仙之一，羚羊精成道。与悟空比试油锅洗澡时被悟空用计烫死，现出羚羊原身。三仙中最弱，但也有几分道行。",
       "intent_pattern": [
-        {"type": "attack", "value": 7},
-        {"type": "attack", "value": 8},
-        {"type": "defend", "value": 5},
-        {"type": "attack", "value": 7}
+        {
+          "type": "attack",
+          "value": 11
+        },
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "defend",
+          "value": 9
+        },
+        {
+          "type": "attack",
+          "value": 11
+        }
+      ],
+      "relics": [
+        "wu_lei_zhang",
+        "yang_li_dao_zhu_lian"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 8, "gold_max": 18}
+      "drops": {
+        "gold_min": 8,
+        "gold_max": 18
+      }
     },
     {
       "enemy_id": "jin_yu_guai",
       "enemy_name": "金鱼怪",
+      "chapter": 2,
       "enemy_type": "normal",
-      "max_hp": 30,
+      "max_hp": 36,
       "base_armor": 0,
-      "description": "观音莲花池养大的金鱼，通天河里爱吃童男童女。",
+      "description": "观音菩萨莲花池中养大的金鱼，修炼成精后逃入通天河。每年要村民供奉童男童女，善使水战，能发水柱将人冲得头晕目眩，后被观音菩萨用竹篮收回。",
       "intent_pattern": [
-        {"type": "attack", "value": 6},
-        {"type": "attack", "value": 8},
-        {"type": "debuff", "value": 0},
-        {"type": "attack", "value": 7}
+        {
+          "type": "attack",
+          "value": 10
+        },
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "debuff",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 11
+        }
       ],
       "skills": [
-        {"skill_id": "water_spray", "name": "水柱喷射", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "slow", "value": 1, "target": "player"}]}
+        {
+          "skill_id": "water_spray",
+          "name": "水柱冲击",
+          "intent_type": "debuff",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "slow",
+              "value": 1,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "stun",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 6, "gold_max": 14}
+      "drops": {
+        "gold_min": 6,
+        "gold_max": 14
+      }
     },
     {
-      "enemy_id": "si_guai",
-      "enemy_name": "青兕大王",
+      "enemy_id": "qing_niu_da_wang",
+      "enemy_name": "青牛大王",
+      "chapter": 2,
       "enemy_type": "boss",
       "max_hp": 200,
       "base_armor": 10,
-      "description": "太上老君的青牛，持有金刚琢，能收一切兵器法宝。",
+      "description": "太上老君的坐骑青牛精，私自下凡盘踞金先山。持有太上老君的金刚琢，能收一切兵器法宝，连悟空的金箍棒也被套走。实力极强，最终需太上老君亲自前来才得以收服。",
       "intent_pattern": [
-        {"type": "attack", "value": 16},
-        {"type": "special", "value": 0},
-        {"type": "defend", "value": 15},
-        {"type": "heavy_attack", "value": 24},
-        {"type": "special", "value": 0}
+        {
+          "type": "attack",
+          "value": 16
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "defend",
+          "value": 15
+        },
+        {
+          "type": "heavy_attack",
+          "value": 24
+        },
+        {
+          "type": "special",
+          "value": 0
+        }
+      ],
+      "relics": [
+        "jin_gang_zhuo_relic",
+        "dian_gang_qiang"
       ],
       "skills": [
-        {"skill_id": "jin_gang_zhuo", "name": "金刚琢", "intent_type": "special", "effects": [{"type": "status", "status_type": "seal", "value": 2, "target": "player"}, {"type": "steal_armor", "value": 10}]},
-        {"skill_id": "bull_rush", "name": "蛮牛突进", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 24, "target": "player"}, {"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]}
+        {
+          "skill_id": "jin_gang_zhuo",
+          "name": "收宝大法",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "seal",
+              "value": 2,
+              "target": "player"
+            },
+            {
+              "type": "steal_armor",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "skill_id": "bull_rush",
+          "name": "蛮牛突进",
+          "intent_type": "heavy_attack",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 24,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "stun",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.5, "phase": 2, "description": "兕怪祭出金刚琢", "buff": {"type": "strength", "value": 5}},
-        {"threshold": 0.25, "phase": 3, "description": "兕怪狂暴", "buff": {"type": "strength", "value": 8, "armor": 20}}
+        {
+          "threshold": 0.5,
+          "phase": 2,
+          "description": "兕怪祭出金刚琢",
+          "buff": {
+            "type": "strength",
+            "value": 5
+          }
+        },
+        {
+          "threshold": 0.25,
+          "phase": 3,
+          "description": "兕怪狂暴",
+          "buff": {
+            "type": "strength",
+            "value": 8,
+            "armor": 20
+          }
+        }
       ],
-      "drops": {"gold_min": 60, "gold_max": 100, "relic_chance": 1.0, "card_rarity_min": "rare"}
+      "drops": {
+        "gold_min": 60,
+        "gold_max": 100,
+        "relics_chance": 1.0,
+        "card_rarity_min": "rare"
+      }
     },
     {
       "enemy_id": "ru_yi_zhen_xian",
       "enemy_name": "如意真仙",
+      "chapter": 2,
       "enemy_type": "normal",
-      "max_hp": 32,
+      "max_hp": 38,
       "base_armor": 0,
-      "description": "红孩儿的叔叔，牛魔王的弟弟，解阳山上卖落胎泉的道士，贪财好利。",
+      "description": "牛魔王的弟弟，红孩儿的叔叔。盘踞解阳山破儿洞，霸占落胎泉向过路人索要钱财。因侄子红孩儿被观音收服而怨恨唐僧师徒，手持如意钩，贪财好利。",
       "intent_pattern": [
-        {"type": "attack", "value": 7},
-        {"type": "attack", "value": 8},
-        {"type": "defend", "value": 5},
-        {"type": "attack", "value": 9}
+        {
+          "type": "attack",
+          "value": 11
+        },
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "defend",
+          "value": 9
+        },
+        {
+          "type": "attack",
+          "value": 13
+        }
+      ],
+      "relics": [
+        "ru_yi_gou"
       ],
       "skills": [
-        {"skill_id": "ru_yi_hook", "name": "如意钩", "intent_type": "attack", "effects": [{"type": "damage", "value": 9, "target": "player"}]}
+        {
+          "skill_id": "ru_yi_hook",
+          "name": "钩锁连环",
+          "intent_type": "attack",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 9,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "slow",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 6, "gold_max": 14}
+      "drops": {
+        "gold_min": 6,
+        "gold_max": 14
+      }
     },
     {
       "enemy_id": "pi_pa_jing",
       "enemy_name": "琵琶精",
+      "chapter": 2,
       "enemy_type": "elite",
       "max_hp": 80,
       "base_armor": 0,
-      "description": "蝎子精。",
+      "description": "本名蝎子精，盘踞毒敌山琵琶洞。曾在雷音寺听佛讲经，尾上毒刺曾蛰伤如来佛祖。善使倒马毒桩，能放出剧毒，连悟空也被蛰伤头痛难忍，后被昂日星官的叫声所克。",
       "intent_pattern": [
-        {"type": "attack", "value": 12},
-        {"type": "special", "value": 0},
-        {"type": "attack", "value": 14},
-        {"type": "debuff", "value": 0},
-        {"type": "heavy_attack", "value": 20}
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 14
+        },
+        {
+          "type": "debuff",
+          "value": 0
+        },
+        {
+          "type": "heavy_attack",
+          "value": 20
+        }
+      ],
+      "relics": [
+        "yu_shi_pi_pa"
       ],
       "skills": [
-        {"skill_id": "poison_sting", "name": "倒马毒桩", "intent_type": "special", "effects": [{"type": "damage", "value": 10, "target": "player"}, {"type": "status", "status_type": "burn", "value": 5, "target": "player"}]},
-        {"skill_id": "charm_song", "name": "琵琶魅音", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "vulnerable", "value": 3, "target": "player"}]}
+        {
+          "skill_id": "poison_sting",
+          "name": "倒马毒桩",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 10,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "burn",
+              "value": 5,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "charm_song",
+          "name": "琵琶魅音",
+          "intent_type": "debuff",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "stun",
+              "value": 1,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.4, "phase": 2, "description": "琵琶精显露蝎子真身", "buff": {"type": "thorns", "value": 5}}
+        {
+          "threshold": 0.4,
+          "phase": 2,
+          "description": "琵琶精显露蝎子真身",
+          "buff": {
+            "type": "thorns",
+            "value": 5
+          }
+        }
       ],
-      "drops": {"gold_min": 25, "gold_max": 45, "relic_chance": 0.4}
+      "drops": {
+        "gold_min": 25,
+        "gold_max": 45,
+        "relics_chance": 0.4
+      }
     },
     {
       "enemy_id": "liu_er_mi_hou",
       "enemy_name": "六耳猕猴",
+      "chapter": 2,
       "enemy_type": "boss",
       "max_hp": 100,
       "base_armor": 5,
-      "description": "冒充孙悟空，实力与真悟空一般无二。",
+      "description": "四大灵猴之一，善聊人意、知前后、万物皆明。外貌神通与悟空一般无二，假冒悟空打伤唐僧抢走行李，连观音、地藏、天庭皆无法分辨真假，最终被如来佛祖识破打死。",
       "intent_pattern": [
-        {"type": "attack", "value": 16},
-        {"type": "heavy_attack", "value": 22},
-        {"type": "defend", "value": 12},
-        {"type": "special", "value": 0},
-        {"type": "attack", "value": 18}
+        {
+          "type": "attack",
+          "value": 16
+        },
+        {
+          "type": "heavy_attack",
+          "value": 22
+        },
+        {
+          "type": "defend",
+          "value": 12
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 18
+        }
+      ],
+      "relics": [
+        "sui_xin_tie_gan_bing"
       ],
       "skills": [
-        {"skill_id": "mirror_strike", "name": "镜像棍法", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 22, "target": "player"}]},
-        {"skill_id": "copy_form", "name": "七十二变", "intent_type": "special", "effects": [{"type": "strength", "value": 3}, {"type": "armor", "value": 10}]}
+        {
+          "skill_id": "mirror_strike",
+          "name": "镜像棍法",
+          "intent_type": "heavy_attack",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 14,
+              "target": "player"
+            },
+            {
+              "type": "damage",
+              "value": 14,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "copy_form",
+          "name": "七十二变",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "strength",
+              "value": 3
+            },
+            {
+              "type": "armor",
+              "value": 10
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.5, "phase": 2, "description": "六耳猕猴释放全力", "buff": {"type": "strength", "value": 5}}
+        {
+          "threshold": 0.5,
+          "phase": 2,
+          "description": "六耳猕猴释放全力",
+          "buff": {
+            "type": "strength",
+            "value": 5
+          }
+        }
       ],
-      "drops": {"gold_min": 30, "gold_max": 55, "relic_chance": 0.5}
+      "drops": {
+        "gold_min": 30,
+        "gold_max": 55,
+        "relics_chance": 0.5
+      }
     },
     {
       "enemy_id": "tie_shan_gong_zhu",
       "enemy_name": "铁扇公主",
+      "chapter": 2,
       "enemy_type": "normal",
-      "max_hp": 42,
+      "max_hp": 48,
       "base_armor": 0,
-      "description": "牛魔王发妻，持有芭蕉扇。",
+      "description": "牛魔王发妻，又名罗刹女，修炼得道的地仙之祖。持有太上老君的芭蕉扇，一扇息火、二扇生风、三扇下雨。因悟空害其子红孩儿被收而怀恨在心，一扇将悟空扇出五万里。",
       "intent_pattern": [
-        {"type": "special", "value": 0},
-        {"type": "attack", "value": 8},
-        {"type": "defend", "value": 6},
-        {"type": "special", "value": 0}
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "defend",
+          "value": 10
+        },
+        {
+          "type": "special",
+          "value": 0
+        }
+      ],
+      "relics": [
+        "ba_jiao_shan"
       ],
       "skills": [
-        {"skill_id": "banana_fan", "name": "芭蕉扇", "intent_type": "special", "effects": [{"type": "damage", "value": 14, "target": "player"}, {"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]}
+        {
+          "skill_id": "banana_fan",
+          "name": "狂风卷地",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 14,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "slow",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 10, "gold_max": 22}
+      "drops": {
+        "gold_min": 10,
+        "gold_max": 22
+      }
     },
     {
       "enemy_id": "yu_mian_hu_li",
       "enemy_name": "玉面狐狸",
+      "chapter": 2,
       "enemy_type": "normal",
-      "max_hp": 16,
+      "max_hp": 22,
       "base_armor": 0,
-      "description": "牛魔王的二娘子。",
+      "description": "万岁狐王的女儿，牛魔王的小妾。家财万贯，家业富足，容貌绝美，住在积雷山摩云洞。性情娇蛮，战力不强但善于狐媚迷惑之术。",
       "intent_pattern": [
-        {"type": "attack", "value": 4},
-        {"type": "debuff", "value": 0},
-        {"type": "attack", "value": 5}
+        {
+          "type": "attack",
+          "value": 8
+        },
+        {
+          "type": "debuff",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 9
+        }
+      ],
+      "relics": [
+        "yu_mei_shan"
       ],
       "skills": [
-        {"skill_id": "fox_charm", "name": "狐媚术", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "vulnerable", "value": 1, "target": "player"}]}
+        {
+          "skill_id": "fox_charm",
+          "name": "狐媚迷心",
+          "intent_type": "debuff",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 2, "gold_max": 6}
+      "drops": {
+        "gold_min": 2,
+        "gold_max": 6
+      }
     },
     {
       "enemy_id": "niu_mo_wang",
       "enemy_name": "牛魔王",
+      "chapter": 2,
       "enemy_type": "boss",
       "max_hp": 110,
       "base_armor": 10,
-      "description": "孙悟空的结拜大哥，身负绝技，妻妾成群。",
+      "description": "大力牛魔王，又名平天大圣，与悟空五百年前结拜为兄弟。神通广大，能变化万千，战力与悟空不相上下。妻子铁扇公主，儿子红孩儿，小妾玉面狐狸。最终被哪吒、托塔天王等天兵天将围剖降服。",
       "intent_pattern": [
-        {"type": "attack", "value": 16},
-        {"type": "heavy_attack", "value": 24},
-        {"type": "defend", "value": 15},
-        {"type": "attack", "value": 18},
-        {"type": "special", "value": 0}
+        {
+          "type": "attack",
+          "value": 16
+        },
+        {
+          "type": "heavy_attack",
+          "value": 24
+        },
+        {
+          "type": "defend",
+          "value": 15
+        },
+        {
+          "type": "attack",
+          "value": 18
+        },
+        {
+          "type": "special",
+          "value": 0
+        }
+      ],
+      "relics": [
+        "hun_tie_gun"
       ],
       "skills": [
-        {"skill_id": "bull_charge", "name": "蛮牛冲撞", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 24, "target": "player"}, {"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]},
-        {"skill_id": "iron_fan", "name": "铁扇", "intent_type": "special", "effects": [{"type": "armor", "value": 20}, {"type": "strength", "value": 3}]}
+        {
+          "skill_id": "bull_charge",
+          "name": "蛮牛冲撞",
+          "intent_type": "heavy_attack",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 24,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "stun",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "iron_body",
+          "name": "铁胆护体",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "armor",
+              "value": 20
+            },
+            {
+              "type": "strength",
+              "value": 3
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.5, "phase": 2, "description": "牛魔王变身巨牛", "buff": {"type": "max_hp_increase", "value": 40}},
-        {"threshold": 0.25, "phase": 3, "description": "牛魔王狂暴", "buff": {"type": "strength", "value": 6}}
+        {
+          "threshold": 0.5,
+          "phase": 2,
+          "description": "牛魔王变身巨牛",
+          "buff": {
+            "type": "max_hp_increase",
+            "value": 40
+          }
+        },
+        {
+          "threshold": 0.25,
+          "phase": 3,
+          "description": "牛魔王狂暴",
+          "buff": {
+            "type": "strength",
+            "value": 6
+          }
+        }
       ],
-      "drops": {"gold_min": 35, "gold_max": 60, "relic_chance": 0.5}
+      "drops": {
+        "gold_min": 35,
+        "gold_max": 60,
+        "relics_chance": 0.5
+      }
     },
     {
       "enemy_id": "jiu_tou_chong",
       "enemy_name": "九头虫",
+      "chapter": 1,
       "enemy_type": "elite",
       "max_hp": 90,
       "base_armor": 5,
-      "description": "乱石山碧波潭妖怪，九个头颅。",
+      "description": "乱石山碧波潭万圣龙王的驸马，九头鸟成精。偷走祭赛国金光寺的佛宝舍利子，武艺高强，九个头颅各有神通，被二郎神的哮天犬咬掉一个头后逃遁无踪。",
       "intent_pattern": [
-        {"type": "attack", "value": 14},
-        {"type": "attack", "value": 12},
-        {"type": "heavy_attack", "value": 20},
-        {"type": "defend", "value": 10},
-        {"type": "special", "value": 0}
+        {
+          "type": "attack",
+          "value": 14
+        },
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "heavy_attack",
+          "value": 20
+        },
+        {
+          "type": "defend",
+          "value": 10
+        },
+        {
+          "type": "special",
+          "value": 0
+        }
       ],
       "skills": [
-        {"skill_id": "nine_heads", "name": "九头齐攻", "intent_type": "special", "effects": [{"type": "damage", "value": 6, "target": "player"}, {"type": "damage", "value": 6, "target": "player"}, {"type": "damage", "value": 6, "target": "player"}]}
+        {
+          "skill_id": "nine_heads",
+          "name": "九头齐攻",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 6,
+              "target": "player"
+            },
+            {
+              "type": "damage",
+              "value": 6,
+              "target": "player"
+            },
+            {
+              "type": "damage",
+              "value": 6,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "burn",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.4, "phase": 2, "description": "九头虫全力出击", "buff": {"type": "strength", "value": 4}}
+        {
+          "threshold": 0.4,
+          "phase": 2,
+          "description": "九头虫全力出击",
+          "buff": {
+            "type": "strength",
+            "value": 4
+          }
+        }
       ],
-      "drops": {"gold_min": 28, "gold_max": 50, "relic_chance": 0.4}
+      "drops": {
+        "gold_min": 28,
+        "gold_max": 50,
+        "relics_chance": 0.4
+      }
     },
     {
       "enemy_id": "ben_bo_er_ba",
       "enemy_name": "奔波儿灞",
+      "chapter": 3,
       "enemy_type": "normal",
-      "max_hp": 16,
+      "max_hp": 24,
       "base_armor": 0,
-      "description": "鲇鱼怪，看塔的笨妖怪之一。",
+      "description": "鲇鱼成精，与灞波儿奔搭档看守乱石山碧波潭的宝塔。性情愚笨，名字常被人混淆，战力不强但忠心耿耿。",
       "intent_pattern": [
-        {"type": "attack", "value": 4},
-        {"type": "attack", "value": 5},
-        {"type": "attack", "value": 4}
+        {
+          "type": "attack",
+          "value": 10
+        },
+        {
+          "type": "attack",
+          "value": 11
+        },
+        {
+          "type": "attack",
+          "value": 10
+        }
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 2, "gold_max": 6}
+      "drops": {
+        "gold_min": 2,
+        "gold_max": 6
+      }
     },
     {
       "enemy_id": "ba_bo_er_ben",
       "enemy_name": "灞波儿奔",
+      "chapter": 3,
       "enemy_type": "normal",
-      "max_hp": 16,
+      "max_hp": 24,
       "base_armor": 0,
-      "description": "黑鱼精，看塔的笨妖怪之一。",
+      "description": "黑鱼成精，与奔波儿灞搭档看守乱石山碧波潭的宝塔。同样愚笨，名字常被人混淆，战力不强但忠心耿耿。",
       "intent_pattern": [
-        {"type": "attack", "value": 5},
-        {"type": "attack", "value": 4},
-        {"type": "attack", "value": 5}
+        {
+          "type": "attack",
+          "value": 11
+        },
+        {
+          "type": "attack",
+          "value": 10
+        },
+        {
+          "type": "attack",
+          "value": 11
+        }
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 2, "gold_max": 6}
+      "drops": {
+        "gold_min": 2,
+        "gold_max": 6
+      }
     },
     {
       "enemy_id": "gu_zhi_gong",
       "enemy_name": "孤直公",
+      "chapter": 3,
       "enemy_type": "normal",
-      "max_hp": 18,
+      "max_hp": 26,
       "base_armor": 0,
-      "description": "树精妖怪，善于吟诗作对。",
+      "description": "柏树修炼成精，木仙庵“四操”之首。年迈德高，喜好谈论诗词歌赋，与拂云叟、凌空子、杏仙等树精同居于荆棘岭木仙庵中，曾留唐僧谈诗。",
       "intent_pattern": [
-        {"type": "attack", "value": 5},
-        {"type": "defend", "value": 4},
-        {"type": "attack", "value": 6}
+        {
+          "type": "attack",
+          "value": 11
+        },
+        {
+          "type": "defend",
+          "value": 10
+        },
+        {
+          "type": "attack",
+          "value": 12
+        }
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 3, "gold_max": 8}
+      "drops": {
+        "gold_min": 3,
+        "gold_max": 8
+      }
     },
     {
       "enemy_id": "xing_xian",
       "enemy_name": "杏仙",
+      "chapter": 3,
       "enemy_type": "normal",
-      "max_hp": 18,
+      "max_hp": 26,
       "base_armor": 0,
-      "description": "杏树精。",
+      "description": "荆棘岭杏树修炼成精，别名杏花仙子。容貌美丽，善于诗词歌赋，与孤直公等树精同居于木仙庵中。曾对唐僧有爱慕之意，以诗传情，后被悟空打散。",
       "intent_pattern": [
-        {"type": "debuff", "value": 0},
-        {"type": "attack", "value": 5},
-        {"type": "attack", "value": 6}
+        {
+          "type": "debuff",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 11
+        },
+        {
+          "type": "attack",
+          "value": 12
+        }
       ],
       "skills": [
-        {"skill_id": "spring_charm", "name": "春心迷惑", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "vulnerable", "value": 1, "target": "player"}]}
+        {
+          "skill_id": "spring_charm",
+          "name": "春心迷惑",
+          "intent_type": "debuff",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "slow",
+              "value": 1,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 3, "gold_max": 8}
+      "drops": {
+        "gold_min": 3,
+        "gold_max": 8
+      }
     },
     {
-      "enemy_id": "huang_mei_lao_fo",
-      "enemy_name": "黄眉老佛",
+      "enemy_id": "huang_mei_da_wang",
+      "enemy_name": "黄眉大王",
+      "chapter": 3,
       "enemy_type": "boss",
       "max_hp": 220,
       "base_armor": 8,
-      "description": "弥勒佛的童子，冒充如来佛祖假设雷音寺，持有金铙和后天袋两件S级法宝，能收一切人和物。",
+      "description": "弥勒佛的童子，偷了主人的金钹和后天袋下凡。在小西天假设小雷音寺冒充如来佛祖，最终被弥勒佛祖亲自收服。",
       "intent_pattern": [
-        {"type": "special", "value": 0},
-        {"type": "attack", "value": 18},
-        {"type": "defend", "value": 15},
-        {"type": "special", "value": 0},
-        {"type": "heavy_attack", "value": 28}
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 18
+        },
+        {
+          "type": "defend",
+          "value": 15
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "heavy_attack",
+          "value": 28
+        }
+      ],
+      "relics": [
+        "jin_nao_relic",
+        "hou_tian_dai"
       ],
       "skills": [
-        {"skill_id": "jin_nao", "name": "金铙", "intent_type": "special", "effects": [{"type": "status", "status_type": "seal", "value": 3, "target": "player"}, {"type": "damage", "value": 10, "target": "player"}]},
-        {"skill_id": "hou_tian_dai", "name": "后天袋", "intent_type": "special", "effects": [{"type": "steal_armor", "value": 15}, {"type": "status", "status_type": "vulnerable", "value": 3, "target": "player"}]},
-        {"skill_id": "fake_buddha", "name": "假佛威压", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 28, "target": "player"}]}
+        {
+          "skill_id": "jin_nao",
+          "name": "金铙罩顶",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "seal",
+              "value": 3,
+              "target": "player"
+            },
+            {
+              "type": "damage",
+              "value": 10,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "hou_tian_dai",
+          "name": "乾坤装袋",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "steal_armor",
+              "value": 15
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 3,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "fake_buddha",
+          "name": "假佛威压",
+          "intent_type": "heavy_attack",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 28,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "stun",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.6, "phase": 2, "description": "黄眉老佛祭出金铙", "buff": {"type": "strength", "value": 5}},
-        {"threshold": 0.3, "phase": 3, "description": "黄眉老佛使用后天袋", "buff": {"type": "strength", "value": 10, "armor": 25}}
+        {
+          "threshold": 0.6,
+          "phase": 2,
+          "description": "黄眉大王祭出金铙",
+          "buff": {
+            "type": "strength",
+            "value": 5
+          }
+        },
+        {
+          "threshold": 0.3,
+          "phase": 3,
+          "description": "黄眉大王使用后天袋",
+          "buff": {
+            "type": "strength",
+            "value": 10,
+            "armor": 25
+          }
+        }
       ],
-      "drops": {"gold_min": 70, "gold_max": 120, "relic_chance": 1.0, "card_rarity_min": "rare"}
+      "drops": {
+        "gold_min": 70,
+        "gold_max": 120,
+        "relics_chance": 1.0,
+        "card_rarity_min": "rare"
+      }
     },
     {
-      "enemy_id": "ju_mang_guai",
-      "enemy_name": "巨蟒怪",
-      "enemy_type": "normal",
-      "max_hp": 45,
-      "base_armor": 3,
-      "description": "驼罗庄上的野生妖怪，有蛮力。",
-      "intent_pattern": [
-        {"type": "attack", "value": 9},
-        {"type": "heavy_attack", "value": 14},
-        {"type": "attack", "value": 10},
-        {"type": "attack", "value": 8}
-      ],
-      "skills": [],
-      "phase_thresholds": [],
-      "drops": {"gold_min": 8, "gold_max": 18}
-    },
-    {
-      "enemy_id": "sai_tai_sui",
-      "enemy_name": "赛太岁",
-      "enemy_type": "elite",
-      "max_hp": 90,
-      "base_armor": 5,
-      "description": "观音菩萨的坐骑金毛狲，朱紫国拐走金圣娘娘，持有紫金铃可飞沙走火，痴情种子。",
-      "intent_pattern": [
-        {"type": "attack", "value": 14},
-        {"type": "special", "value": 0},
-        {"type": "heavy_attack", "value": 20},
-        {"type": "defend", "value": 12},
-        {"type": "attack", "value": 16}
-      ],
-      "skills": [
-        {"skill_id": "purple_bell", "name": "紫金铃", "intent_type": "special", "effects": [{"type": "damage", "value": 12, "target": "player"}, {"type": "status", "status_type": "burn", "value": 5, "target": "player"}]},
-        {"skill_id": "claw_strike", "name": "金毛利爪", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 20, "target": "player"}]}
-      ],
-      "phase_thresholds": [
-        {"threshold": 0.4, "phase": 2, "description": "赛太岁摇动紫金铃", "buff": {"type": "strength", "value": 4, "thorns": 3}}
-      ],
-      "drops": {"gold_min": 28, "gold_max": 50, "relic_chance": 0.4}
-    },
-    {
-      "enemy_id": "qi_zhi_zhu_jing",
-      "enemy_name": "七蜘蛛精",
+      "enemy_id": "mang_she_jing",
+      "enemy_name": "蟒蛇精",
+      "chapter": 3,
       "enemy_type": "normal",
       "max_hp": 55,
-      "base_armor": 0,
-      "description": "盘丝洞七个美女蜘蛛精，蛛丝缠人。",
+      "base_armor": 3,
+      "description": "红鳞大蟒，盘踞七绝山稀柿洞。身长三十余丈，能吞人畜不吐骨头。其所在的七绝山臭气熏天，连飞鸟都不敢过，被悟空钻入腹中杀死。",
       "intent_pattern": [
-        {"type": "debuff", "value": 0},
-        {"type": "attack", "value": 10},
-        {"type": "attack", "value": 8},
-        {"type": "debuff", "value": 0},
-        {"type": "heavy_attack", "value": 14}
+        {
+          "type": "attack",
+          "value": 15
+        },
+        {
+          "type": "heavy_attack",
+          "value": 23
+        },
+        {
+          "type": "attack",
+          "value": 16
+        },
+        {
+          "type": "attack",
+          "value": 14
+        }
       ],
-      "skills": [
-        {"skill_id": "silk_web", "name": "蛛丝缠绕", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "slow", "value": 2, "target": "player"}]}
-      ],
-      "phase_thresholds": [],
-      "drops": {"gold_min": 12, "gold_max": 25}
-    },
-    {
-      "enemy_id": "mi_ma_lu_ban",
-      "enemy_name": "蜜蚂蠦班",
-      "enemy_type": "normal",
-      "max_hp": 20,
-      "base_armor": 0,
-      "description": "七蜘蛛精的干儿子们，小虫子精。",
-      "intent_pattern": [
-        {"type": "attack", "value": 5},
-        {"type": "debuff", "value": 0, "status_type": "burn", "stacks": 2},
-        {"type": "attack", "value": 6},
-        {"type": "attack", "value": 5}
+      "relics": [
+        "ruan_bing_shuang_qiang"
       ],
       "skills": [],
       "phase_thresholds": [],
-      "drops": {"gold_min": 3, "gold_max": 8}
+      "drops": {
+        "gold_min": 8,
+        "gold_max": 18
+      }
+    },
+    {
+      "enemy_id": "zhi_zhu_jing",
+      "enemy_name": "蛛蛛精",
+      "chapter": 3,
+      "enemy_type": "normal",
+      "max_hp": 65,
+      "base_armor": 0,
+      "description": "盘丝洞七只蜘蛛修炼成精，常在濯垢泉洗浴。能从肘窝中吐出丝绳缓住敌人，将百眼魔君称为师兄。后被悟空变化为鹰将其衣物叼走，最终被昂日星官的母亲毗蓝婆菩萨用绣花针所杀。",
+      "intent_pattern": [
+        {
+          "type": "debuff",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 16
+        },
+        {
+          "type": "summon",
+          "value": 0,
+          "summon_id": "summoned_bug"
+        },
+        {
+          "type": "attack",
+          "value": 14
+        },
+        {
+          "type": "debuff",
+          "value": 0
+        },
+        {
+          "type": "heavy_attack",
+          "value": 23
+        }
+      ],
+      "skills": [
+        {
+          "skill_id": "silk_web",
+          "name": "蛛丝缠绕",
+          "intent_type": "debuff",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "slow",
+              "value": 2,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "burn",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "summon_bugs",
+          "name": "召唤虫群",
+          "intent_type": "summon",
+          "effects": []
+        }
+      ],
+      "phase_thresholds": [],
+      "drops": {
+        "gold_min": 12,
+        "gold_max": 25
+      },
+      "children": [
+        {
+          "enemy_id": "summoned_bee",
+          "enemy_name": "蜜蜂",
+          "enemy_type": "normal",
+          "max_hp": 8,
+          "base_armor": 0,
+          "description": "蜘蛛精召唤的蜜蜂，嗡嗡作响。",
+          "intent_pattern": [
+            {
+              "type": "attack",
+              "value": 3
+            },
+            {
+              "type": "attack",
+              "value": 4
+            },
+            {
+              "type": "attack",
+              "value": 3
+            }
+          ],
+          "skills": [],
+          "phase_thresholds": [],
+          "drops": {
+            "gold_min": 0,
+            "gold_max": 1
+          }
+        },
+        {
+          "enemy_id": "summoned_wasp",
+          "enemy_name": "蚂蜂",
+          "enemy_type": "normal",
+          "max_hp": 10,
+          "base_armor": 0,
+          "description": "蜘蛛精召唤的蚂蜂，毒刺凶猛。",
+          "intent_pattern": [
+            {
+              "type": "attack",
+              "value": 4
+            },
+            {
+              "type": "debuff",
+              "value": 0,
+              "status_type": "burn",
+              "stacks": 1
+            },
+            {
+              "type": "attack",
+              "value": 5
+            }
+          ],
+          "skills": [],
+          "phase_thresholds": [],
+          "drops": {
+            "gold_min": 0,
+            "gold_max": 1
+          }
+        },
+        {
+          "enemy_id": "summoned_gadfly",
+          "enemy_name": "牛虻",
+          "enemy_type": "normal",
+          "max_hp": 12,
+          "base_armor": 0,
+          "description": "蜘蛛精召唤的牛虻，吸血成性。",
+          "intent_pattern": [
+            {
+              "type": "attack",
+              "value": 5
+            },
+            {
+              "type": "attack",
+              "value": 4
+            },
+            {
+              "type": "debuff",
+              "value": 0,
+              "status_type": "bleed",
+              "stacks": 1
+            }
+          ],
+          "skills": [],
+          "phase_thresholds": [],
+          "drops": {
+            "gold_min": 0,
+            "gold_max": 1
+          }
+        },
+        {
+          "enemy_id": "summoned_moth",
+          "enemy_name": "蛾子",
+          "enemy_type": "normal",
+          "max_hp": 6,
+          "base_armor": 0,
+          "description": "蜘蛛精召唤的蛾子，善于伪装。",
+          "intent_pattern": [
+            {
+              "type": "attack",
+              "value": 2
+            },
+            {
+              "type": "debuff",
+              "value": 0,
+              "status_type": "slow",
+              "stacks": 1
+            },
+            {
+              "type": "attack",
+              "value": 3
+            }
+          ],
+          "skills": [],
+          "phase_thresholds": [],
+          "drops": {
+            "gold_min": 0,
+            "gold_max": 1
+          }
+        },
+        {
+          "enemy_id": "summoned_dragonfly",
+          "enemy_name": "蜻蜓",
+          "enemy_type": "normal",
+          "max_hp": 9,
+          "base_armor": 0,
+          "description": "蜘蛛精召唤的蜻蜓，飞速极快。",
+          "intent_pattern": [
+            {
+              "type": "attack",
+              "value": 4
+            },
+            {
+              "type": "attack",
+              "value": 5
+            },
+            {
+              "type": "attack",
+              "value": 3
+            }
+          ],
+          "skills": [],
+          "phase_thresholds": [],
+          "drops": {
+            "gold_min": 0,
+            "gold_max": 1
+          }
+        }
+      ]
     },
     {
       "enemy_id": "bai_yan_mo_jun",
       "enemy_name": "百眼魔君",
+      "chapter": 3,
       "enemy_type": "elite",
       "max_hp": 85,
       "base_armor": 3,
-      "description": "蜈蚣精，又称多目怪，两胁生千眼，千眼金光森森艳艳，善下毒，野生妖怪中的强者。",
+      "description": "蜓蚙修炼成精，又称多目怪，盘踞黄花观。两胁下有一千只眼睛，能放出金光森森艳艳，善下毒，是野生妖怪中的强者。与盘丝洞七只蜘蛛精互称师兄弟妹，后被昂日星官的母亲毗蓝婆菩萨用绣花针降服。",
       "intent_pattern": [
-        {"type": "special", "value": 0},
-        {"type": "attack", "value": 14},
-        {"type": "debuff", "value": 0},
-        {"type": "heavy_attack", "value": 20},
-        {"type": "special", "value": 0}
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 14
+        },
+        {
+          "type": "debuff",
+          "value": 0
+        },
+        {
+          "type": "heavy_attack",
+          "value": 20
+        },
+        {
+          "type": "special",
+          "value": 0
+        }
+      ],
+      "relics": [
+        "po_jie_jian"
       ],
       "skills": [
-        {"skill_id": "golden_light", "name": "千眼金光", "intent_type": "special", "effects": [{"type": "damage", "value": 10, "target": "player"}, {"type": "status", "status_type": "seal", "value": 2, "target": "player"}]},
-        {"skill_id": "centipede_poison", "name": "蜈蚣毒", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "burn", "value": 5, "target": "player"}]}
+        {
+          "skill_id": "golden_light",
+          "name": "千眼金光",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 10,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "seal",
+              "value": 2,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "centipede_poison",
+          "name": "蜓蚓剧毒",
+          "intent_type": "debuff",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "burn",
+              "value": 5,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "slow",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.4, "phase": 2, "description": "百眼魔君释放千眼金光", "buff": {"type": "strength", "value": 4}}
+        {
+          "threshold": 0.4,
+          "phase": 2,
+          "description": "百眼魔君释放千眼金光",
+          "buff": {
+            "type": "strength",
+            "value": 4
+          }
+        }
       ],
-      "drops": {"gold_min": 25, "gold_max": 45, "relic_chance": 0.4}
+      "drops": {
+        "gold_min": 25,
+        "gold_max": 45,
+        "relics_chance": 0.4
+      }
     },
     {
-      "enemy_id": "shi_wang",
-      "enemy_name": "狮王",
+      "enemy_id": "shi_da_wang",
+      "enemy_name": "狮大王",
+      "chapter": 3,
       "enemy_type": "elite",
       "max_hp": 95,
       "base_armor": 8,
-      "description": "狮驼岭老魔，文殊菩萨的坐骑。",
+      "description": "狮驼岭大大王，青毛狮子怪，文殊菩萨的坐骑。能张口将人一口吞下，曾将悟空吞入腹中。与象大王、大鹏金翅雕结拜为兄弟，三妖合力占据狮驼国。",
       "intent_pattern": [
-        {"type": "attack", "value": 16},
-        {"type": "special", "value": 0},
-        {"type": "defend", "value": 12},
-        {"type": "heavy_attack", "value": 22},
-        {"type": "attack", "value": 14}
+        {
+          "type": "attack",
+          "value": 16
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "defend",
+          "value": 12
+        },
+        {
+          "type": "heavy_attack",
+          "value": 22
+        },
+        {
+          "type": "attack",
+          "value": 14
+        }
+      ],
+      "relics": [
+        "da_han_dao"
       ],
       "skills": [
-        {"skill_id": "swallow", "name": "吞噬", "intent_type": "special", "effects": [{"type": "damage", "value": 15, "target": "player"}, {"type": "status", "status_type": "seal", "value": 2, "target": "player"}]}
+        {
+          "skill_id": "swallow",
+          "name": "吞噬",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 15,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "seal",
+              "value": 2,
+              "target": "player"
+            },
+            {
+              "type": "heal",
+              "value": 10
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.4, "phase": 2, "description": "狮王显露真身", "buff": {"type": "strength", "value": 5}}
+        {
+          "threshold": 0.4,
+          "phase": 2,
+          "description": "狮王显露真身",
+          "buff": {
+            "type": "strength",
+            "value": 5
+          }
+        }
       ],
-      "drops": {"gold_min": 30, "gold_max": 50, "relic_chance": 0.45}
+      "drops": {
+        "gold_min": 30,
+        "gold_max": 50,
+        "relics_chance": 0.45
+      }
     },
     {
-      "enemy_id": "xiang_wang",
-      "enemy_name": "象王",
+      "enemy_id": "xiang_da_wang",
+      "enemy_name": "象大王",
+      "chapter": 3,
       "enemy_type": "elite",
       "max_hp": 95,
       "base_armor": 10,
-      "description": "狮驼岭二魔，普贤菩萨的坐骑白象。",
+      "description": "狮驼岭二大王，黄牙白象怪，普贤菩萨的坐骑。武器长枪，能用长鼻将人卷住，曾用鼻子将悟空卷住动弹不得。与狮大王、大鹏金翅雕结拜为兄弟，三妖合力占据狮驼国。",
       "intent_pattern": [
-        {"type": "defend", "value": 15},
-        {"type": "attack", "value": 14},
-        {"type": "special", "value": 0},
-        {"type": "heavy_attack", "value": 22},
-        {"type": "defend", "value": 12}
+        {
+          "type": "defend",
+          "value": 15
+        },
+        {
+          "type": "attack",
+          "value": 14
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "heavy_attack",
+          "value": 22
+        },
+        {
+          "type": "defend",
+          "value": 12
+        }
+      ],
+      "relics": [
+        "tun_tian_qiang"
       ],
       "skills": [
-        {"skill_id": "trunk_grab", "name": "长鼻卷", "intent_type": "special", "effects": [{"type": "damage", "value": 12, "target": "player"}, {"type": "status", "status_type": "slow", "value": 2, "target": "player"}]}
+        {
+          "skill_id": "trunk_grab",
+          "name": "长鼻卷缚",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 12,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "slow",
+              "value": 2,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.4, "phase": 2, "description": "象王狂暴", "buff": {"type": "strength", "value": 4, "armor": 10}}
+        {
+          "threshold": 0.4,
+          "phase": 2,
+          "description": "象王狂暴",
+          "buff": {
+            "type": "strength",
+            "value": 4,
+            "armor": 10
+          }
+        }
       ],
-      "drops": {"gold_min": 30, "gold_max": 50, "relic_chance": 0.45}
+      "drops": {
+        "gold_min": 30,
+        "gold_max": 50,
+        "relics_chance": 0.45
+      }
     },
     {
       "enemy_id": "da_peng_jin_chi_diao",
       "enemy_name": "大鹏金翅雕",
+      "chapter": 3,
       "enemy_type": "boss",
       "max_hp": 260,
       "base_armor": 12,
-      "description": "狮驼岭三魔，如来的舅舅，凤凰之子，扇翅九万里赶上筋斗云，持有阴阳二气瓶，实力超一流。",
+      "description": "狮驼岭三大王，与如来佛祖有亲缘关系，乃凤凰之子、孔雀大明王菩萨的舌弟。扇翅九万里，神通广大，实力在三兄弟中最强，最终被如来佛祖亲自降服。",
       "intent_pattern": [
-        {"type": "attack", "value": 20},
-        {"type": "special", "value": 0},
-        {"type": "heavy_attack", "value": 30},
-        {"type": "defend", "value": 15},
-        {"type": "special", "value": 0},
-        {"type": "attack", "value": 22}
+        {
+          "type": "attack",
+          "value": 20
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "heavy_attack",
+          "value": 30
+        },
+        {
+          "type": "defend",
+          "value": 15
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 22
+        }
+      ],
+      "relics": [
+        "hua_gan_fang_tian_ji",
+        "yin_yang_er_qi_ping"
       ],
       "skills": [
-        {"skill_id": "yin_yang_bottle", "name": "阴阳二气瓶", "intent_type": "special", "effects": [{"type": "status", "status_type": "seal", "value": 3, "target": "player"}, {"type": "damage", "value": 15, "target": "player"}]},
-        {"skill_id": "wing_storm", "name": "金翅风暴", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 30, "target": "player"}, {"type": "status", "status_type": "vulnerable", "value": 3, "target": "player"}]},
-        {"skill_id": "sky_dive", "name": "九天俯冲", "intent_type": "attack", "effects": [{"type": "damage", "value": 22, "target": "player"}]}
+        {
+          "skill_id": "yin_yang_bottle",
+          "name": "阴阳二气",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "seal",
+              "value": 3,
+              "target": "player"
+            },
+            {
+              "type": "damage",
+              "value": 15,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "wing_storm",
+          "name": "金翅风暴",
+          "intent_type": "heavy_attack",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 30,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "stun",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "sky_dive",
+          "name": "九天俯冲",
+          "intent_type": "attack",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 22,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.6, "phase": 2, "description": "大鹏金翅雕展翅高飞", "buff": {"type": "strength", "value": 6}},
-        {"threshold": 0.3, "phase": 3, "description": "大鹏金翅雕全力爆发", "buff": {"type": "strength", "value": 12, "armor": 30}}
+        {
+          "threshold": 0.6,
+          "phase": 2,
+          "description": "大鹏金翅雕展翅高飞",
+          "buff": {
+            "type": "strength",
+            "value": 6
+          }
+        },
+        {
+          "threshold": 0.3,
+          "phase": 3,
+          "description": "大鹏金翅雕全力爆发",
+          "buff": {
+            "type": "strength",
+            "value": 12,
+            "armor": 30
+          }
+        }
       ],
-      "drops": {"gold_min": 80, "gold_max": 150, "relic_chance": 1.0, "card_rarity_min": "legendary"}
+      "drops": {
+        "gold_min": 80,
+        "gold_max": 150,
+        "relics_chance": 1.0,
+        "card_rarity_min": "legendary"
+      }
     },
     {
       "enemy_id": "bai_lu_guai",
       "enemy_name": "白鹿怪",
+      "chapter": 3,
       "enemy_type": "normal",
-      "max_hp": 50,
+      "max_hp": 60,
       "base_armor": 3,
-      "description": "寿星的白鹿，比丘国妖怪国丈。",
+      "description": "南极寿星的坐骑白鹿下凡成精，盘踞比丘国。化作国丈迷惑国王，要用一千一百一十三个小儿的心肝做药引，能吸取精元恢复伤势。",
       "intent_pattern": [
-        {"type": "attack", "value": 9},
-        {"type": "defend", "value": 8},
-        {"type": "attack", "value": 11},
-        {"type": "heavy_attack", "value": 14}
+        {
+          "type": "attack",
+          "value": 15
+        },
+        {
+          "type": "defend",
+          "value": 14
+        },
+        {
+          "type": "attack",
+          "value": 17
+        },
+        {
+          "type": "heavy_attack",
+          "value": 23
+        }
+      ],
+      "relics": [
+        "shi_ling_zhang"
       ],
       "skills": [
-        {"skill_id": "life_drain", "name": "吸取精元", "intent_type": "special", "effects": [{"type": "damage", "value": 8, "target": "player"}, {"type": "heal", "value": 8}]}
+        {
+          "skill_id": "life_drain",
+          "name": "吸取精元",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 8,
+              "target": "player"
+            },
+            {
+              "type": "heal",
+              "value": 8
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 12, "gold_max": 25}
+      "drops": {
+        "gold_min": 12,
+        "gold_max": 25
+      }
     },
     {
       "enemy_id": "bai_mian_hu_li",
       "enemy_name": "白面狐狸",
+      "chapter": 3,
       "enemy_type": "normal",
-      "max_hp": 14,
+      "max_hp": 22,
       "base_armor": 0,
-      "description": "白鹿怪的小情人。",
+      "description": "白鹿怪的干女儿，狐狸修炼成精。被白鹿怪化作美女送入比丘国王宫为美后，容貌倾城，善于狐媚迷惑之术，战力不强但善于迷惑人心。",
       "intent_pattern": [
-        {"type": "attack", "value": 4},
-        {"type": "debuff", "value": 0},
-        {"type": "attack", "value": 5}
+        {
+          "type": "attack",
+          "value": 10
+        },
+        {
+          "type": "debuff",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 11
+        }
       ],
       "skills": [
-        {"skill_id": "fox_lure", "name": "狐媚", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "vulnerable", "value": 1, "target": "player"}]}
+        {
+          "skill_id": "fox_lure",
+          "name": "狐媚惑心",
+          "intent_type": "debuff",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "stun",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 2, "gold_max": 5}
+      "drops": {
+        "gold_min": 2,
+        "gold_max": 5
+      }
     },
     {
       "enemy_id": "jin_bi_lao_shu_jing",
       "enemy_name": "金鼻白毛老鼠精",
+      "chapter": 3,
       "enemy_type": "normal",
-      "max_hp": 52,
+      "max_hp": 62,
       "base_armor": 0,
-      "description": "托塔天王的干女儿，擅长逃跑，依仗无底洞大迷宫。",
+      "description": "又名半截观音，盘踞陷空山无底洞。曾在灵山偷吃如来的香花宝烛，被托塔天王收为义女。化作美女掳走唐僧，善使遁地术，行动敏捷，对唐僧情意绵绵。",
       "intent_pattern": [
-        {"type": "attack", "value": 8},
-        {"type": "special", "value": 0},
-        {"type": "attack", "value": 10},
-        {"type": "defend", "value": 6},
-        {"type": "attack", "value": 9}
+        {
+          "type": "attack",
+          "value": 14
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 16
+        },
+        {
+          "type": "defend",
+          "value": 12
+        },
+        {
+          "type": "attack",
+          "value": 15
+        }
       ],
       "skills": [
-        {"skill_id": "escape", "name": "遁地术", "intent_type": "special", "effects": [{"type": "armor", "value": 12}]}
+        {
+          "skill_id": "escape",
+          "name": "遁地伏击",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "armor",
+              "value": 12
+            },
+            {
+              "type": "status",
+              "status_type": "burn",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 12, "gold_max": 25}
+      "drops": {
+        "gold_min": 12,
+        "gold_max": 25
+      }
     },
     {
-      "enemy_id": "ai_ye_bao_zi_jing",
-      "enemy_name": "艾叶花皮豹子精",
+      "enemy_id": "nan_shan_da_wang",
+      "enemy_name": "南山大王",
+      "chapter": 3,
       "enemy_type": "normal",
-      "max_hp": 50,
+      "max_hp": 60,
       "base_armor": 3,
-      "description": "野生妖怪，会做假人头冒充唐僧脑袋，骗得悟空八戒痛哭。",
+      "description": "艾叶花皮豹子修炼成精，盘踞隐雾山折岳连环洞。曾用分瓣梅花计假冒唐僧人头欺骗悟空，狡诈多端，手下小妖众多，最终被悟空识破计谋打死。",
       "intent_pattern": [
-        {"type": "attack", "value": 10},
-        {"type": "special", "value": 0},
-        {"type": "heavy_attack", "value": 14},
-        {"type": "attack", "value": 9}
+        {
+          "type": "attack",
+          "value": 16
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "heavy_attack",
+          "value": 23
+        },
+        {
+          "type": "attack",
+          "value": 15
+        }
+      ],
+      "relics": [
+        "xuan_tie_chu"
       ],
       "skills": [
-        {"skill_id": "fake_head", "name": "伪造术", "intent_type": "special", "effects": [{"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]}
+        {
+          "skill_id": "fake_head",
+          "name": "分瓣梅花计",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 2,
+              "target": "player"
+            },
+            {
+              "type": "armor",
+              "value": 8
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 12, "gold_max": 25}
+      "drops": {
+        "gold_min": 12,
+        "gold_max": 25
+      }
     },
     {
       "enemy_id": "huang_shi_jing",
       "enemy_name": "黄狮精",
+      "chapter": 3,
       "enemy_type": "normal",
-      "max_hp": 48,
+      "max_hp": 58,
       "base_armor": 3,
-      "description": "野生狮妖，善使四明铲，九灵元圣的孙子，被评为最善良的妖怪。",
+      "description": "野生狮妖，九灵元圣的孙子，性情敦厚善良，被评为西游中最善良的妖怪。因偷走悟空等人的兵器办铁器宝会而惹祸上身，最终被悟空打死。",
       "intent_pattern": [
-        {"type": "attack", "value": 9},
-        {"type": "attack", "value": 10},
-        {"type": "defend", "value": 7},
-        {"type": "heavy_attack", "value": 14}
+        {
+          "type": "attack",
+          "value": 15
+        },
+        {
+          "type": "attack",
+          "value": 16
+        },
+        {
+          "type": "defend",
+          "value": 13
+        },
+        {
+          "type": "heavy_attack",
+          "value": 23
+        }
+      ],
+      "relics": [
+        "si_ming_chan"
       ],
       "skills": [
-        {"skill_id": "steal_weapon", "name": "偷盗", "intent_type": "special", "effects": [{"type": "status", "status_type": "seal", "value": 1, "target": "player"}]}
+        {
+          "skill_id": "steal_weapon",
+          "name": "窃兵之术",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "seal",
+              "value": 1,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 12, "gold_max": 25}
+      "drops": {
+        "gold_min": 12,
+        "gold_max": 25
+      }
     },
     {
       "enemy_id": "jiu_ling_yuan_sheng",
       "enemy_name": "九灵元圣",
+      "chapter": 3,
       "enemy_type": "boss",
       "max_hp": 100,
       "base_armor": 8,
-      "description": "太乙真人的坐骑九头狮子。",
+      "description": "太乙救苦天尊的坐骑九头狮子，修炼多年道行深厚。九个头颅各有神通，一声吐可震慑天地。因孙子黄狮精被杀而下山报仇，实力强大，最终被太乙救苦天尊亲自收回。",
       "intent_pattern": [
-        {"type": "attack", "value": 16},
-        {"type": "special", "value": 0},
-        {"type": "heavy_attack", "value": 24},
-        {"type": "defend", "value": 12},
-        {"type": "attack", "value": 18}
+        {
+          "type": "attack",
+          "value": 16
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "heavy_attack",
+          "value": 24
+        },
+        {
+          "type": "defend",
+          "value": 12
+        },
+        {
+          "type": "attack",
+          "value": 18
+        }
       ],
       "skills": [
-        {"skill_id": "nine_roar", "name": "九头齐吼", "intent_type": "special", "effects": [{"type": "damage", "value": 8, "target": "player"}, {"type": "status", "status_type": "vulnerable", "value": 3, "target": "player"}]},
-        {"skill_id": "lion_bite", "name": "狮王噬咬", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 24, "target": "player"}]}
+        {
+          "skill_id": "nine_roar",
+          "name": "九头齐吼",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 8,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "stun",
+              "value": 1,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "lion_bite",
+          "name": "狮王噬咬",
+          "intent_type": "heavy_attack",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 24,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "burn",
+              "value": 3,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.4, "phase": 2, "description": "九灵元圣全力出击", "buff": {"type": "strength", "value": 5}}
+        {
+          "threshold": 0.4,
+          "phase": 2,
+          "description": "九灵元圣全力出击",
+          "buff": {
+            "type": "strength",
+            "value": 5
+          }
+        }
       ],
-      "drops": {"gold_min": 30, "gold_max": 55, "relic_chance": 0.5}
-    },
-    {
-      "enemy_id": "xun_ni_shi",
-      "enemy_name": "狻猊狮",
-      "enemy_type": "normal",
-      "max_hp": 40,
-      "base_armor": 3,
-      "description": "九灵元圣的孙子之一，狮子怪。",
-      "intent_pattern": [
-        {"type": "attack", "value": 8},
-        {"type": "defend", "value": 6},
-        {"type": "attack", "value": 10},
-        {"type": "attack", "value": 8}
-      ],
-      "skills": [],
-      "phase_thresholds": [],
-      "drops": {"gold_min": 8, "gold_max": 18}
-    },
-    {
-      "enemy_id": "tuan_xiang_shi",
-      "enemy_name": "抟象狮",
-      "enemy_type": "normal",
-      "max_hp": 40,
-      "base_armor": 3,
-      "description": "九灵元圣的孙子之一，狮子怪。",
-      "intent_pattern": [
-        {"type": "attack", "value": 9},
-        {"type": "attack", "value": 8},
-        {"type": "defend", "value": 7},
-        {"type": "heavy_attack", "value": 12}
-      ],
-      "skills": [],
-      "phase_thresholds": [],
-      "drops": {"gold_min": 8, "gold_max": 18}
+      "drops": {
+        "gold_min": 30,
+        "gold_max": 55,
+        "relics_chance": 0.5
+      }
     },
     {
       "enemy_id": "pi_han_da_wang",
       "enemy_name": "辟寒大王",
+      "chapter": 3,
       "enemy_type": "elite",
       "max_hp": 85,
       "base_armor": 5,
-      "description": "犀牛精三兄弟之一。",
+      "description": "犀牛精三兄弟之首，盘踞金平府玄英洞。能释放寒气护体，与辟暑、辟尘大王合力偷走如来佛祖的舍利子。三兄弟各有神通，后被四星官降服。",
       "intent_pattern": [
-        {"type": "attack", "value": 14},
-        {"type": "defend", "value": 10},
-        {"type": "heavy_attack", "value": 18},
-        {"type": "attack", "value": 12},
-        {"type": "special", "value": 0}
+        {
+          "type": "attack",
+          "value": 14
+        },
+        {
+          "type": "defend",
+          "value": 10
+        },
+        {
+          "type": "heavy_attack",
+          "value": 18
+        },
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "special",
+          "value": 0
+        }
+      ],
+      "relics": [
+        "yue_fu"
       ],
       "skills": [
-        {"skill_id": "cold_aura", "name": "寒气护体", "intent_type": "special", "effects": [{"type": "armor", "value": 15}, {"type": "status", "status_type": "slow", "value": 1, "target": "player"}]}
+        {
+          "skill_id": "cold_aura",
+          "name": "寒气护体",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "armor",
+              "value": 15
+            },
+            {
+              "type": "status",
+              "status_type": "slow",
+              "value": 1,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "weaken",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.4, "phase": 2, "description": "辟寒大王释放寒气", "buff": {"type": "strength", "value": 3}}
+        {
+          "threshold": 0.4,
+          "phase": 2,
+          "description": "辟寒大王释放寒气",
+          "buff": {
+            "type": "strength",
+            "value": 3
+          }
+        }
       ],
-      "drops": {"gold_min": 25, "gold_max": 45, "relic_chance": 0.4}
+      "drops": {
+        "gold_min": 25,
+        "gold_max": 45,
+        "relics_chance": 0.4
+      }
     },
     {
       "enemy_id": "pi_shu_da_wang",
       "enemy_name": "辟暑大王",
+      "chapter": 3,
       "enemy_type": "elite",
       "max_hp": 85,
       "base_armor": 5,
-      "description": "犀牛精三兄弟之一。",
+      "description": "犀牛精三兄弟老二，盘踞金平府玄英洞。能释放暑气护体灸伤敌人，与辟寒、辟尘大王合力为害。三兄弟各有神通，后被四星官降服。",
       "intent_pattern": [
-        {"type": "attack", "value": 12},
-        {"type": "special", "value": 0},
-        {"type": "heavy_attack", "value": 18},
-        {"type": "defend", "value": 10},
-        {"type": "attack", "value": 14}
+        {
+          "type": "attack",
+          "value": 12
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "heavy_attack",
+          "value": 18
+        },
+        {
+          "type": "defend",
+          "value": 10
+        },
+        {
+          "type": "attack",
+          "value": 14
+        }
+      ],
+      "relics": [
+        "lie_yan_dao"
       ],
       "skills": [
-        {"skill_id": "heat_aura", "name": "暑气护体", "intent_type": "special", "effects": [{"type": "armor", "value": 15}, {"type": "status", "status_type": "burn", "value": 3, "target": "player"}]}
+        {
+          "skill_id": "heat_aura",
+          "name": "暑气灶伤",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "armor",
+              "value": 10
+            },
+            {
+              "type": "status",
+              "status_type": "burn",
+              "value": 4,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.4, "phase": 2, "description": "辟暑大王释放暑气", "buff": {"type": "strength", "value": 3}}
+        {
+          "threshold": 0.4,
+          "phase": 2,
+          "description": "辟暑大王释放暑气",
+          "buff": {
+            "type": "strength",
+            "value": 3
+          }
+        }
       ],
-      "drops": {"gold_min": 25, "gold_max": 45, "relic_chance": 0.4}
+      "drops": {
+        "gold_min": 25,
+        "gold_max": 45,
+        "relics_chance": 0.4
+      }
     },
     {
       "enemy_id": "pi_chen_da_wang",
       "enemy_name": "辟尘大王",
+      "chapter": 3,
       "enemy_type": "elite",
       "max_hp": 85,
       "base_armor": 5,
-      "description": "犀牛精三兄弟之一。",
+      "description": "犀牛精三兄弟老三，盘踞金平府玄英洞。能释放尘气护体使敌人流血，与辟寒、辟暑大王合力为害。三兄弟各有神通，后被四星官降服。",
       "intent_pattern": [
-        {"type": "defend", "value": 12},
-        {"type": "attack", "value": 14},
-        {"type": "heavy_attack", "value": 18},
-        {"type": "special", "value": 0},
-        {"type": "attack", "value": 12}
+        {
+          "type": "defend",
+          "value": 12
+        },
+        {
+          "type": "attack",
+          "value": 14
+        },
+        {
+          "type": "heavy_attack",
+          "value": 18
+        },
+        {
+          "type": "special",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 12
+        }
+      ],
+      "relics": [
+        "qi_ta_teng"
       ],
       "skills": [
-        {"skill_id": "dust_aura", "name": "尘气护体", "intent_type": "special", "effects": [{"type": "armor", "value": 15}, {"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]}
+        {
+          "skill_id": "dust_aura",
+          "name": "尘气迷眼",
+          "intent_type": "special",
+          "effects": [
+            {
+              "type": "armor",
+              "value": 10
+            },
+            {
+              "type": "status",
+              "status_type": "seal",
+              "value": 2,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [
-        {"threshold": 0.4, "phase": 2, "description": "辟尘大王释放尘气", "buff": {"type": "strength", "value": 3}}
+        {
+          "threshold": 0.4,
+          "phase": 2,
+          "description": "辟尘大王释放尘气",
+          "buff": {
+            "type": "strength",
+            "value": 3
+          }
+        }
       ],
-      "drops": {"gold_min": 25, "gold_max": 45, "relic_chance": 0.4}
+      "drops": {
+        "gold_min": 25,
+        "gold_max": 45,
+        "relics_chance": 0.4
+      }
     },
     {
       "enemy_id": "yu_tu_jing",
       "enemy_name": "玉兔精",
+      "chapter": 3,
       "enemy_type": "normal",
-      "max_hp": 52,
+      "max_hp": 62,
       "base_armor": 0,
-      "description": "广寒宫玉兔。",
+      "description": "广寒宫嫦娥的玉兔，私自下凡盘踞天竺国。化作天竺国公主模样，打算招亲意图掳走唐僧。善于月光迷惑之术，后被嫦娥亲自下凡收回。",
       "intent_pattern": [
-        {"type": "attack", "value": 9},
-        {"type": "debuff", "value": 0},
-        {"type": "attack", "value": 11},
-        {"type": "defend", "value": 6},
-        {"type": "heavy_attack", "value": 14}
+        {
+          "type": "attack",
+          "value": 15
+        },
+        {
+          "type": "debuff",
+          "value": 0
+        },
+        {
+          "type": "attack",
+          "value": 17
+        },
+        {
+          "type": "defend",
+          "value": 12
+        },
+        {
+          "type": "heavy_attack",
+          "value": 23
+        }
+      ],
+      "relics": [
+        "dao_yao_chu"
       ],
       "skills": [
-        {"skill_id": "moon_charm", "name": "月光迷惑", "intent_type": "debuff", "effects": [{"type": "status", "status_type": "vulnerable", "value": 2, "target": "player"}]},
-        {"skill_id": "pestle_strike", "name": "捣药杵", "intent_type": "heavy_attack", "effects": [{"type": "damage", "value": 14, "target": "player"}]}
+        {
+          "skill_id": "moon_charm",
+          "name": "月光迷惑",
+          "intent_type": "debuff",
+          "effects": [
+            {
+              "type": "status",
+              "status_type": "stun",
+              "value": 1,
+              "target": "player"
+            },
+            {
+              "type": "status",
+              "status_type": "slow",
+              "value": 1,
+              "target": "player"
+            }
+          ]
+        },
+        {
+          "skill_id": "pestle_strike",
+          "name": "捣药连击",
+          "intent_type": "heavy_attack",
+          "effects": [
+            {
+              "type": "damage",
+              "value": 8,
+              "target": "player"
+            },
+            {
+              "type": "damage",
+              "value": 8,
+              "target": "player"
+            }
+          ]
+        }
       ],
       "phase_thresholds": [],
-      "drops": {"gold_min": 12, "gold_max": 25}
+      "drops": {
+        "gold_min": 12,
+        "gold_max": 25
+      }
     }
   ]
 }

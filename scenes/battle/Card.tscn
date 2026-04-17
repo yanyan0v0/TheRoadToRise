@@ -39,6 +39,7 @@ mouse_filter = 2
 color = Color(0.45, 0.15, 0.15, 1)
 
 [node name="Background" type="ColorRect" parent="." unique_id=719478330]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -85,23 +86,12 @@ text = "1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="StarContainer" type="HBoxContainer" parent="." unique_id=1644424011]
-z_index = 5
-layout_mode = 0
-offset_left = 142.0
-offset_top = 11.0
-offset_right = 171.0
-offset_bottom = 22.0
-mouse_filter = 2
-theme_override_constants/separation = 1
-alignment = 1
-
 [node name="TitleLabel" type="Label" parent="." unique_id=1203213404]
 layout_mode = 0
-offset_left = 4.0
-offset_top = 25.0
-offset_right = 176.0
-offset_bottom = 46.0
+offset_left = 5.0
+offset_top = 23.0
+offset_right = 177.0
+offset_bottom = 44.0
 theme_override_colors/font_color = Color(0.98872954, 0.9475966, 0.89828724, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0.2, 0.1, 0, 0.9)
@@ -134,12 +124,23 @@ text = "攻击"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="StarContainer" type="HBoxContainer" parent="." unique_id=1644424011]
+z_index = 5
+layout_mode = 0
+offset_left = 75.0
+offset_top = 180.0
+offset_right = 104.0
+offset_bottom = 191.0
+mouse_filter = 2
+theme_override_constants/separation = 1
+alignment = 1
+
 [node name="DescriptionArea" type="ColorRect" parent="." unique_id=2121829680]
 layout_mode = 0
 offset_left = 4.0
-offset_top = 180.0
+offset_top = 190.0
 offset_right = 176.0
-offset_bottom = 266.0
+offset_bottom = 258.0
 mouse_filter = 2
 color = Color(1, 1, 1, 0)
 
@@ -149,7 +150,6 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 13.0
-offset_top = 5.0
 offset_right = -16.0
 offset_bottom = -4.0
 grow_horizontal = 2

@@ -1,21 +1,21 @@
-## 法宝数据资源类
+## Relic data resource class
 class_name RelicData
 extends Resource
 
-## 法宝触发类型
+## Relic trigger types
 enum TriggerType {
-	ON_BATTLE_START,    # 战斗开始时
-	ON_ATTACK,          # 攻击时
-	ON_TAKE_DAMAGE,     # 受到伤害时
-	ON_KILL,            # 击杀敌人时
-	ON_TURN_START,      # 回合开始时
-	ON_TURN_END,        # 回合结束时
-	ON_CARD_PLAY,       # 打出卡牌时
-	ON_FATAL_DAMAGE,    # 受到致命伤害时
-	PASSIVE,            # 被动效果
+	ON_BATTLE_START,    # Battle start
+	ON_ATTACK,          # On attack
+	ON_TAKE_DAMAGE,     # On take damage
+	ON_KILL,            # On kill
+	ON_TURN_START,      # Turn start
+	ON_TURN_END,        # Turn end
+	ON_CARD_PLAY,       # On card play
+	ON_FATAL_DAMAGE,    # On fatal damage
+	PASSIVE,            # Passive effect
 }
 
-## 法宝稀有度
+## Relic rarity
 enum RelicRarity {
 	COMMON,
 	UNCOMMON,
@@ -28,55 +28,66 @@ enum RelicRarity {
 @export var rarity: RelicRarity = RelicRarity.COMMON
 @export var trigger_type: TriggerType = TriggerType.PASSIVE
 @export var description: String = ""
-@export var star_level: int = 1  # 星级（1-3）
+@export var enhance_level: int = 0  # Enhancement level (0+, no cap), each level +1 to numeric values
 
-## 效果列表
-## 格式: {"type": "armor/damage/heal/draw/mana", "value": 数值, "chance": 概率(0-1)}
+## Effect list
+## Format: {"type": "armor/damage/heal/draw/mana", "value": number, "chance": probability(0-1)}
 @export var effects: Array[Dictionary] = []
-## 2星效果
-@export var star_2_effects: Array[Dictionary] = []
-## 3星效果
-@export var star_3_effects: Array[Dictionary] = []
-## 2星描述
-@export var star_2_description: String = ""
-## 3星描述
-@export var star_3_description: String = ""
 
-## 获取星级显示
-func get_star_display() -> String:
-	match star_level:
-		1: return "★☆☆"
-		2: return "★★☆"
-		3: return "★★★"
-	return "★☆☆"
+## Get enhancement display text
+func get_enhance_display() -> String:
+	if enhance_level <= 0:
+		return ""
+	return "+%d" % enhance_level
 
-## 获取当前星级的效果
-func get_effects_for_star() -> Array[Dictionary]:
-	match star_level:
-		2:
-			if not star_2_effects.is_empty():
-				return star_2_effects
-		3:
-			if not star_3_effects.is_empty():
-				return star_3_effects
-	return effects
+## Get enhanced effects (each numeric "value" field increased by enhance_level * rarity bonus)
+func get_enhanced_effects() -> Array[Dictionary]:
+	if enhance_level <= 0:
+		return effects
+	var rarity_str := ""
+	match rarity:
+		RelicRarity.COMMON: rarity_str = "common"
+		RelicRarity.UNCOMMON: rarity_str = "uncommon"
+		RelicRarity.RARE: rarity_str = "rare"
+		RelicRarity.LEGENDARY: rarity_str = "legendary"
+	var bonus_per_level: int = RelicTooltip.get_enhance_bonus(rarity_str)
+	var enhanced: Array[Dictionary] = []
+	for effect in effects:
+		var e: Dictionary = effect.duplicate()
+		# Only enhance integer "value" fields, not percentages like "chance", "damage_percent"
+		if e.has("value") and e["value"] is int:
+			e["value"] = e["value"] + enhance_level * bonus_per_level
+		enhanced.append(e)
+	return enhanced
 
-## 获取当前星级的描述
-func get_description_for_star() -> String:
-	match star_level:
-		2:
-			if not star_2_description.is_empty():
-				return star_2_description
-		3:
-			if not star_3_description.is_empty():
-				return star_3_description
-	return description
+## Get enhanced description dynamically built from effects
+func get_enhanced_description() -> String:
+	var rarity_str := ""
+	match rarity:
+		RelicRarity.COMMON: rarity_str = "common"
+		RelicRarity.UNCOMMON: rarity_str = "uncommon"
+		RelicRarity.RARE: rarity_str = "rare"
+		RelicRarity.LEGENDARY: rarity_str = "legendary"
+	var data := {"effects": effects, "trigger_type": "", "description": description, "source": "", "relic_name": relic_name, "rarity": rarity_str}
+	match trigger_type:
+		TriggerType.ON_BATTLE_START: data["trigger_type"] = "on_battle_start"
+		TriggerType.ON_ATTACK: data["trigger_type"] = "on_attack"
+		TriggerType.ON_TAKE_DAMAGE: data["trigger_type"] = "on_take_damage"
+		TriggerType.ON_KILL: data["trigger_type"] = "on_kill"
+		TriggerType.ON_TURN_START: data["trigger_type"] = "on_turn_start"
+		TriggerType.ON_TURN_END: data["trigger_type"] = "on_turn_end"
+		TriggerType.ON_CARD_PLAY: data["trigger_type"] = "on_card_play"
+		TriggerType.ON_FATAL_DAMAGE: data["trigger_type"] = "on_fatal_damage"
+		TriggerType.PASSIVE: data["trigger_type"] = "passive"
+	return RelicTooltip.build_description_from_effects(data, enhance_level)
 
-## 获取显示名称（含星级）
+## Get display name (with enhancement level)
 func get_display_name() -> String:
-	return "%s %s" % [relic_name, get_star_display()]
+	if enhance_level > 0:
+		return "%s +%d" % [relic_name, enhance_level]
+	return relic_name
 
-## 获取稀有度颜色
+## Get rarity color
 func get_rarity_color() -> Color:
 	match rarity:
 		RelicRarity.COMMON: return Color.WHITE
@@ -85,15 +96,13 @@ func get_rarity_color() -> Color:
 		RelicRarity.LEGENDARY: return Color("FDCB6E")
 	return Color.WHITE
 
-## 从字典数据初始化
+## Initialize from dictionary data
 static func from_dict(data: Dictionary) -> RelicData:
 	var relic := RelicData.new()
 	relic.relic_id = data.get("relic_id", "")
 	relic.relic_name = data.get("relic_name", "")
 	relic.description = data.get("description", "")
-	relic.star_level = data.get("star_level", 1)
-	relic.star_2_description = data.get("star_2_description", "")
-	relic.star_3_description = data.get("star_3_description", "")
+	relic.enhance_level = data.get("enhance_level", 0)
 	
 	var rarity_str: String = data.get("rarity", "common")
 	match rarity_str:
@@ -117,13 +126,5 @@ static func from_dict(data: Dictionary) -> RelicData:
 	var effects_data: Array = data.get("effects", [])
 	for e in effects_data:
 		relic.effects.append(e)
-	
-	var star_2_data: Array = data.get("star_2_effects", [])
-	for e in star_2_data:
-		relic.star_2_effects.append(e)
-	
-	var star_3_data: Array = data.get("star_3_effects", [])
-	for e in star_3_data:
-		relic.star_3_effects.append(e)
 	
 	return relic

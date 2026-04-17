@@ -53,6 +53,7 @@ const TYPE_COLORS := {
 	"attack": Color("D63031"),
 	"skill": Color("0984E3"),
 	"ultimate": Color("6C5CE7"),
+	"spirit": Color("E17055"),
 }
 
 ## 边框颜色映射（根据卡牌类型）
@@ -60,6 +61,7 @@ const BORDER_COLORS := {
 	"attack": Color(0.45, 0.15, 0.15, 1.0),
 	"skill": Color(0.15, 0.25, 0.45, 1.0),
 	"ultimate": Color(0.3, 0.2, 0.45, 1.0),
+	"spirit": Color(0.45, 0.25, 0.1, 1.0),
 }
 
 func _ready() -> void:
@@ -70,6 +72,9 @@ func _ready() -> void:
 	# 保存初始边框颜色
 	if border:
 		_saved_border_color = border.color
+	# If setup() was called before _ready(), refresh display now
+	if not card_data.is_empty():
+		_update_display()
 
 ## 用数据初始化卡牌显示
 func setup(data: Dictionary, p_star_level: int = 1) -> void:
@@ -82,16 +87,18 @@ func setup(data: Dictionary, p_star_level: int = 1) -> void:
 func _update_display() -> void:
 	if card_data.is_empty():
 		return
+	# Wait until @onready nodes are available
+	if not is_node_ready():
+		return
 	
 	var rarity: String = card_data.get("rarity", "common")
-	var card_type: String = card_data.get("card_type", "attack")
-	var is_upgraded: bool = card_data.get("is_upgraded", false)
+	var card_type_raw = card_data.get("card_type", "attack")
+	var card_types: Array = card_type_raw if card_type_raw is Array else [card_type_raw]
+	var primary_type: String = card_types[0] if not card_types.is_empty() else "attack"
 	var card_name: String = card_data.get("card_name", "???")
-	if is_upgraded:
-		card_name += "·极"
 	
-	# 费用
-	var energy_cost: int = card_data.get("energy_cost", 1)
+	# 费用（根据星级读取对应费用）
+	var energy_cost: int = CardData.get_card_energy_cost(card_data)
 	cost_label.text = str(energy_cost)
 	
 	# 体力费用（天蓬元帅）
@@ -101,7 +108,7 @@ func _update_display() -> void:
 	
 	# 稀有度边框颜色（根据稀有度调整边框亮度）
 	var rarity_color: Color = RARITY_COLORS.get(rarity, Color.WHITE)
-	var base_border_color: Color = BORDER_COLORS.get(card_type, Color(0.45, 0.15, 0.15, 1.0))
+	var base_border_color: Color = BORDER_COLORS.get(primary_type, Color(0.45, 0.15, 0.15, 1.0))
 	if rarity == "legendary":
 		base_border_color = Color(0.5, 0.4, 0.15, 1.0)  # 传说金色边框
 	elif rarity == "rare":
@@ -114,13 +121,13 @@ func _update_display() -> void:
 	
 	# Star display with images
 	_update_star_display()
-	if star_level >= 3:
-		title_label.add_theme_color_override("font_color", Color("FDCB6E"))
-	elif star_level >= 2:
-		title_label.add_theme_color_override("font_color", Color("00B894"))
+	match star_level:
+		3: title_label.add_theme_color_override("font_color", Color("A855F7"))  # Purple
+		2: title_label.add_theme_color_override("font_color", Color("00B894"))  # Green
+		_: title_label.add_theme_color_override("font_color", Color.WHITE)  # White
 	
 	# 加载角色对应的卡牌背景图片
-	_load_card_artwork(card_type)
+	_load_card_artwork(primary_type)
 	
 	# 描述（根据星级显示对应效果描述）
 	var desc_text: String = card_data.get("description", "")
@@ -130,11 +137,14 @@ func _update_display() -> void:
 			desc_text = star_desc
 	
 	# 类型标签单独显示
-	var type_name := ""
-	match card_type:
-		"attack": type_name = "攻击"
-		"skill": type_name = "技能"
-		"ultimate": type_name = "终结技"
+	var type_names: Array[String] = []
+	for t in card_types:
+		match t:
+			"attack": type_names.append("攻击")
+			"defense": type_names.append("防御")
+			"skill": type_names.append("技能")
+			"summon": type_names.append("召唤")
+	var type_name := "/".join(type_names) if not type_names.is_empty() else "攻击"
 	if type_tag_label:
 		type_tag_label.text = type_name
 	description_label.text = "[center]%s[/center]" % desc_text
@@ -186,13 +196,15 @@ func _gui_input(event: InputEvent) -> void:
 					is_dragging = false
 					z_index = original_index
 					card_drag_ended.emit(self)
-					# 清除敌人选中状态
-					_clear_drag_enemy_hover()
 					# 检查卡牌是否完全拖出手牌区域
 					if _is_card_outside_hand_area():
-						card_played.emit(self, null)
+						# Save hovered enemy before clearing, pass as target
+						var hovered_target: Node = _drag_hovered_enemy
+						_clear_drag_enemy_hover()
+						card_played.emit(self, hovered_target)
 					else:
-						# 回到原位
+						# 清除敌人选中状态并回到原位
+						_clear_drag_enemy_hover()
 						_animate_return()
 	
 	elif event is InputEventMouseMotion:
@@ -298,21 +310,30 @@ func _update_drag_enemy_hover() -> void:
 	if new_hovered != _drag_hovered_enemy:
 		# 取消旧的选中状态
 		if _drag_hovered_enemy != null and is_instance_valid(_drag_hovered_enemy):
-			var tween := _drag_hovered_enemy.create_tween()
-			tween.tween_property(_drag_hovered_enemy, "scale", Vector2.ONE, 0.1)
+			if _drag_hovered_enemy.has_node("Sprite"):
+				var sprite := _drag_hovered_enemy.get_node("Sprite")
+				var tween := sprite.create_tween()
+				tween.tween_property(sprite, "scale", Vector2.ONE, 0.1)
+				sprite.modulate = Color.WHITE
 			_drag_hovered_enemy.set_meta("is_hovered", false)
 		# 设置新的选中状态
 		if new_hovered != null:
-			var tween := new_hovered.create_tween()
-			tween.tween_property(new_hovered, "scale", ENEMY_SELECT_SCALE, 0.1)
+			if new_hovered.has_node("Sprite"):
+				var sprite := new_hovered.get_node("Sprite")
+				var tween := sprite.create_tween()
+				tween.tween_property(sprite, "scale", ENEMY_SELECT_SCALE, 0.1)
+				sprite.modulate = Color(1.3, 1.1, 0.8)
 			new_hovered.set_meta("is_hovered", true)
 		_drag_hovered_enemy = new_hovered
 
 ## 清除拖拽时的敌人选中状态
 func _clear_drag_enemy_hover() -> void:
 	if _drag_hovered_enemy != null and is_instance_valid(_drag_hovered_enemy):
-		var tween := _drag_hovered_enemy.create_tween()
-		tween.tween_property(_drag_hovered_enemy, "scale", Vector2.ONE, 0.1)
+		if _drag_hovered_enemy.has_node("Sprite"):
+			var sprite := _drag_hovered_enemy.get_node("Sprite")
+			var tween := sprite.create_tween()
+			tween.tween_property(sprite, "scale", Vector2.ONE, 0.1)
+			sprite.modulate = Color.WHITE
 		_drag_hovered_enemy.set_meta("is_hovered", false)
 	_drag_hovered_enemy = null
 

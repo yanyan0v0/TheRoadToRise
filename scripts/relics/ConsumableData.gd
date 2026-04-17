@@ -4,9 +4,10 @@ extends Resource
 
 ## 丹药品质枚举
 enum PillQuality {
-	NORMAL,     # 普通
-	RARE,       # 稀有
-	LEGENDARY,  # 传说
+	LOW,        # 下品
+	MID,        # 中品
+	HIGH,       # 上品
+	EXTREME,    # 极品
 }
 
 ## 使用场景枚举
@@ -20,7 +21,7 @@ enum UseScene {
 @export var consumable_name: String = ""
 @export var description: String = ""
 @export var price: int = 0  # 商店价格
-@export var quality: PillQuality = PillQuality.NORMAL
+@export var quality: PillQuality = PillQuality.LOW
 @export var use_scene: UseScene = UseScene.ANYTIME
 
 ## 效果列表
@@ -30,17 +31,19 @@ enum UseScene {
 ## 获取品质名称
 func get_quality_name() -> String:
 	match quality:
-		PillQuality.NORMAL: return "普通"
-		PillQuality.RARE: return "稀有"
-		PillQuality.LEGENDARY: return "传说"
-	return "普通"
+		PillQuality.LOW: return "下品"
+		PillQuality.MID: return "中品"
+		PillQuality.HIGH: return "上品"
+		PillQuality.EXTREME: return "极品"
+	return "下品"
 
 ## 获取品质颜色
 func get_quality_color() -> Color:
 	match quality:
-		PillQuality.NORMAL: return Color.WHITE
-		PillQuality.RARE: return Color("0984E3")  # 蓝色
-		PillQuality.LEGENDARY: return Color("FDCB6E")  # 金色
+		PillQuality.LOW: return Color.WHITE           # 白色
+		PillQuality.MID: return Color("00B894")        # 绿色
+		PillQuality.HIGH: return Color("0984E3")       # 蓝色
+		PillQuality.EXTREME: return Color("FDCB6E")    # 金色
 	return Color.WHITE
 
 ## 获取使用场景名称
@@ -68,11 +71,12 @@ static func from_dict(data: Dictionary) -> ConsumableData:
 	consumable.price = data.get("price", 0)
 	
 	# 解析品质
-	var quality_str: String = data.get("quality", "normal")
+	var quality_str: String = data.get("quality", "low")
 	match quality_str:
-		"normal": consumable.quality = PillQuality.NORMAL
-		"rare": consumable.quality = PillQuality.RARE
-		"legendary": consumable.quality = PillQuality.LEGENDARY
+		"low": consumable.quality = PillQuality.LOW
+		"mid": consumable.quality = PillQuality.MID
+		"high": consumable.quality = PillQuality.HIGH
+		"extreme": consumable.quality = PillQuality.EXTREME
 	
 	# 解析使用场景
 	var scene_str: String = data.get("use_scene", "anytime")

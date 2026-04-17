@@ -6,7 +6,6 @@ extends Control
 @onready var settings_button: Button = $ButtonContainer/SettingsButton
 @onready var achievement_button: Button = $ButtonContainer/AchievementButton
 @onready var quit_button: Button = $ButtonContainer/QuitButton
-@onready var settings_panel: Control = $SettingsPanel
 @onready var button_container: VBoxContainer = $ButtonContainer
 
 func _ready() -> void:
@@ -22,10 +21,10 @@ func _ready() -> void:
 	achievement_button.pressed.connect(_on_achievement_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 	
-	# 隐藏设置面板
+	# Hide the embedded SettingsPanel (no longer used)
+	var settings_panel := get_node_or_null("SettingsPanel")
 	if settings_panel:
 		settings_panel.visible = false
-		settings_panel.panel_closed.connect(_on_settings_closed)
 
 ## 开始新游戏
 func _on_start_pressed() -> void:
@@ -44,11 +43,9 @@ func _on_continue_pressed() -> void:
 			_:
 				SceneTransition.change_scene("res://scenes/map/MapScene.tscn")
 
-## 打开设置
+## 打开设置（使用GlobalHUD的设置弹窗）
 func _on_settings_pressed() -> void:
-	if settings_panel:
-		settings_panel.visible = true
-		button_container.visible = false
+	GlobalHUD.show_settings_panel()
 
 ## 打开成就界面
 func _on_achievement_pressed() -> void:
@@ -57,7 +54,3 @@ func _on_achievement_pressed() -> void:
 ## 退出游戏
 func _on_quit_pressed() -> void:
 	get_tree().quit()
-
-## Settings panel closed callback
-func _on_settings_closed() -> void:
-	button_container.visible = true

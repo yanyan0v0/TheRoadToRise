@@ -3,36 +3,81 @@
     {
       "consumable_id": "hui_chun_dan",
       "consumable_name": "回春丹",
-      "description": "恢复15点生命值。",
-      "price": 30,
-      "quality": "normal",
+      "description": "恢复10点生命值。",
+      "price": 20,
+      "quality": "low",
       "use_scene": "anytime",
-      "effects": [{"type": "heal", "value": 15}]
+      "effects": [{"type": "heal", "value": 10}]
     },
     {
-      "consumable_id": "tie_gu_dan",
-      "consumable_name": "铁骨丹",
-      "description": "本场战斗获得8点护甲。",
-      "price": 30,
-      "quality": "normal",
+      "consumable_id": "tie_pi_dan",
+      "consumable_name": "铁皮丹",
+      "description": "本场战斗获得5点护甲。",
+      "price": 20,
+      "quality": "low",
       "use_scene": "battle",
-      "effects": [{"type": "armor", "value": 8, "target": "self"}]
+      "effects": [{"type": "armor", "value": 5, "target": "self"}]
+    },
+    {
+      "consumable_id": "ning_shen_dan",
+      "consumable_name": "凝神丹",
+      "description": "本回合法力+1。",
+      "price": 25,
+      "quality": "low",
+      "use_scene": "battle",
+      "effects": [{"type": "mana", "value": 1}]
+    },
+    {
+      "consumable_id": "cu_li_dan",
+      "consumable_name": "粗力丹",
+      "description": "本场战斗力量+1。",
+      "price": 25,
+      "quality": "low",
+      "use_scene": "battle",
+      "effects": [{"type": "strength", "value": 1}]
     },
     {
       "consumable_id": "qing_xin_dan",
       "consumable_name": "清心丹",
       "description": "移除所有负面状态。",
-      "price": 35,
-      "quality": "normal",
+      "price": 30,
+      "quality": "low",
       "use_scene": "anytime",
       "effects": [{"type": "remove_debuffs"}]
+    },
+    {
+      "consumable_id": "ling_shi_dan",
+      "consumable_name": "灵视丹",
+      "description": "抽1张牌。",
+      "price": 25,
+      "quality": "low",
+      "use_scene": "battle",
+      "effects": [{"type": "draw", "value": 1}]
+    },
+    {
+      "consumable_id": "jin_chuang_dan",
+      "consumable_name": "金创丹",
+      "description": "恢复20点生命值。",
+      "price": 40,
+      "quality": "mid",
+      "use_scene": "anytime",
+      "effects": [{"type": "heal", "value": 20}]
+    },
+    {
+      "consumable_id": "tie_gu_dan",
+      "consumable_name": "铁骨丹",
+      "description": "本场战斗获得10点护甲。",
+      "price": 40,
+      "quality": "mid",
+      "use_scene": "battle",
+      "effects": [{"type": "armor", "value": 10, "target": "self"}]
     },
     {
       "consumable_id": "ju_qi_dan",
       "consumable_name": "聚气丹",
       "description": "本回合法力+2。",
-      "price": 50,
-      "quality": "rare",
+      "price": 45,
+      "quality": "mid",
       "use_scene": "battle",
       "effects": [{"type": "mana", "value": 2}]
     },
@@ -40,49 +85,174 @@
       "consumable_id": "po_jun_dan",
       "consumable_name": "破军丹",
       "description": "本场战斗力量+3。",
-      "price": 50,
-      "quality": "rare",
+      "price": 45,
+      "quality": "mid",
       "use_scene": "battle",
       "effects": [{"type": "strength", "value": 3}]
     },
     {
-      "consumable_id": "jin_chuang_dan",
-      "consumable_name": "金创丹",
-      "description": "恢复30点生命值。",
-      "price": 55,
-      "quality": "rare",
+      "consumable_id": "tong_ming_dan",
+      "consumable_name": "通明丹",
+      "description": "抽2张牌。",
+      "price": 45,
+      "quality": "mid",
+      "use_scene": "battle",
+      "effects": [{"type": "draw", "value": 2}]
+    },
+    {
+      "consumable_id": "gu_yuan_dan",
+      "consumable_name": "固元丹",
+      "description": "永久增加3点最大生命值。",
+      "price": 50,
+      "quality": "mid",
       "use_scene": "anytime",
-      "effects": [{"type": "heal", "value": 30}]
+      "effects": [{"type": "max_hp", "value": 3}]
+    },
+    {
+      "consumable_id": "du_she_dan",
+      "consumable_name": "毒蛇丹",
+      "description": "对敌方造成15点伤害。",
+      "price": 40,
+      "quality": "mid",
+      "use_scene": "battle",
+      "effects": [{"type": "damage", "value": 15, "target": "enemy"}]
+    },
+    {
+      "consumable_id": "tian_shan_xue_lian_dan",
+      "consumable_name": "天山雪莲丹",
+      "description": "恢复35点生命值。",
+      "price": 65,
+      "quality": "high",
+      "use_scene": "anytime",
+      "effects": [{"type": "heal", "value": 35}]
+    },
+    {
+      "consumable_id": "xuan_tie_dan",
+      "consumable_name": "玄铁丹",
+      "description": "本场战斗获得18点护甲。",
+      "price": 65,
+      "quality": "high",
+      "use_scene": "battle",
+      "effects": [{"type": "armor", "value": 18, "target": "self"}]
+    },
+    {
+      "consumable_id": "tian_yuan_dan",
+      "consumable_name": "天元丹",
+      "description": "本回合法力+3。",
+      "price": 70,
+      "quality": "high",
+      "use_scene": "battle",
+      "effects": [{"type": "mana", "value": 3}]
+    },
+    {
+      "consumable_id": "ba_wang_dan",
+      "consumable_name": "霸王丹",
+      "description": "本场战斗力量+5。",
+      "price": 70,
+      "quality": "high",
+      "use_scene": "battle",
+      "effects": [{"type": "strength", "value": 5}]
+    },
+    {
+      "consumable_id": "da_li_jin_gang_dan",
+      "consumable_name": "大力金刚丹",
+      "description": "本场战斗力量+3，护甲+10。",
+      "price": 70,
+      "quality": "high",
+      "use_scene": "battle",
+      "effects": [
+        {"type": "strength", "value": 3},
+        {"type": "armor", "value": 10, "target": "self"}
+      ]
+    },
+    {
+      "consumable_id": "po_huang_dan",
+      "consumable_name": "破荒丹",
+      "description": "对敌方造成30点伤害。",
+      "price": 65,
+      "quality": "high",
+      "use_scene": "battle",
+      "effects": [{"type": "damage", "value": 30, "target": "enemy"}]
+    },
+    {
+      "consumable_id": "zhu_ji_dan",
+      "consumable_name": "筑基丹",
+      "description": "永久增加6点最大生命值。",
+      "price": 75,
+      "quality": "high",
+      "use_scene": "anytime",
+      "effects": [{"type": "max_hp", "value": 6}]
+    },
+    {
+      "consumable_id": "tian_yan_dan",
+      "consumable_name": "天眼丹",
+      "description": "抽3张牌。",
+      "price": 70,
+      "quality": "high",
+      "use_scene": "battle",
+      "effects": [{"type": "draw", "value": 3}]
     },
     {
       "consumable_id": "jiu_zhuan_jin_dan",
       "consumable_name": "九转金丹",
       "description": "恢复全部生命值。",
-      "price": 80,
-      "quality": "legendary",
+      "price": 100,
+      "quality": "extreme",
       "use_scene": "anytime",
       "effects": [{"type": "heal_percent", "value": 100}]
-    },
-    {
-      "consumable_id": "da_li_jin_gang_dan",
-      "consumable_name": "大力金刚丹",
-      "description": "本场战斗力量+5，护甲+10。",
-      "price": 80,
-      "quality": "legendary",
-      "use_scene": "battle",
-      "effects": [
-        {"type": "strength", "value": 5},
-        {"type": "armor", "value": 10, "target": "self"}
-      ]
     },
     {
       "consumable_id": "tai_yi_zi_jin_dan",
       "consumable_name": "太乙紫金丹",
       "description": "死亡时自动使用，恢复50%生命值。",
-      "price": 90,
-      "quality": "legendary",
+      "price": 100,
+      "quality": "extreme",
       "use_scene": "passive",
       "effects": [{"type": "revive", "value": 50}]
+    },
+    {
+      "consumable_id": "hun_tian_dan",
+      "consumable_name": "混天丹",
+      "description": "本场战斗力量+5，护甲+15，法力+2。",
+      "price": 110,
+      "quality": "extreme",
+      "use_scene": "battle",
+      "effects": [
+        {"type": "strength", "value": 5},
+        {"type": "armor", "value": 15, "target": "self"},
+        {"type": "mana", "value": 2}
+      ]
+    },
+    {
+      "consumable_id": "tian_di_ling_dan",
+      "consumable_name": "天地灵丹",
+      "description": "永久增加10点最大生命值。",
+      "price": 100,
+      "quality": "extreme",
+      "use_scene": "anytime",
+      "effects": [{"type": "max_hp", "value": 10}]
+    },
+    {
+      "consumable_id": "wan_lei_dan",
+      "consumable_name": "万雷丹",
+      "description": "对敌方造成50点伤害。",
+      "price": 100,
+      "quality": "extreme",
+      "use_scene": "battle",
+      "effects": [{"type": "damage", "value": 50, "target": "enemy"}]
+    },
+    {
+      "consumable_id": "wu_ji_dan",
+      "consumable_name": "无极丹",
+      "description": "恢复50%生命值，力量+3，护甲+8。",
+      "price": 110,
+      "quality": "extreme",
+      "use_scene": "battle",
+      "effects": [
+        {"type": "heal_percent", "value": 50},
+        {"type": "strength", "value": 3},
+        {"type": "armor", "value": 8, "target": "self"}
+      ]
     }
   ]
 }

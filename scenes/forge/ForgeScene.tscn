@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://cforge001"]
+[gd_scene format=3 uid="uid://cforge001"]
 
-[ext_resource type="Script" path="res://scenes/forge/ForgeScene.gd" id="1"]
+[ext_resource type="Script" uid="uid://cenm444y1l15s" path="res://scenes/forge/ForgeScene.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://56yos0hb1sj8" path="res://ui/images/forge/forge_bg.jpg" id="2"]
 
-[node name="ForgeScene" type="Control"]
+[node name="ForgeScene" type="Control" unique_id=1850585013]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,3 +11,168 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
+
+[node name="Background" type="TextureRect" parent="." unique_id=1915544361]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BgOverlay" type="ColorRect" parent="." unique_id=1136973315]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.4)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=902151456]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainVBox" type="VBoxContainer" parent="CenterContainer" unique_id=736354916]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Title" type="Label" parent="CenterContainer/MainVBox" unique_id=46858184]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.901961, 0.494118, 0.133333, 1)
+theme_override_font_sizes/font_size = 32
+text = "🔨 炼器坊"
+horizontal_alignment = 1
+
+[node name="GoldLabel" type="Label" parent="CenterContainer/MainVBox" unique_id=705578469]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "💰 金币: 0"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="CenterContainer/MainVBox" unique_id=570691554]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_font_sizes/font_size = 14
+text = "强化法宝提升数值效果，品质越高每级提升越多，但花费更高、成功率更低"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/MainVBox" unique_id=956875627]
+custom_minimum_size = Vector2(720, 420)
+layout_mode = 2
+
+[node name="RelicGrid" type="GridContainer" parent="CenterContainer/MainVBox/ScrollContainer" unique_id=660566596]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 4
+
+[node name="EmptyHint" type="CenterContainer" parent="CenterContainer/MainVBox" unique_id=1546456148]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(720, 100)
+layout_mode = 2
+
+[node name="EmptyLabel" type="Label" parent="CenterContainer/MainVBox/EmptyHint" unique_id=681069542]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "没有可强化的法宝"
+horizontal_alignment = 1
+
+[node name="LeaveSpacer" type="Control" parent="CenterContainer/MainVBox" unique_id=739540293]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+
+[node name="LeaveCenter" type="CenterContainer" parent="CenterContainer/MainVBox" unique_id=658777997]
+layout_mode = 2
+
+[node name="LeaveButton" type="Button" parent="CenterContainer/MainVBox/LeaveCenter" unique_id=1526794977]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "离开炼器坊"
+
+[node name="EnhancePopup" type="Control" parent="." unique_id=640822098]
+unique_name_in_owner = true
+visible = false
+z_index = 50
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Overlay" type="ColorRect" parent="EnhancePopup" unique_id=984352068]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="Panel" type="PanelContainer" parent="EnhancePopup" unique_id=1248494320]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="EnhancePopup/Panel" unique_id=297028527]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="PopupTitle" type="Label" parent="EnhancePopup/Panel/VBox" unique_id=1090602604]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.901961, 0.494118, 0.133333, 1)
+theme_override_font_sizes/font_size = 22
+text = "⚒️ 法宝强化"
+horizontal_alignment = 1
+
+[node name="CompareHBox" type="HBoxContainer" parent="EnhancePopup/Panel/VBox" unique_id=294766081]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="CostLabel" type="Label" parent="EnhancePopup/Panel/VBox" unique_id=1387764427]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ButtonHBox" type="HBoxContainer" parent="EnhancePopup/Panel/VBox" unique_id=147038549]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="EnhanceButton" type="Button" parent="EnhancePopup/Panel/VBox/ButtonHBox" unique_id=1671788210]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="CancelButton" type="Button" parent="EnhancePopup/Panel/VBox/ButtonHBox" unique_id=2132685098]
+custom_minimum_size = Vector2(100, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "取消"

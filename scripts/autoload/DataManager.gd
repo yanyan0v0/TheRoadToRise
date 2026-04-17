@@ -13,6 +13,14 @@ var characters: Dictionary = {}     # character_id -> CharacterData字典
 var base_card_pool: Array[String] = []           # 基础卡池（所有角色通用）
 var character_card_pools: Dictionary = {}         # 角色专属卡池 character_id -> Array[card_id]
 
+# ===== 敌人分类缓存 =====
+var _enemies_by_chapter: Dictionary = {}          # chapter(int) -> Array[enemy_id]
+var _enemies_by_type: Dictionary = {}             # enemy_type(String) -> Array[enemy_id]
+var _enemies_by_chapter_type: Dictionary = {}     # "chapter_type" -> Array[enemy_id]
+var _normal_enemy_pools: Dictionary = {}          # chapter(int) -> Array[Array[enemy_id]] (auto-generated combat pools)
+var _boss_pool: Array[String] = []                # All boss enemy ids
+var _elite_pool: Array[String] = []               # All elite enemy ids
+
 # ===== 数据文件路径 =====
 const DATA_DIR := "res://data/"
 const CARDS_FILE := "res://data/cards.json"
@@ -21,6 +29,7 @@ const RELICS_FILE := "res://data/relics.json"
 const CONSUMABLES_FILE := "res://data/consumables.json"
 const EVENTS_FILE := "res://data/events.json"
 const CHARACTERS_FILE := "res://data/characters.json"
+const ACHIEVEMENTS_FILE := "res://data/achievements.json"
 
 var _is_loaded: bool = false
 
@@ -38,6 +47,7 @@ func load_all_data() -> void:
 	_load_relics()
 	_load_consumables()
 	_load_events()
+	_load_achievements()
 	
 	_is_loaded = true
 	print("[DataManager] 所有游戏数据加载完成")
@@ -46,6 +56,7 @@ func load_all_data() -> void:
 	print("  - 敌人: %d" % enemies.size())
 	print("  - 法宝: %d" % relics.size())
 	print("  - 消耗品: %d" % consumables.size())
+	print("  - 成就: %d" % AchievementManager.ACHIEVEMENTS.size())
 
 ## 加载角色数据
 func _load_characters() -> void:
@@ -93,6 +104,9 @@ func _load_enemies() -> void:
 		var enemy_id: String = enemy_data.get("enemy_id", "")
 		if enemy_id != "":
 			enemies[enemy_id] = enemy_data
+	
+	# Build enemy classification cache
+	_build_enemy_cache()
 
 ## 加载法宝数据
 func _load_relics() -> void:
@@ -130,6 +144,21 @@ func _load_events() -> void:
 		if event_id != "":
 			events[event_id] = event_data
 
+## 加载成就数据
+func _load_achievements() -> void:
+	var data := _load_json(ACHIEVEMENTS_FILE)
+	if data.is_empty():
+		return
+	
+	var achievement_dict: Dictionary = {}
+	var achievement_list: Array = data.get("achievements", [])
+	for ach_data in achievement_list:
+		var ach_id: String = ach_data.get("achievement_id", "")
+		if ach_id != "":
+			achievement_dict[ach_id] = ach_data
+	
+	AchievementManager.init_achievements(achievement_dict)
+
 ## 获取卡牌数据
 func get_card(card_id: String) -> Dictionary:
 	return cards.get(card_id, {})
@@ -137,6 +166,28 @@ func get_card(card_id: String) -> Dictionary:
 ## 获取敌人数据
 func get_enemy(enemy_id: String) -> Dictionary:
 	return enemies.get(enemy_id, {})
+
+## Get all boss enemy ids (cached)
+func get_boss_pool() -> Array[String]:
+	return _boss_pool
+
+## Get all elite enemy ids (cached)
+func get_elite_pool() -> Array[String]:
+	return _elite_pool
+
+## Get normal enemy ids for a specific chapter (cached)
+func get_normal_enemies_by_chapter(chapter: int) -> Array[String]:
+	var key := str(chapter) + "_normal"
+	if _enemies_by_chapter_type.has(key):
+		return _enemies_by_chapter_type[key]
+	return []
+
+## Get auto-generated normal enemy combat pools for a chapter
+## Each pool is an Array of enemy_ids representing one possible encounter
+func get_normal_enemy_pools(chapter: int) -> Array:
+	if _normal_enemy_pools.has(chapter):
+		return _normal_enemy_pools[chapter]
+	return []
 
 ## 获取法宝数据
 func get_relic(relic_id: String) -> Dictionary:
@@ -247,3 +298,99 @@ func _load_json(path: String) -> Dictionary:
 		return json.data
 	
 	return {}
+
+## Build enemy classification cache from loaded enemy data
+func _build_enemy_cache() -> void:
+	_enemies_by_chapter.clear()
+	_enemies_by_type.clear()
+	_enemies_by_chapter_type.clear()
+	_normal_enemy_pools.clear()
+	_boss_pool.clear()
+	_elite_pool.clear()
+	
+	for enemy_id in enemies:
+		var data: Dictionary = enemies[enemy_id]
+		var chapter: int = data.get("chapter", 0)
+		var etype: String = data.get("enemy_type", "normal")
+		
+		# By chapter
+		if not _enemies_by_chapter.has(chapter):
+			_enemies_by_chapter[chapter] = []
+		_enemies_by_chapter[chapter].append(enemy_id)
+		
+		# By type
+		if not _enemies_by_type.has(etype):
+			_enemies_by_type[etype] = []
+		_enemies_by_type[etype].append(enemy_id)
+		
+		# By chapter + type
+		var key := str(chapter) + "_" + etype
+		if not _enemies_by_chapter_type.has(key):
+			_enemies_by_chapter_type[key] = []
+		_enemies_by_chapter_type[key].append(enemy_id)
+		
+		# Boss pool
+		if etype == "boss":
+			_boss_pool.append(enemy_id)
+		
+		# Elite pool
+		if etype == "elite":
+			_elite_pool.append(enemy_id)
+	
+	# Generate normal enemy combat pools per chapter
+	for chapter in range(4):
+		_normal_enemy_pools[chapter] = _generate_combat_pools(chapter)
+	
+	print("  - 敌人缓存: boss=%d, elite=%d, pools=%s" % [
+		_boss_pool.size(), _elite_pool.size(),
+		str([_normal_enemy_pools.get(0, []).size(), _normal_enemy_pools.get(1, []).size(),
+			_normal_enemy_pools.get(2, []).size(), _normal_enemy_pools.get(3, []).size()])
+	])
+
+## Generate combat encounter pools for a chapter from normal enemies
+## Creates 2-enemy and 3-enemy combinations from the chapter's normal enemy pool
+func _generate_combat_pools(chapter: int) -> Array:
+	var key := str(chapter) + "_normal"
+	var normal_ids: Array = _enemies_by_chapter_type.get(key, [])
+	if normal_ids.is_empty():
+		return []
+	
+	var pools: Array = []
+	var shuffled: Array = normal_ids.duplicate()
+	shuffled.shuffle()
+	
+	# Generate pools: alternate between 2-enemy and 3-enemy groups
+	var idx := 0
+	while idx < shuffled.size():
+		var remaining := shuffled.size() - idx
+		if remaining >= 3 and (pools.size() % 2 == 1 or remaining == 3):
+			# 3-enemy pool
+			pools.append([shuffled[idx], shuffled[idx + 1], shuffled[idx + 2]])
+			idx += 3
+		elif remaining >= 2:
+			# 2-enemy pool
+			pools.append([shuffled[idx], shuffled[idx + 1]])
+			idx += 2
+		else:
+			# 1 enemy left, pair with a random one from the same chapter
+			var partner: String = shuffled[randi() % maxi(idx, 1)]
+			pools.append([shuffled[idx], partner])
+			idx += 1
+	
+	# Ensure at least 4 pools for variety
+	while pools.size() < 4 and normal_ids.size() >= 2:
+		var a: String = normal_ids[randi() % normal_ids.size()]
+		var b: String = normal_ids[randi() % normal_ids.size()]
+		while b == a and normal_ids.size() > 1:
+			b = normal_ids[randi() % normal_ids.size()]
+		var new_pool: Array = [a, b]
+		# Avoid exact duplicates
+		var is_dup := false
+		for existing in pools:
+			if existing == new_pool:
+				is_dup = true
+				break
+		if not is_dup:
+			pools.append(new_pool)
+	
+	return pools

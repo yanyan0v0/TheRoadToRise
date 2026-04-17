@@ -78,12 +78,13 @@ func draw_cards(count: int) -> Array[Dictionary]:
 	return drawn
 
 ## 打出卡牌（从手牌移到弃牌堆）
+## If the card was transformed (e.g. by 七十二变), restore original card identity
 func play_card(card_id: String) -> void:
 	for i in range(hand.size()):
 		if hand[i].get("card_id", "") == card_id:
 			var entry: Dictionary = hand[i]
 			hand.remove_at(i)
-			discard_pile.append(entry)
+			discard_pile.append(_restore_original_entry(entry))
 			_emit_deck_changed()
 			return
 
@@ -93,14 +94,14 @@ func discard_from_hand(card_id: String) -> void:
 		if hand[i].get("card_id", "") == card_id:
 			var entry: Dictionary = hand[i]
 			hand.remove_at(i)
-			discard_pile.append(entry)
+			discard_pile.append(_restore_original_entry(entry))
 			_emit_deck_changed()
 			return
 
 ## 弃掉所有手牌
 func discard_all_hand() -> void:
 	for entry in hand:
-		discard_pile.append(entry)
+		discard_pile.append(_restore_original_entry(entry))
 	hand.clear()
 	_emit_deck_changed()
 
@@ -155,19 +156,13 @@ func upgrade_card(card_id: String) -> Dictionary:
 	if card_data.is_empty():
 		return {}
 	
-	# 创建升级版本
+	# 创建升级版本（默认升级：所有数值+50%）
 	var upgraded := card_data.duplicate(true)
-	upgraded["is_upgraded"] = true
 	upgraded["card_id"] = card_id + "_upgraded"
 	
-	# 应用升级效果
-	if upgraded.has("upgraded_effects") and not upgraded["upgraded_effects"].is_empty():
-		upgraded["effects"] = upgraded["upgraded_effects"]
-	else:
-		# 默认升级：伤害+50%
-		for effect in upgraded.get("effects", []):
-			if effect.has("value"):
-				effect["value"] = int(effect["value"] * 1.5)
+	for effect in upgraded.get("effects", []):
+		if effect.has("value"):
+			effect["value"] = int(effect["value"] * 1.5)
 	
 	# 更新名称
 	var original_name: String = upgraded.get("card_name", "")
@@ -175,6 +170,16 @@ func upgrade_card(card_id: String) -> Dictionary:
 		upgraded["card_name"] = original_name + "·极"
 	
 	return upgraded
+
+## Restore a hand entry to its original card identity if it was transformed
+## Returns a clean entry with only card_id and star_level (no _original_ fields)
+func _restore_original_entry(entry: Dictionary) -> Dictionary:
+	if entry.has("_original_card_id"):
+		return {
+			"card_id": entry["_original_card_id"],
+			"star_level": entry.get("_original_star_level", 1)
+		}
+	return entry
 
 ## 发送牌组变化信号
 func _emit_deck_changed() -> void:

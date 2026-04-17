@@ -3,6 +3,9 @@ extends Control
 
 var current_event: Dictionary = {}
 
+## Card scene for reuse
+const CARD_SCENE := preload("res://scenes/battle/Card.tscn")
+
 @onready var event_title: Label = $CenterContainer/VBox/EventTitle
 @onready var event_description: RichTextLabel = $CenterContainer/VBox/EventDescription
 @onready var choices_container: VBoxContainer = $CenterContainer/VBox/ChoicesContainer
@@ -20,35 +23,20 @@ func _ready() -> void:
 ## 加载随机事件
 func _load_random_event() -> void:
 	var events: Array[Dictionary] = DataManager.get_all_events()
-	if events.is_empty():
-		# 默认事件
-		current_event = {
-			"event_name": "路遇仙人",
-			"description": "一位白发仙人拦住去路，微笑着说：'施主，贫道有一物相赠，不知施主可愿一试？'",
-			"choices": [
-				{"text": "接受馈赠", "effects": [{"type": "heal", "value": 10}], "result_text": "仙人赠你一颗仙丹，恢复了10点生命。"},
-				{"text": "婉言谢绝", "effects": [{"type": "gold", "value": 20}], "result_text": "仙人点头微笑，留下20枚金币后飘然而去。"},
-				{"text": "警惕离开", "effects": [], "result_text": "你小心翼翼地绕过仙人，继续前行。"}
-			]
-		}
-	else:
-		current_event = events[randi() % events.size()]
+	current_event = events[randi() % events.size()]
 	
 	_display_event()
 
 ## 显示事件
 func _display_event() -> void:
 	event_title.text = current_event.get("event_name", "未知事件")
-	event_description.text = current_event.get("description", "")
+	event_description.text = "[center]%s[/center]" % current_event.get("description", "")
 	
 	# 清除旧选项
 	for child in choices_container.get_children():
 		child.queue_free()
 	
-	# 兼容两种字段名：choices 和 options
-	var choices: Array = current_event.get("choices", [])
-	if choices.is_empty():
-		choices = current_event.get("options", [])
+	var choices: Array = current_event.get("options", [])
 	
 	for i in range(choices.size()):
 		var choice: Dictionary = choices[i]
@@ -60,7 +48,24 @@ func _display_event() -> void:
 		var choice_idx := i
 		button.pressed.connect(func(): _on_choice_selected(choice_idx))
 		
-		choices_container.add_child(button)
+		# Check if this option has exactly one result, show its description below the button
+		var results: Array = choice.get("results", [])
+		if results.size() == 1:
+			var wrapper := VBoxContainer.new()
+			wrapper.add_theme_constant_override("separation", 2)
+			wrapper.add_child(button)
+			
+			var desc_label := Label.new()
+			desc_label.text = results[0].get("description", "")
+			desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			desc_label.add_theme_font_size_override("font_size", 12)
+			desc_label.add_theme_color_override("font_color", Color(0.6, 0.65, 0.7, 0.85))
+			desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+			wrapper.add_child(desc_label)
+			
+			choices_container.add_child(wrapper)
+		else:
+			choices_container.add_child(button)
 
 ## 选择选项
 func _on_choice_selected(choice_index: int) -> void:
@@ -81,7 +86,7 @@ func _on_choice_selected(choice_index: int) -> void:
 		var cost_value: int = cost.get("value", 0)
 		if cost_type == "gold" and GameManager.current_gold < cost_value:
 			# 金币不足
-			result_label.text = "金币不足，无法选择此选项。"
+			result_label.text = "[center]金币不足，无法选择此选项。[/center]"
 			result_label.visible = true
 			return
 		if cost_type == "gold":
@@ -124,8 +129,11 @@ func _on_choice_selected(choice_index: int) -> void:
 		else:
 			result_text = choice.get("result_text", "事件结束。")
 	
-	result_label.text = result_text
+	result_label.text = "[center]" + result_text + "[/center]"
 	result_label.visible = true
+	
+	# Show card UI if a card was obtained
+	_show_obtained_card_ui(effects if not effects.is_empty() else (results if not results.is_empty() else []))
 	
 	# 隐藏选项，显示继续按钮
 	choices_container.visible = false
@@ -194,6 +202,41 @@ func _apply_effect(effect: Dictionary) -> void:
 func _on_continue_pressed() -> void:
 	SceneTransition.change_scene("res://scenes/map/MapScene.tscn")
 
+## Show obtained card using battle card UI
+func _show_obtained_card_ui(effects_list: Array) -> void:
+	for effect in effects_list:
+		var etype: String = effect.get("type", "")
+		if etype != "card":
+			continue
+		var card_id: String = effect.get("card_id", "")
+		if card_id.is_empty():
+			continue
+		var card_data: Dictionary = DataManager.get_card(card_id)
+		if card_data.is_empty():
+			continue
+		
+		# Create a container for the card
+		var card_hbox := HBoxContainer.new()
+		card_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+		
+		var card_node: Control = CARD_SCENE.instantiate()
+		card_node.custom_minimum_size = Vector2(180, 270)
+		card_hbox.add_child(card_node)
+		card_node.setup(card_data, 1)
+		card_node.is_playable = false
+		card_node.modulate = Color.WHITE
+		card_node.set_process_input(false)
+		# Hide background for non-battle card UI
+		if card_node.has_node("Background"):
+			card_node.get_node("Background").visible = false
+		
+		# Insert before continue button
+		var vbox := continue_button.get_parent()
+		var btn_idx := continue_button.get_index()
+		vbox.add_child(card_hbox)
+		vbox.move_child(card_hbox, btn_idx)
+		break  # Only show one card
+
 ## 获取效果详情文本
 func _get_effect_detail_text(effect: Dictionary) -> String:
 	var etype: String = effect.get("type", "")
@@ -211,13 +254,6 @@ func _get_effect_detail_text(effect: Dictionary) -> String:
 		"heal_percent":
 			var actual := int(GameManager.max_hp * value / 100.0)
 			return "💚 恢复了 %d 点生命 (%d%%)" % [actual, value]
-		"card":
-			var card_id: String = effect.get("card_id", "")
-			var card_data: Dictionary = DataManager.get_card(card_id)
-			var card_name: String = card_data.get("card_name", "神秘卡牌")
-			var detail := "🃏 获得卡牌：%s" % card_name
-			detail += _build_card_detail(card_data)
-			return detail
 		"relic":
 			var relic_id: String = effect.get("relic_id", "")
 			var relic_data: Dictionary = DataManager.get_relic(relic_id)
@@ -248,12 +284,16 @@ func _build_card_detail(card_data: Dictionary) -> String:
 	if card_data.is_empty():
 		return ""
 	
-	var card_type: String = card_data.get("card_type", "attack")
-	var type_name := ""
-	match card_type:
-		"attack": type_name = "攻击"
-		"skill": type_name = "技能"
-		"ultimate": type_name = "终结技"
+	var card_type_raw = card_data.get("card_type", "attack")
+	var card_types: Array = card_type_raw if card_type_raw is Array else [card_type_raw]
+	var type_names: Array[String] = []
+	for t in card_types:
+		match t:
+			"attack": type_names.append("攻击")
+			"defense": type_names.append("防御")
+			"skill": type_names.append("技能")
+			"summon": type_names.append("召唤")
+	var type_name: String = "/".join(type_names) if not type_names.is_empty() else "攻击"
 	
 	var rarity: String = card_data.get("rarity", "common")
 	var rarity_name := ""
@@ -295,7 +335,7 @@ func _build_relic_detail(relic_data: Dictionary) -> String:
 		"passive": trigger_name = "被动"
 		_: trigger_name = trigger
 	
-	var desc: String = relic_data.get("description", "")
+	var desc: String = RelicTooltip.get_enhanced_description(relic_data)
 	
 	var text := "\n    ┌─────────────────────────┐"
 	text += "\n    │ 品质: %s  |  触发: %s" % [rarity_name, trigger_name]

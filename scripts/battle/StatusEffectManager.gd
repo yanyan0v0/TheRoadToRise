@@ -7,20 +7,18 @@ enum EffectType {
 	# 正面状态
 	GOLDEN_BODY,   # 金身：下次伤害降至1
 	REGENERATION,  # 治愈：每层每回合+1生命
-	THORNS,        # 反甲：受伤时反弹
+	THORNS,        # 反甲：受到攻击时，每层对敌方造成伤害+1
 	OVERCHARGE,    # 充盈：下回合法力+1
 	AGILITY,       # 敏捷：法力消耗-1
+	COUNTER,       # 反击：受伤时每层对1个敌人造成等量伤害
+	ARMOR_BREAK,   # 破甲：每层每回合无视护甲的伤害+1
 	# 负面状态
-	ARMOR_BREAK,   # 破甲：护甲减少
 	SLOW,          # 减速：出牌数-1
 	BURN,          # 灼烧：每层每回合-1生命
-	SEAL,          # 封印：无法使用技能牌
-	VULNERABLE,    # 易伤：受到伤害+1每层
-	# 特殊状态
+	SEAL,          # 封印：每层每回合无法发动1次技能
+	BLEED,         # 流血：层数≥血量时立即死亡
+	WEAKEN,        # 虚弱：每层力量-1
 	STUN,          # 眩晕：无法行动
-	COUNTER,       # 反击：受伤时反击
-	DAMAGE_HALVE,  # 伤害减半
-	WEAKEN,        # 弱化：攻击力降低
 }
 
 ## 状态效果颜色
@@ -34,10 +32,9 @@ const EFFECT_COLORS := {
 	"slow": Color("00CEC9"),           # 青色
 	"burn": Color("E17055"),           # 橙色
 	"seal": Color("D63031"),           # 红色
-	"vulnerable": Color("FDCB6E"),     # 黄色
+	"bleed": Color("D63031"),          # 红色
 	"stun": Color("636E72"),           # 灰色
 	"counter": Color("D63031"),        # 红色
-	"damage_halve": Color("0984E3"),   # 蓝色
 	"weaken": Color("636E72"),         # 灰色
 }
 
@@ -52,11 +49,10 @@ const EFFECT_NAMES := {
 	"slow": "减速",
 	"burn": "灼烧",
 	"seal": "封印",
-	"vulnerable": "易伤",
+	"bleed": "流血",
 	"stun": "眩晕",
 	"counter": "反击",
-	"damage_halve": "伤害减半",
-	"weaken": "弱化",
+	"weaken": "虚弱",
 }
 
 ## 当前状态效果 {effect_type_string: stacks}
@@ -101,13 +97,13 @@ func clear_all() -> void:
 
 ## 清除所有负面状态
 func clear_debuffs() -> void:
-	var debuffs := ["armor_break", "slow", "burn", "seal", "vulnerable", "stun", "weaken"]
+	var debuffs := ["armor_break", "slow", "burn", "seal", "stun", "weaken", "bleed"]
 	for debuff in debuffs:
 		effects.erase(debuff)
 
 ## 清除所有正面状态
 func clear_buffs() -> void:
-	var buffs := ["golden_body", "regeneration", "thorns", "overcharge", "agility", "counter", "damage_halve"]
+	var buffs := ["golden_body", "regeneration", "thorns", "overcharge", "agility", "counter"]
 	for buff in buffs:
 		effects.erase(buff)
 
@@ -166,17 +162,12 @@ func on_damage_taken(damage: int, attacker_status: StatusEffectManager) -> Dicti
 		results.modified_damage = 1
 		remove_effect("golden_body", 1)
 	
-	# 伤害减半
-	if has_effect("damage_halve"):
-		results.modified_damage = results.modified_damage / 2
+	# 反甲：在敌方攻击意图时由BattleManager处理，不在此处结算
 	
-	# 反甲：反弹伤害
-	if has_effect("thorns"):
-		results.reflect_damage = get_stacks("thorns")
-	
-	# 反击：反弹等量伤害
+	# 反击：每层对1个敌人造成等量受到的伤害
 	if has_effect("counter"):
-		results.reflect_damage += results.modified_damage
+		results.reflect_damage = results.modified_damage
+		results["counter_stacks"] = get_stacks("counter")
 	
 	return results
 
