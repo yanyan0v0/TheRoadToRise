@@ -110,7 +110,7 @@ func _refresh_ui() -> void:
 ## Create a relic card button for the grid list
 func _create_relic_card(index: int, relic_data: Dictionary, enhance_level: int) -> Control:
 	var btn := Button.new()
-	btn.custom_minimum_size = Vector2(150	, 150)
+	btn.custom_minimum_size = Vector2(150, 150)
 	btn.flat = false
 	btn.focus_mode = Control.FOCUS_NONE
 
@@ -155,6 +155,49 @@ func _create_relic_card(index: int, relic_data: Dictionary, enhance_level: int) 
 	name_label.add_theme_color_override("font_color", rarity_color)
 	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(name_label)
+
+	# 图标显示区域（名字下方）
+	var icon_container := ColorRect.new()
+	icon_container.custom_minimum_size = Vector2(40, 40)
+	icon_container.color = Color(0.25, 0.2, 0.1, 0.8)  # 棕色背景
+	
+	# 边框样式
+	var icon_border := StyleBoxFlat.new()
+	icon_border.bg_color = Color(0, 0, 0, 0)  # 透明背景
+	icon_border.border_color = Color(0.6, 0.5, 0.3, 0.8)  # 金色边框
+	icon_border.set_border_width_all(2)
+	icon_border.set_corner_radius_all(4)
+	icon_container.add_theme_stylebox_override("panel", icon_border)
+	
+	# 法宝图标
+	var relic_icon := TextureRect.new()
+	relic_icon.custom_minimum_size = Vector2(32, 32)
+	relic_icon.size = Vector2(32, 32)
+	relic_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	relic_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	relic_icon.position = Vector2(4, 4)
+	relic_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	# 尝试加载法宝图标
+	var icon_path := "res://ui/images/global/relic.png"
+	if ResourceLoader.exists(icon_path):
+		relic_icon.texture = load(icon_path)
+	else:
+		# 如果图标不存在，使用文字作为后备
+		var fallback_label := Label.new()
+		fallback_label.text = relic_name.left(1)
+		fallback_label.add_theme_font_size_override("font_size", 16)
+		fallback_label.add_theme_color_override("font_color", Color("FDCB6E"))
+		fallback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		fallback_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		fallback_label.position = Vector2.ZERO
+		fallback_label.size = Vector2(32, 32)
+		fallback_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon_container.add_child(fallback_label)
+	else:
+		icon_container.add_child(relic_icon)
+	
+	vbox.add_child(icon_container)
 
 	# Short description
 	var desc_label := Label.new()
@@ -352,7 +395,7 @@ func _show_floating_result(success: bool, relic_data: Dictionary, enhance_level:
 	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	# Add to scene root with top z_index so it renders above everything
-	hint_label.z_index = 200
+	hint_label.z_index = 2000
 	hint_label.top_level = true
 	add_child(hint_label)
 
@@ -360,7 +403,7 @@ func _show_floating_result(success: bool, relic_data: Dictionary, enhance_level:
 	var enhance_panel: PanelContainer = $EnhancePopup/Panel
 	await get_tree().process_frame
 	var panel_center := enhance_panel.global_position + enhance_panel.size * 0.5
-	hint_label.global_position = Vector2(panel_center.x - hint_label.size.x * 0.5, panel_center.y - hint_label.size.y * 0.5)
+	hint_label.global_position = Vector2(panel_center.x - hint_label.size.x * 0.5, 100)
 
 	# Animate: float up and fade out
 	var tween := create_tween()

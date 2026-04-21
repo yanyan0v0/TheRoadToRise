@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://ccard001"]
 
 [ext_resource type="Script" uid="uid://dwxon6ohlw1fm" path="res://scripts/cards/Card.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://cjeayuiralctj" path="res://ui/images/global/card/zhu_bajie/attack.png" id="2_1a5j0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_typetag"]
 content_margin_left = 6.0
@@ -38,21 +39,6 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.45, 0.15, 0.15, 1)
 
-[node name="Background" type="ColorRect" parent="." unique_id=719478330]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -4.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-color = Color(0.12, 0.08, 0.06, 1)
-
 [node name="CardArtwork" type="TextureRect" parent="." unique_id=1208103942]
 layout_mode = 0
 offset_left = 4.0
@@ -60,6 +46,7 @@ offset_top = 4.0
 offset_right = 177.0
 offset_bottom = 267.0
 mouse_filter = 2
+texture = ExtResource("2_1a5j0")
 expand_mode = 1
 stretch_mode = 6
 
@@ -82,6 +69,29 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 20
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CostCircle2" type="ColorRect" parent="." unique_id=1894690207]
+z_index = 5
+layout_mode = 0
+offset_left = 4.0
+offset_top = 30.0
+offset_right = 40.0
+offset_bottom = 66.0
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
+
+[node name="CostLabel" type="Label" parent="CostCircle2" unique_id=1973411780]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
 text = "1"
 horizontal_alignment = 1
 vertical_alignment = 1

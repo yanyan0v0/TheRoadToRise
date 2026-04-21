@@ -32,27 +32,26 @@ grow_vertical = 2
 vertical_scroll_mode = 0
 
 [node name="MapContainer" type="Control" parent="ScrollContainer" unique_id=1375187260]
-custom_minimum_size = Vector2(2160, 0)
+custom_minimum_size = Vector2(2600, 666)
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
 
 [node name="Bg" type="TextureRect" parent="ScrollContainer/MapContainer" unique_id=1619225987]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 54.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_dw805")
-expand_mode = 3
+expand_mode = 2
+stretch_mode = 2
 
 [node name="LinesContainer" type="Control" parent="ScrollContainer/MapContainer" unique_id=1950914559]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = -39.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -62,6 +61,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = -39.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2

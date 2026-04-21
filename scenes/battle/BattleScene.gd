@@ -25,9 +25,15 @@ var _combo_tween: Tween = null
 @onready var draw_pile_label: Label = $DrawPileLabel
 @onready var discard_pile_label: Label = $DiscardPileLabel
 @onready var floating_text_container: Control = $FloatingTextContainer
-@onready var pause_menu: Control = $PauseMenu
 
 @onready var player_hp_text: Label = $BattleArea/PlayerArea/PlayerHPRow/PlayerHPBar/PlayerHPText
+@onready var player_mana_bar: ProgressBar = $BattleArea/PlayerArea/PlayerManaRow/PlayerManaBar
+@onready var player_mana_text: Label = $BattleArea/PlayerArea/PlayerManaRow/PlayerManaBar/PlayerManaText
+@onready var player_mana_ticks: Control = $BattleArea/PlayerArea/PlayerManaRow/PlayerManaBar/ManaTicks
+@onready var player_stamina_row: HBoxContainer = $BattleArea/PlayerArea/PlayerStaminaRow
+@onready var player_stamina_bar: ProgressBar = $BattleArea/PlayerArea/PlayerStaminaRow/PlayerStaminaBar
+@onready var player_stamina_text: Label = $BattleArea/PlayerArea/PlayerStaminaRow/PlayerStaminaBar/PlayerStaminaText
+@onready var player_stamina_ticks: Control = $BattleArea/PlayerArea/PlayerStaminaRow/PlayerStaminaBar/StaminaTicks
 
 ## HP bar fill styles
 var _hp_fill_normal: StyleBoxFlat = null
@@ -106,6 +112,7 @@ func _ready() -> void:
 	EventBus.armor_changed.connect(_on_armor_changed)
 	EventBus.gold_changed.connect(_on_gold_changed)
 	EventBus.mana_changed.connect(_on_mana_changed)
+	EventBus.stamina_changed.connect(_on_stamina_changed)
 	EventBus.damage_dealt.connect(_on_damage_dealt)
 	EventBus.healing_applied.connect(_on_healing_applied)
 	EventBus.enemy_died.connect(_on_enemy_died)
@@ -326,6 +333,8 @@ func _update_player_ui() -> void:
 	player_hp_bar.value = GameManager.current_hp
 	player_hp_text.text = "%d/%d" % [GameManager.current_hp, GameManager.max_hp]
 	_update_player_armor_display(GameManager.current_armor)
+	_update_mana_bar(GameManager.current_mana, GameManager.max_mana)
+	_update_stamina_bar(GameManager.current_stamina, GameManager.max_stamina)
 	_update_combo_display()
 
 ## 结束回合
@@ -478,7 +487,62 @@ func _on_gold_changed(_current_gold: int) -> void:
 	pass  # 由GlobalHUD处理
 
 func _on_mana_changed(current_mana: int, max_mana: int) -> void:
-	pass  # 由GlobalHUD处理
+	_update_mana_bar(current_mana, max_mana)
+
+func _on_stamina_changed(current_stamina: int, max_stamina: int) -> void:
+	_update_stamina_bar(current_stamina, max_stamina)
+
+## Update the player mana bar (value, text, and tick marks)
+func _update_mana_bar(current_mana: int, max_mana: int) -> void:
+	if player_mana_bar == null:
+		return
+	player_mana_bar.max_value = maxi(1, max_mana)
+	player_mana_bar.value = current_mana
+	if player_mana_text != null:
+		player_mana_text.text = "%d/%d" % [current_mana, max_mana]
+	_rebuild_ticks(player_mana_ticks, max_mana)
+
+## Update the player stamina bar (only visible when character has stamina, e.g. Zhu Bajie)
+func _update_stamina_bar(current_stamina: int, max_stamina: int) -> void:
+	if player_stamina_row == null:
+		return
+	var has_stamina: bool = max_stamina > 0
+	player_stamina_row.visible = has_stamina
+	if not has_stamina:
+		return
+	player_stamina_bar.max_value = maxi(1, max_stamina)
+	player_stamina_bar.value = current_stamina
+	if player_stamina_text != null:
+		player_stamina_text.text = "%d/%d" % [current_stamina, max_stamina]
+	_rebuild_ticks(player_stamina_ticks, max_stamina)
+
+## Rebuild tick-mark separators on the mana bar based on max_mana
+func _rebuild_mana_ticks(max_mana: int) -> void:
+	_rebuild_ticks(player_mana_ticks, max_mana)
+
+## Generic helper to rebuild tick-mark separators for a progress bar overlay
+func _rebuild_ticks(ticks_container: Control, max_value: int) -> void:
+	if ticks_container == null:
+		return
+	for child in ticks_container.get_children():
+		child.queue_free()
+	if max_value <= 1:
+		return
+	var tick_color := Color(0, 0, 0, 0.55)
+	var tick_width := 1.0
+	for i in range(1, max_value):
+		var tick := ColorRect.new()
+		tick.color = tick_color
+		tick.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tick.anchor_left = float(i) / float(max_value)
+		tick.anchor_right = tick.anchor_left
+		tick.anchor_top = 0.0
+		tick.anchor_bottom = 1.0
+		tick.offset_left = -tick_width / 2.0
+		tick.offset_right = tick_width / 2.0
+		tick.offset_top = 1.0
+		tick.offset_bottom = -1.0
+		ticks_container.add_child(tick)
 
 func _on_deck_changed(draw_count: int, discard_count: int) -> void:
 	draw_pile_label.text = "抽牌堆: %d" % draw_count

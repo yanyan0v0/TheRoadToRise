@@ -23,6 +23,8 @@ var _saved_border_color: Color = Color.WHITE  # 保存原始边框颜色
 @onready var card_artwork: TextureRect = $CardArtwork
 @onready var cost_circle: ColorRect = $CostCircle
 @onready var cost_label: Label = $CostCircle/CostLabel
+@onready var cost_circle_2: ColorRect = $CostCircle2
+@onready var cost_label_2: Label = $CostCircle2/CostLabel
 @onready var star_container: HBoxContainer = $StarContainer
 @onready var title_label: Label = $TitleLabel
 @onready var description_area: ColorRect = $DescriptionArea
@@ -101,10 +103,16 @@ func _update_display() -> void:
 	var energy_cost: int = CardData.get_card_energy_cost(card_data)
 	cost_label.text = str(energy_cost)
 	
-	# 体力费用（天蓬元帅）
+	# 体力费用（仅对拥有体力系统的角色显示，例如天蓬元帅）
 	var stamina_cost: int = card_data.get("stamina_cost", 0)
-	if stamina_cost > 0:
-		cost_label.text = "%d/%d" % [energy_cost, stamina_cost]
+	if GameManager.max_stamina > 0:
+		if cost_circle_2 != null:
+			cost_circle_2.visible = true
+		if cost_label_2 != null:
+			cost_label_2.text = str(stamina_cost)
+	else:
+		if cost_circle_2 != null:
+			cost_circle_2.visible = false
 	
 	# 稀有度边框颜色（根据稀有度调整边框亮度）
 	var rarity_color: Color = RARITY_COLORS.get(rarity, Color.WHITE)

@@ -3,6 +3,7 @@
     {
       "character_id": "sun_wukong",
       "character_name": "齐天大圣",
+      "description": "花果山水帘洞之主，生性桀骜不驯。\n一棒在手，可荡平四海妖氛。",
       "max_hp": 70,
       "mana": 3,
       "stamina": 0,
@@ -15,6 +16,7 @@
     {
       "character_id": "zhu_bajie",
       "character_name": "天蓬元帅",
+      "description": "天庭贬谪的天蓬元帅，好色贪吃。\n蛮力惊人，擅以血肉之躯抵御万千。",
       "max_hp": 85,
       "mana": 3,
       "stamina": 3,
@@ -22,11 +24,12 @@
       "starter_relic": "jiu_chi_ding_pa",
       "unlock_condition": "achievement",
       "unlock_achievement": "first_game",
-      "starter_deck": ["attack", "attack", "attack", "attack", "defend", "defend", "defend", "defend", "meng_zhuang", "tan_shi"]
+      "starter_deck": ["attack", "attack", "attack", "attack", "defend", "defend", "defend", "defend", "xun_meng_chong_ji", "da_chi_da_he"]
     },
     {
       "character_id": "sha_wujing",
       "character_name": "卷帘大将",
+      "description": "卷帘大将转世，忠厚持重。\n降妖宝杖随身，护体金光不熄。",
       "max_hp": 75,
       "mana": 3,
       "stamina": 0,
@@ -39,6 +42,7 @@
     {
       "character_id": "tang_seng",
       "character_name": "大唐圣僧",
+      "description": "大唐御弟，金蝉子转世。\n一心求取真经，白龙马随行护驾。",
       "max_hp": 65,
       "mana": 3,
       "stamina": 0,

@@ -2256,6 +2256,241 @@
         }
       ],
       "star_3_description": "召唤蛛丝妖灵，获得12点护甲并抽2张牌。使用后消失。"
+    },
+    {
+      "card_id": "jin_gu_bang_lie_kong",
+      "card_name": "金箍棒·裂空",
+      "card_type": [
+        "attack",
+        "skill"
+      ],
+      "rarity": "rare",
+      "energy_cost": 2,
+      "description": "金箍棒蓄力爆发，对敌人造成14点伤害，破甲+8，施加2层灼烧。",
+      "character_exclusive": "sun_wukong",
+      "effects": [
+        {
+          "type": "remove_armor",
+          "value": 8,
+          "target": "enemy"
+        },
+        {
+          "type": "damage",
+          "value": 14,
+          "target": "enemy"
+        },
+        {
+          "type": "status",
+          "status_type": "burn",
+          "value": 2,
+          "target": "enemy"
+        }
+      ],
+      "star_2_effects": [
+        {
+          "type": "remove_armor",
+          "value": 12,
+          "target": "enemy"
+        },
+        {
+          "type": "damage",
+          "value": 20,
+          "target": "enemy"
+        },
+        {
+          "type": "status",
+          "status_type": "burn",
+          "value": 3,
+          "target": "enemy"
+        }
+      ],
+      "star_3_effects": [
+        {
+          "type": "remove_armor",
+          "value": 18,
+          "target": "enemy"
+        },
+        {
+          "type": "damage",
+          "value": 28,
+          "target": "enemy"
+        },
+        {
+          "type": "status",
+          "status_type": "burn",
+          "value": 5,
+          "target": "enemy"
+        }
+      ],
+      "star_2_description": "金箍棒蓄力爆发，对敌人造成20点伤害，破甲+12，施加3层灼烧。",
+      "star_3_description": "金箍棒蓄力爆发，对敌人造成28点伤害，破甲+18，施加5层灼烧。"
+    },
+    {
+      "card_id": "jin_gu_bang_xu_neng",
+      "card_name": "金箍棒·蓄能",
+      "card_type": [
+        "skill"
+      ],
+      "rarity": "rare",
+      "energy_cost": 1,
+      "description": "金箍棒贯注千钧雷能，破除敌人6点护甲，自身获得1层充盈、2层荆棘与1点力量。",
+      "character_exclusive": "sun_wukong",
+      "effects": [
+        {
+          "type": "remove_armor",
+          "value": 6,
+          "target": "enemy"
+        },
+        {
+          "type": "status",
+          "status_type": "overcharge",
+          "value": 1,
+          "target": "self"
+        },
+        {
+          "type": "status",
+          "status_type": "thorns",
+          "value": 2,
+          "target": "self"
+        },
+        {
+          "type": "strength",
+          "value": 1,
+          "target": "self"
+        }
+      ],
+      "star_2_effects": [
+        {
+          "type": "remove_armor",
+          "value": 9,
+          "target": "enemy"
+        },
+        {
+          "type": "status",
+          "status_type": "overcharge",
+          "value": 2,
+          "target": "self"
+        },
+        {
+          "type": "status",
+          "status_type": "thorns",
+          "value": 3,
+          "target": "self"
+        },
+        {
+          "type": "strength",
+          "value": 2,
+          "target": "self"
+        }
+      ],
+      "star_3_effects": [
+        {
+          "type": "remove_armor",
+          "value": 12,
+          "target": "enemy"
+        },
+        {
+          "type": "status",
+          "status_type": "overcharge",
+          "value": 3,
+          "target": "self"
+        },
+        {
+          "type": "status",
+          "status_type": "thorns",
+          "value": 5,
+          "target": "self"
+        },
+        {
+          "type": "status",
+          "status_type": "weak",
+          "value": 2,
+          "target": "enemy"
+        },
+        {
+          "type": "strength",
+          "value": 3,
+          "target": "self"
+        }
+      ],
+      "star_2_description": "金箍棒贯注千钧雷能，破除敌人9点护甲，自身获得2层过载、3层荆棘与2点力量。",
+      "star_3_description": "金箍棒贯注千钧雷能，破除敌人12点护甲并施加2层虚弱，自身获得3层过载、5层荆棘与3点力量。"
+    },
+    {
+      "card_id": "jin_gu_bang_qian_gun",
+      "card_name": "金箍棒·千棍",
+      "card_type": [
+        "attack",
+        "skill"
+      ],
+      "rarity": "rare",
+      "energy_cost": 3,
+      "description": "金箍棒化万棒环阵，对所有敌人造成2次7点伤害，施加2层灼烧，自身获得8点护甲。",
+      "character_exclusive": "sun_wukong",
+      "effects": [
+        {
+          "type": "damage",
+          "value": 7,
+          "target": "all_enemies",
+          "times": 2
+        },
+        {
+          "type": "status",
+          "status_type": "burn",
+          "value": 2,
+          "target": "all_enemies"
+        },
+        {
+          "type": "armor",
+          "value": 8,
+          "target": "self"
+        }
+      ],
+      "star_2_effects": [
+        {
+          "type": "damage",
+          "value": 9,
+          "target": "all_enemies",
+          "times": 2
+        },
+        {
+          "type": "status",
+          "status_type": "burn",
+          "value": 3,
+          "target": "all_enemies"
+        },
+        {
+          "type": "armor",
+          "value": 12,
+          "target": "self"
+        }
+      ],
+      "star_3_effects": [
+        {
+          "type": "damage",
+          "value": 10,
+          "target": "all_enemies",
+          "times": 3
+        },
+        {
+          "type": "status",
+          "status_type": "burn",
+          "value": 4,
+          "target": "all_enemies"
+        },
+        {
+          "type": "armor",
+          "value": 16,
+          "target": "self"
+        },
+        {
+          "type": "strength",
+          "value": 1,
+          "target": "self"
+        }
+      ],
+      "star_2_description": "金箍棒化万棒环阵，对所有敌人造成2次9点伤害，施加3层灼烧，自身获得12点护甲。",
+      "star_3_description": "金箍棒化万棒环阵，对所有敌人造成3次10点伤害，施加4层灼烧，自身获得16点护甲并力量+1。"
     }
   ]
 }

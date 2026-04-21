@@ -242,6 +242,49 @@ static func build_tooltip(relic_data: Dictionary, enhance_level: int = 0) -> Pan
 	title_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(title_label)
 	
+	# === 图标显示区域（标题下方） ===
+	var icon_container := ColorRect.new()
+	icon_container.custom_minimum_size = Vector2(120, 120)  # 增加容器大小以容纳120x120图标和边距
+	icon_container.color = Color(0.25, 0.2, 0.1, 0.8)  # 棕色背景
+	
+	# 边框样式
+	var icon_border := StyleBoxFlat.new()
+	icon_border.bg_color = Color(0, 0, 0, 0)  # 透明背景
+	icon_border.border_color = Color(0.6, 0.5, 0.3, 0.8)  # 金色边框
+	icon_border.set_border_width_all(2)
+	icon_border.set_corner_radius_all(4)
+	icon_container.add_theme_stylebox_override("panel", icon_border)
+	
+	# 法宝图标 - 优化为120x120并居中
+	var relic_icon := TextureRect.new()
+	relic_icon.custom_minimum_size = Vector2(120, 120)
+	relic_icon.size = Vector2(120, 120)
+	relic_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	relic_icon.expand_mode = TextureRect.EXPAND_FIT_HEIGHT
+	relic_icon.position = Vector2(0, 0)
+	relic_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	# 尝试加载法宝图标
+	var relic_id: String = relic_data.get("relic_id", "")
+	var icon_path := "res://ui/images/global/relic/%s.png" % relic_id
+	if ResourceLoader.exists(icon_path):
+		relic_icon.texture = load(icon_path)
+		icon_container.add_child(relic_icon)
+	else:
+		# 如果图标不存在，使用文字作为后备
+		var fallback_label := Label.new()
+		fallback_label.text = relic_name.left(1)
+		fallback_label.add_theme_font_size_override("font_size", 14)
+		fallback_label.add_theme_color_override("font_color", Color("FDCB6E"))
+		fallback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		fallback_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		fallback_label.position = Vector2.ZERO
+		fallback_label.size = Vector2(28, 28)
+		fallback_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon_container.add_child(fallback_label)
+	
+	vbox.add_child(icon_container)
+	
 	# === Separator ===
 	var sep := HSeparator.new()
 	sep.add_theme_constant_override("separation", 4)
@@ -262,7 +305,7 @@ static func build_tooltip(relic_data: Dictionary, enhance_level: int = 0) -> Pan
 	desc_label.add_theme_font_size_override("font_size", 12)
 	desc_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	desc_label.custom_minimum_size = Vector2(220, 0)
+	desc_label.custom_minimum_size = Vector2(120, 0)
 	desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(desc_label)
 	

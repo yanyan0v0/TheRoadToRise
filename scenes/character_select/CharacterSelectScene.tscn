@@ -1,8 +1,162 @@
 [gd_scene format=3 uid="uid://cselect001"]
 
 [ext_resource type="Script" uid="uid://bd6rky1xgn7u4" path="res://scenes/character_select/CharacterSelectScene.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://xg5v1ibmk536" path="res://ui/images/character_select/character_select_bg.jpg" id="2_g8o0v"]
-[ext_resource type="Texture2D" uid="uid://ckqe7iiu8kr6v" path="res://ui/images/character_select/character_select_title.png" id="3_pqjn1"]
+[ext_resource type="Texture2D" uid="uid://tkldo2d03ssh" path="res://ui/images/character_select/icon_right.png" id="3_arrow"]
+[ext_resource type="Texture2D" uid="uid://c7atvgoquqfs" path="res://ui/images/character_select/icon_return.png" id="3_g8o0v"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pqjn1"]
+content_margin_left = 24.0
+content_margin_top = 0.0
+content_margin_right = 24.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.39215687)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pqjn1_pressed"]
+content_margin_left = 24.0
+content_margin_top = 0.0
+content_margin_right = 24.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.65)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.78, 0.55, 0.22, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pqjn1_hover"]
+content_margin_left = 24.0
+content_margin_top = 0.0
+content_margin_right = 24.0
+content_margin_bottom = 0.0
+bg_color = Color(0.18, 0.12, 0.05, 0.55)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.992157, 0.796078, 0.431373, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pqjn1_disabled"]
+content_margin_left = 24.0
+content_margin_top = 0.0
+content_margin_right = 24.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.25)
+border_color = Color(0.5, 0.5, 0.5, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_arrow_normal"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0, 0, 0, 0.39215687)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_arrow_pressed"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0, 0, 0, 0.65)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.78, 0.55, 0.22, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_arrow_hover"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.12, 0.1, 0.08, 0.55)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.992157, 0.796078, 0.431373, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g8o0v"]
+content_margin_left = 24.0
+content_margin_top = 0.0
+content_margin_right = 24.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.39215687)
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g8o0v_pressed"]
+content_margin_left = 24.0
+content_margin_top = 0.0
+content_margin_right = 24.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.65)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.78, 0.55, 0.22, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g8o0v_hover"]
+content_margin_left = 24.0
+content_margin_top = 0.0
+content_margin_right = 24.0
+content_margin_bottom = 0.0
+bg_color = Color(0.12, 0.1, 0.08, 0.55)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.992157, 0.796078, 0.431373, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g8o0v_disabled"]
+content_margin_left = 24.0
+content_margin_top = 0.0
+content_margin_right = 24.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.25)
+border_color = Color(0.5, 0.5, 0.5, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="CharacterSelectScene" type="Control" unique_id=365468152]
 layout_mode = 3
@@ -20,7 +174,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.176471, 0.203922, 0.211765, 1)
+mouse_filter = 2
+color = Color(0.08, 0.06, 0.1, 1)
 
 [node name="BackgroundTextureRect" type="TextureRect" parent="." unique_id=251184517]
 layout_mode = 1
@@ -29,57 +184,142 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_g8o0v")
+mouse_filter = 2
 expand_mode = 2
-stretch_mode = 4
+stretch_mode = 6
 
-[node name="TitleTextureRect" type="TextureRect" parent="." unique_id=1698246919]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -300.0
-offset_top = 20.0
-offset_right = 300.0
-offset_bottom = 100.0
-grow_horizontal = 2
-texture = ExtResource("3_pqjn1")
-expand_mode = 1
-stretch_mode = 4
-
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=123826511]
+[node name="BackgroundFadeRect" type="TextureRect" parent="." unique_id=251184518]
+modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 40.0
-offset_top = 130.0
-offset_right = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 2
+stretch_mode = 6
+
+[node name="InfoPanel" type="Panel" parent="." unique_id=1698246919]
+layout_mode = 1
+offset_left = 60.0
+offset_top = 140.0
+offset_right = 480.0
+offset_bottom = 520.0
+
+[node name="InfoContent" type="VBoxContainer" parent="InfoPanel" unique_id=1698246920]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = -24.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 10
 
-[node name="CardsContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1147669163]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 3.0
-theme_override_constants/separation = 20
+[node name="StartButton" type="Button" parent="InfoPanel" unique_id=2075499304]
+custom_minimum_size = Vector2(90, 64)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -36.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_pqjn1")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pqjn1_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pqjn1_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_pqjn1_disabled")
+theme_override_styles/focus = SubResource("StyleBoxFlat_pqjn1")
+text = "确定"
+icon_alignment = 1
+expand_icon = true
+
+[node name="ThumbnailBar" type="HBoxContainer" parent="." unique_id=123826511]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -120.0
+offset_right = 320.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 12
 alignment = 1
 
-[node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1525070433]
+[node name="PrevButton" type="Button" parent="ThumbnailBar" unique_id=123826512]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-theme_override_constants/separation = 40
-alignment = 1
+size_flags_vertical = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_arrow_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_arrow_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_arrow_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_arrow_normal")
 
-[node name="BackButton" type="Button" parent="VBoxContainer/ButtonContainer" unique_id=1928004532]
-custom_minimum_size = Vector2(160, 50)
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "返回"
+[node name="Arrow" type="TextureRect" parent="ThumbnailBar/PrevButton" unique_id=123826514]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_arrow")
+expand_mode = 1
+stretch_mode = 5
+flip_h = true
 
-[node name="StartButton" type="Button" parent="VBoxContainer/ButtonContainer" unique_id=2075499304]
-custom_minimum_size = Vector2(160, 50)
+[node name="NextButton" type="Button" parent="ThumbnailBar" unique_id=123826513]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "开始取经"
+size_flags_vertical = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_arrow_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_arrow_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_arrow_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_arrow_normal")
+
+[node name="Arrow" type="TextureRect" parent="ThumbnailBar/NextButton" unique_id=123826515]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_arrow")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BackButton" type="Button" parent="." unique_id=1928004532]
+custom_minimum_size = Vector2(90, 64)
+layout_mode = 1
+offset_left = 60.0
+offset_top = 20.0
+offset_right = 150.0
+offset_bottom = 84.0
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_g8o0v")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_g8o0v_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_g8o0v_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_g8o0v_disabled")
+theme_override_styles/focus = SubResource("StyleBoxFlat_g8o0v")
+icon = ExtResource("3_g8o0v")
+icon_alignment = 1
+expand_icon = true

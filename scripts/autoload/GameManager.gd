@@ -61,6 +61,9 @@ var current_chapter: int = 1
 var current_node_index: int = 0
 ## 当前地图数据
 var current_map_data: Dictionary = {}
+## 当前地图滚动位置（修复滚动条回到初始位置问题）
+var current_map_scroll_x: float = 0.0
+var current_map_scroll_y: float = 0.0
 ## 当前战斗类型（normal/elite/boss）
 var current_battle_type: String = "normal"
 ## 当前BOSS ID
@@ -482,6 +485,8 @@ func get_save_data() -> Dictionary:
 		"current_chapter": current_chapter,
 		"current_node_index": current_node_index,
 		"current_map_data": current_map_data,
+		"current_map_scroll_x": current_map_scroll_x,
+		"current_map_scroll_y": current_map_scroll_y,
 		"total_gold_earned": total_gold_earned,
 		"stats": stats,
 		# 天劫系统
@@ -523,6 +528,8 @@ func load_save_data(data: Dictionary) -> void:
 	current_chapter = data.get("current_chapter", 1)
 	current_node_index = data.get("current_node_index", 0)
 	current_map_data = data.get("current_map_data", {})
+	current_map_scroll_x = data.get("current_map_scroll_x", 0.0)
+	current_map_scroll_y = data.get("current_map_scroll_y", 0.0)
 	total_gold_earned = data.get("total_gold_earned", 0)
 	stats = data.get("stats", stats)
 	# 天劫系统

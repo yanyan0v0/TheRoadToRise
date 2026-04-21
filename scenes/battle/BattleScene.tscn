@@ -2,11 +2,48 @@
 
 [ext_resource type="Script" uid="uid://cv0jblff7mahn" path="res://scenes/battle/BattleScene.gd" id="1"]
 [ext_resource type="Script" uid="uid://d2o0olnpjs12w" path="res://scripts/cards/HandManager.gd" id="2"]
-[ext_resource type="PackedScene" uid="uid://cpause001" path="res://ui/components/PauseMenu.tscn" id="3"]
 [ext_resource type="Texture2D" uid="uid://dse6w7cv4a85d" path="res://ui/images/battle/enter_trun.png" id="4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
 bg_color = Color(0.8, 0.15, 0.15, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mana_bg"]
+bg_color = Color(0.08, 0.1, 0.2, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.4, 0.7, 0.9)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mana_fill"]
+bg_color = Color(0.3, 0.55, 0.95, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stamina_bg"]
+bg_color = Color(0.08, 0.18, 0.1, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.55, 0.35, 0.9)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stamina_fill"]
+bg_color = Color(0.3, 0.75, 0.4, 1)
 corner_radius_top_left = 2
 corner_radius_top_right = 2
 corner_radius_bottom_right = 2
@@ -52,6 +89,7 @@ anchor_right = 0.29500002
 anchor_bottom = 1.039
 offset_right = 0.39996338
 offset_bottom = -0.16000366
+theme_override_constants/separation = 0
 alignment = 2
 
 [node name="PlayerSprite" type="TextureRect" parent="BattleArea/PlayerArea" unique_id=2120837675]
@@ -81,7 +119,7 @@ horizontal_alignment = 1
 [node name="PlayerHPRow" type="HBoxContainer" parent="BattleArea/PlayerArea" unique_id=959704527]
 layout_mode = 2
 size_flags_horizontal = 0
-theme_override_constants/separation = 4
+theme_override_constants/separation = 0
 
 [node name="ArmorLabel" type="Label" parent="BattleArea/PlayerArea/PlayerHPRow" unique_id=1564424276]
 custom_minimum_size = Vector2(50, 0)
@@ -112,6 +150,101 @@ grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 12
 text = "70/70"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerManaRow" type="HBoxContainer" parent="BattleArea/PlayerArea" unique_id=1985401001]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 0
+
+[node name="ManaLabel" type="Label" parent="BattleArea/PlayerArea/PlayerManaRow" unique_id=1985401002]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.55, 0.75, 1, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="PlayerManaBar" type="ProgressBar" parent="BattleArea/PlayerArea/PlayerManaRow" unique_id=1985401003]
+custom_minimum_size = Vector2(150, 6)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_mana_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_mana_fill")
+max_value = 3.0
+value = 3.0
+show_percentage = false
+
+[node name="ManaTicks" type="Control" parent="BattleArea/PlayerArea/PlayerManaRow/PlayerManaBar" unique_id=1985401004]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PlayerManaText" type="Label" parent="BattleArea/PlayerArea/PlayerManaRow/PlayerManaBar" unique_id=1985401005]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "3/3"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerStaminaRow" type="HBoxContainer" parent="BattleArea/PlayerArea" unique_id=1985401101]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 0
+
+[node name="StaminaLabel" type="Label" parent="BattleArea/PlayerArea/PlayerStaminaRow" unique_id=1985401102]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.6, 0.95, 0.65, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="PlayerStaminaBar" type="ProgressBar" parent="BattleArea/PlayerArea/PlayerStaminaRow" unique_id=1985401103]
+custom_minimum_size = Vector2(150, 6)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_stamina_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_stamina_fill")
+max_value = 3.0
+value = 3.0
+show_percentage = false
+
+[node name="StaminaTicks" type="Control" parent="BattleArea/PlayerArea/PlayerStaminaRow/PlayerStaminaBar" unique_id=1985401104]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PlayerStaminaText" type="Label" parent="BattleArea/PlayerArea/PlayerStaminaRow/PlayerStaminaBar" unique_id=1985401105]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "3/3"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -194,6 +327,3 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="PauseMenu" parent="." unique_id=182062845 instance=ExtResource("3")]
-layout_mode = 1

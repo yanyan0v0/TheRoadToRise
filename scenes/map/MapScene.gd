@@ -12,6 +12,7 @@ var _dev_click_timers: Dictionary = {}  # node_id -> last_click_time
 const DEV_CLICK_THRESHOLD: int = 5
 const DEV_CLICK_TIMEOUT: float = 2.0  # 2秒内连击5次
 
+@onready var scroll_container: ScrollContainer = $ScrollContainer
 @onready var map_container: Control = $ScrollContainer/MapContainer
 @onready var lines_container: Control = $ScrollContainer/MapContainer/LinesContainer
 @onready var nodes_container: Control = $ScrollContainer/MapContainer/NodesContainer
@@ -40,6 +41,13 @@ func _ready() -> void:
 	# 等待布局完成后再渲染
 	await get_tree().process_frame
 	_render_map()
+	
+	# 恢复滚动位置（修复滚动条回到初始位置问题）
+	if GameManager.current_map_scroll_x != 0.0 or GameManager.current_map_scroll_y != 0.0:
+		# 等待一帧确保ScrollContainer已完全初始化
+		await get_tree().process_frame
+		scroll_container.scroll_horizontal = GameManager.current_map_scroll_x
+		scroll_container.scroll_vertical = GameManager.current_map_scroll_y
 
 ## 从地图数据中提取BOSS节点的boss_id，同步到GameManager.current_boss_id
 ## 这样 HUD 的章节名（取自boss的chapter_name）在进入地图时就能立即显示
@@ -67,9 +75,6 @@ func _sync_current_chapter_boss() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED and map_data and not map_data.is_empty():
 		_render_map()
-
-## BOSS节点右侧额外边距（像素）
-const BOSS_RIGHT_MARGIN := 600
 
 ## 图例中需要显示的节点类型（排除起点）
 const LEGEND_NODE_TYPES := [
@@ -148,6 +153,8 @@ func _render_map() -> void:
 	for child in nodes_container.get_children():
 		child.queue_free()
 	node_buttons.clear()
+	# 重建时清空呼吸动画驱动表，避免悬挂引用（border panel 作为 nodes_container 子节点会随同被清理）
+	_breath_entries.clear()
 	
 	# 根据节点实际像素坐标动态计算容器大小
 	var viewport_size := get_viewport_rect().size
@@ -159,12 +166,6 @@ func _render_map() -> void:
 			max_x = n.position.x
 		if n.position.y > max_y:
 			max_y = n.position.y
-	# 右侧额外留出空间给BOSS大节点
-	var map_width: float = max(max_x + BOSS_RIGHT_MARGIN, viewport_size.x)
-	# 高度固定为屏幕高度，不允许垂直缩放，避免背景图变形
-	var map_height: float = viewport_size.y
-	map_container.custom_minimum_size = Vector2(map_width, map_height)
-	map_container.size = Vector2(map_width, map_height)
 	
 	var nodes: Array = map_data.get("nodes", [])
 	
@@ -177,14 +178,37 @@ func _render_map() -> void:
 				if target_node and target_node.visited:
 					visited_edges["%d->%d" % [node.id, conn_id]] = true
 	
-	# 先绘制连接线（区分已走路径和其他分支）
+	# 构建可达边集合（current_node -> 未访问的下一层节点的连接）
+	var reachable_edges: Dictionary = {}  # "from_id->to_id" -> true
+	var current_node_for_edges: MapGenerator.MapNode = _compute_current_node(nodes)
+	if current_node_for_edges != null:
+		for conn_id in current_node_for_edges.connections:
+			var target_node := _find_node(nodes, conn_id)
+			if target_node and not target_node.visited:
+				reachable_edges["%d->%d" % [current_node_for_edges.id, conn_id]] = true
+	
+	# 先绘制普通分支（灰），再绘制已走/可达（金），保证高亮边在上层
+	# Pass 1: 非高亮边
 	for node in nodes:
 		for conn_id in node.connections:
 			var target_node := _find_node(nodes, conn_id)
-			if target_node:
-				var edge_key := "%d->%d" % [node.id, conn_id]
-				var is_visited_edge: bool = visited_edges.has(edge_key)
-				_draw_connection_line(node.position, target_node.position, is_visited_edge)
+			if target_node == null:
+				continue
+			var edge_key := "%d->%d" % [node.id, conn_id]
+			if visited_edges.has(edge_key) or reachable_edges.has(edge_key):
+				continue
+			_draw_connection_line(node.position, target_node.position, false, false)
+	# Pass 2: 高亮边（已走 + 当前→可达）
+	for node in nodes:
+		for conn_id in node.connections:
+			var target_node := _find_node(nodes, conn_id)
+			if target_node == null:
+				continue
+			var edge_key := "%d->%d" % [node.id, conn_id]
+			var is_visited_edge: bool = visited_edges.has(edge_key)
+			var is_reachable_edge: bool = reachable_edges.has(edge_key)
+			if is_visited_edge or is_reachable_edge:
+				_draw_connection_line(node.position, target_node.position, is_visited_edge, is_reachable_edge)
 	
 	# 再绘制节点
 	for node in nodes:
@@ -215,8 +239,27 @@ const NODE_DESCRIPTIONS := {
 var _current_tooltip: PanelContainer = null
 var _tooltip_target_button: Button = null
 
-## 呼吸动画Tween字典：btn_instance_id -> Tween
-var _breath_tweens: Dictionary = {}
+## 呼吸动画统一驱动：用累计时间 + 每个节点的相位做数学计算，避免 N 个 Tween + 每帧闭包调用
+## 动画对象是“金色边框 Panel”，而非按钮本身的 scale，避免像素对齐造成的阶梯抖动
+## key(panel_instance_id) -> { "panel": Panel, "style": StyleBoxFlat, "phase": float, "is_boss": bool }
+var _breath_entries: Dictionary = {}
+var _breath_time: float = 0.0
+## 呼吸周期（秒）
+const BREATH_PERIOD: float = 1.8
+## 呼吸角频率 = 2π / 周期
+const BREATH_OMEGA: float = TAU / BREATH_PERIOD
+
+## 金色边框呼吸参数
+const GLOW_BORDER_NAME := "_GlowBorder"
+## 边框宽度范围（像素）
+const GLOW_BORDER_WIDTH_MIN: float = 1.5
+const GLOW_BORDER_WIDTH_MAX: float = 3.5
+## 金色边框颜色（色相/亮度固定，alpha 动态变化）
+const GLOW_BORDER_COLOR := Color(1.0, 0.85, 0.25, 1.0)
+const GLOW_BORDER_ALPHA_MIN: float = 0.45
+const GLOW_BORDER_ALPHA_MAX: float = 1.0
+## 边框相对按钮的外拓像素（让边框路在按钮外围，视觉上更冲击）
+const GLOW_BORDER_PADDING: float = 4.0
 
 ## 创建节点按钮
 func _create_node_button(node: MapGenerator.MapNode) -> void:
@@ -301,130 +344,175 @@ func _create_node_button(node: MapGenerator.MapNode) -> void:
 	# 绑定hover事件，显示气泡框
 	_bind_node_hover(button, node)
 	
-	# 为可访问节点添加发光边框和阴影立体效果
+	# 为可访问节点添加金色边框呼吸动画
 	if node.reachable and not node.visited:
 		_apply_glow_effect(button)
 	
-	# 为已访问节点添加灰色圆形边框
+	# 为已访问节点降低透明度（替代灰色边框）
 	if node.visited and node.node_type != MapGenerator.NodeType.START:
 		_apply_visited_border(button)
 
-## 为可访问节点添加发光边框 + 呼吸动画
-## 注意：边框添加到 nodes_container（与按钮同级），避免被按钮的 clip_children 裁剪
+## 为可访问节点添加金色边框呼吸动画
+## 实现：给按钮挂一个额外的 Panel 子节点作为边框层，_process 中更新 border_width 与 alpha
+## 好处：
+##   1. 按钮本身不做 scale，彻底消除小按钮缩放时因像素重对齐出现的抖动
+##   2. 边框在按钮外围（padding），不遮挡节点图片也不影响点击区（mouse_filter = IGNORE）
+##   3. BOSS 和普通节点统一处理，尺寸/圆角分别适配
 func _apply_glow_effect(button: Button) -> void:
-	# 移除旧的发光效果（如果有）
+	# 移除旧的呼吸动画（如果有）
 	_remove_glow_effect(button)
+	if not is_instance_valid(button):
+		return
 	
 	var btn_size := button.size
-	var btn_pos := button.position
 	# 判断是否为BOSS节点（非正方形即为BOSS）
 	var is_boss: bool = abs(btn_size.x - btn_size.y) > 1.0 or btn_size.x > NODE_BUTTON_SIZE.x + 10
-	# 圆形节点用半径，BOSS节点用小圆角
-	var base_corner: int = 8 if is_boss else int(btn_size.x / 2.0)
 	
-	# 使用按钮实例ID作为关联标识
-	var btn_idx := str(button.get_instance_id())
+	# 创建边框样式：透明填充 + 金色边框
+	var border_style := StyleBoxFlat.new()
+	border_style.bg_color = Color(0, 0, 0, 0)
+	border_style.border_color = GLOW_BORDER_COLOR
+	var init_w: int = int(round((GLOW_BORDER_WIDTH_MIN + GLOW_BORDER_WIDTH_MAX) * 0.5))
+	border_style.border_width_top = init_w
+	border_style.border_width_bottom = init_w
+	border_style.border_width_left = init_w
+	border_style.border_width_right = init_w
+	# 普通节点使用圆角，BOSS 节点使用轻圆角矩形（区别于圆形按钮）
+	if is_boss:
+		var boss_cr := 8
+		border_style.corner_radius_top_left = boss_cr
+		border_style.corner_radius_top_right = boss_cr
+		border_style.corner_radius_bottom_left = boss_cr
+		border_style.corner_radius_bottom_right = boss_cr
+	else:
+		var radius: int = int((btn_size.x + GLOW_BORDER_PADDING * 2.0) / 2.0)
+		border_style.corner_radius_top_left = radius
+		border_style.corner_radius_top_right = radius
+		border_style.corner_radius_bottom_left = radius
+		border_style.corner_radius_bottom_right = radius
 	
-	# --- 金色加粗边框 ---
-	var glow_panel := Panel.new()
-	glow_panel.name = "GlowBorder_" + btn_idx
-	var glow_style := StyleBoxFlat.new()
-	glow_style.bg_color = Color(0, 0, 0, 0)  # 透明背景
-	glow_style.border_width_top = 5
-	glow_style.border_width_bottom = 5
-	glow_style.border_width_left = 5
-	glow_style.border_width_right = 5
-	glow_style.border_color = Color(0.85, 0.7, 0.2, 1.0)
-	var border_radius: int = (base_corner + 1) if is_boss else int((btn_size.x + 10) / 2.0)
-	glow_style.corner_radius_top_left = border_radius
-	glow_style.corner_radius_top_right = border_radius
-	glow_style.corner_radius_bottom_left = border_radius
-	glow_style.corner_radius_bottom_right = border_radius
-	glow_panel.add_theme_stylebox_override("panel", glow_style)
-	glow_panel.size = btn_size + Vector2(10, 10)
-	glow_panel.position = btn_pos + Vector2(-5, -5)
-	glow_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	nodes_container.add_child(glow_panel)
-	# 边框移到按钮之前，确保在按钮下方
-	nodes_container.move_child(glow_panel, 0)
+	# 创建边框容器 Panel
+	var border_panel := Panel.new()
+	border_panel.name = GLOW_BORDER_NAME
+	border_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	border_panel.add_theme_stylebox_override("panel", border_style)
+	# 将 Panel 放到按钮外拓位置（相对按钮本地坐标系）
+	border_panel.position = Vector2(-GLOW_BORDER_PADDING, -GLOW_BORDER_PADDING)
+	border_panel.size = btn_size + Vector2(GLOW_BORDER_PADDING * 2.0, GLOW_BORDER_PADDING * 2.0)
+	border_panel.z_index = 10  # 确保在节点图片上方
+	# 不可裁剪：BOSS 节点的 clip_children 未开，普通节点开启了 clip_children
+	# 为了避免边框被按钮裁剪掉，边框作为 nodes_container 的子节点而非按钮子节点
+	# 但位置需转换到 nodes_container 坐标系
+	border_panel.position = button.position + Vector2(-GLOW_BORDER_PADDING, -GLOW_BORDER_PADDING)
+	nodes_container.add_child(border_panel)
 	
-	# --- 呼吸动画：边框透明度在 0.4 ~ 1.0 之间循环 ---
-	_start_breath_animation(glow_panel, btn_idx)
+	# 注册到呼吸驱动表
+	var key := str(border_panel.get_instance_id())
+	var phase_offset: float = randf() * TAU
+	_breath_entries[key] = {
+		"panel": border_panel,
+		"style": border_style,
+		"phase": phase_offset,
+		"is_boss": is_boss,
+	}
+	
+	# 将 panel 引用存到按钮的 meta，便于 _remove_glow_effect 定向移除
+	button.set_meta("glow_border_panel_id", border_panel.get_instance_id())
 
-## 启动呼吸动画
-func _start_breath_animation(panel: Panel, btn_idx: String) -> void:
-	# 先停止旧的呼吸动画
-	if _breath_tweens.has(btn_idx):
-		var old_tween: Tween = _breath_tweens[btn_idx]
-		if old_tween and old_tween.is_valid():
-			old_tween.kill()
-		_breath_tweens.erase(btn_idx)
-	
-	# 创建循环Tween实现呼吸效果
-	var tween := create_tween()
-	tween.set_loops()  # 无限循环
-	# 从完全不透明渐变到半透明，再渐变回来
-	tween.tween_property(panel, "modulate:a", 0.35, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	tween.tween_property(panel, "modulate:a", 1.0, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_breath_tweens[btn_idx] = tween
+## 统一呼吸动画驱动：每帧一次性更新所有注册节点的 scale
+## 相比 N 个 Tween + 闭包回调，这种写法：
+##   1. 只有一次 _process 调度
+##   2. 无闭包捕获开销
+##   3. 无 Tween 状态机开销
+##   4. 可一次性清理失效按钮
+func _process(delta: float) -> void:
+	if _breath_entries.is_empty():
+		return
+	_breath_time += delta
+	# 关键：按 BREATH_PERIOD（秒）截断，而非 TAU，保证 cos(base_t + phase) 截断前后连续
+	if _breath_time > BREATH_PERIOD:
+		_breath_time = fmod(_breath_time, BREATH_PERIOD)
+	var base_t: float = _breath_time * BREATH_OMEGA
+	var invalid_keys: Array = []
+	for key in _breath_entries.keys():
+		var entry: Dictionary = _breath_entries[key]
+		var panel: Panel = entry.get("panel")
+		var style: StyleBoxFlat = entry.get("style")
+		if not is_instance_valid(panel) or style == null:
+			invalid_keys.append(key)
+			continue
+		var phase: float = entry.get("phase", 0.0)
+		# breath ∈ [0, 1]，0 = 最细最淡，1 = 最粗最亮
+		var breath: float = 0.5 * (1.0 - cos(base_t + phase))
+		var w: float = GLOW_BORDER_WIDTH_MIN + (GLOW_BORDER_WIDTH_MAX - GLOW_BORDER_WIDTH_MIN) * breath
+		var a: float = GLOW_BORDER_ALPHA_MIN + (GLOW_BORDER_ALPHA_MAX - GLOW_BORDER_ALPHA_MIN) * breath
+		var iw: int = int(round(w))
+		style.border_width_top = iw
+		style.border_width_bottom = iw
+		style.border_width_left = iw
+		style.border_width_right = iw
+		var c: Color = GLOW_BORDER_COLOR
+		c.a = a
+		style.border_color = c
+	for k in invalid_keys:
+		_breath_entries.erase(k)
 
-## 移除节点上的发光效果（从 nodes_container 中查找并移除）
+## 移除节点上的金色边框呼吸动画，移除边框 Panel 并恢复按钮状态
 func _remove_glow_effect(button: Button) -> void:
-	var btn_idx := str(button.get_instance_id())
-	# 停止呼吸动画
-	if _breath_tweens.has(btn_idx):
-		var old_tween: Tween = _breath_tweens[btn_idx]
-		if old_tween and old_tween.is_valid():
-			old_tween.kill()
-		_breath_tweens.erase(btn_idx)
-	# 移除边框面板
-	var target_name: String = "GlowBorder_" + btn_idx
-	for child in nodes_container.get_children():
-		if child.name == target_name:
-			child.queue_free()
-			break
+	if not is_instance_valid(button):
+		return
+	# 保险起见：恢复 scale（若之前版本尚有残留）
+	button.scale = Vector2.ONE
+	# 根据 meta 定向清除对应的边框 panel
+	if button.has_meta("glow_border_panel_id"):
+		var pid: int = button.get_meta("glow_border_panel_id")
+		var key := str(pid)
+		if _breath_entries.has(key):
+			var entry: Dictionary = _breath_entries[key]
+			var p: Panel = entry.get("panel")
+			if is_instance_valid(p):
+				p.queue_free()
+			_breath_entries.erase(key)
+		else:
+			# 降级方案：遍历寻找同 ID 的 panel（理论上不应走到这里）
+			for child in nodes_container.get_children():
+				if child is Panel and child.name == GLOW_BORDER_NAME and child.get_instance_id() == pid:
+					child.queue_free()
+					break
+		button.remove_meta("glow_border_panel_id")
 
-## 为已访问节点添加灰色圆形边框
+## 已访问节点的透明度（用于视觉区分）
+const VISITED_ALPHA := 0.45
+## 节点上层图片子节点名称（与 _create_node_button 中保持一致）
+const NODE_IMAGE_NAME := "NodeImage"
+
+## 将已访问节点的视觉标记改为降低透明度
+## 只降低"上层节点图片"的透明度，不影响"下层圆形底色" F5F0DD
+## 这样视觉上已访问节点仍是酱白圆底，但上面的类型图标变淡
 func _apply_visited_border(button: Button) -> void:
+	if not is_instance_valid(button):
+		return
 	var btn_size := button.size
-	var btn_pos := button.position
-	var btn_idx := str(button.get_instance_id())
-	
-	# 判断是否为BOSS节点
+	# 判断是否为BOSS节点，BOSS节点不降透明度（保持清晰可辨）
 	var is_boss: bool = abs(btn_size.x - btn_size.y) > 1.0 or btn_size.x > NODE_BUTTON_SIZE.x + 10
 	if is_boss:
 		return
-	
-	var visited_panel := Panel.new()
-	visited_panel.name = "VisitedBorder_" + btn_idx
-	var visited_style := StyleBoxFlat.new()
-	visited_style.bg_color = Color(0, 0, 0, 0)  # 透明背景
-	visited_style.border_width_top = 3
-	visited_style.border_width_bottom = 3
-	visited_style.border_width_left = 3
-	visited_style.border_width_right = 3
-	visited_style.border_color = Color(0.1, 0.1, 0.1, 0.5)  # 黑色边框
-	var border_radius: int = (base_corner + 1) if is_boss else int((btn_size.x + 6) / 2.0)
-	visited_style.corner_radius_top_left = border_radius
-	visited_style.corner_radius_top_right = border_radius
-	visited_style.corner_radius_bottom_left = border_radius
-	visited_style.corner_radius_bottom_right = border_radius
-	visited_panel.add_theme_stylebox_override("panel", visited_style)
-	visited_panel.size = btn_size + Vector2(6, 6)
-	visited_panel.position = btn_pos + Vector2(-3, -3)
-	visited_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	nodes_container.add_child(visited_panel)
-	# 边框移到按钮之前，确保在按钮下方
-	nodes_container.move_child(visited_panel, 0)
+	# 仅对上层图片应用透明度，保持按钮本身（下层圆形底色）不变
+	var image_rect: TextureRect = button.get_node_or_null(NODE_IMAGE_NAME) as TextureRect
+	if image_rect != null:
+		var c := image_rect.modulate
+		c.a = VISITED_ALPHA
+		image_rect.modulate = c
 
-## 移除已访问节点的灰色边框
+## 恢复已访问节点上层图片的透明度
 func _remove_visited_border(button: Button) -> void:
-	var btn_idx := str(button.get_instance_id())
-	var target_name: String = "VisitedBorder_" + btn_idx
-	for child in nodes_container.get_children():
-		if child.name == target_name:
-			child.queue_free()
-			break
+	if not is_instance_valid(button):
+		return
+	var image_rect: TextureRect = button.get_node_or_null(NODE_IMAGE_NAME) as TextureRect
+	if image_rect != null:
+		var c := image_rect.modulate
+		c.a = 1.0
+		image_rect.modulate = c
 
 ## 为节点按钮绑定hover事件，显示/隐藏气泡框
 func _bind_node_hover(button: Button, node: MapGenerator.MapNode) -> void:
@@ -542,7 +630,7 @@ func _show_node_tooltip(button: Button, node: MapGenerator.MapNode) -> void:
 		# BOSS节点：气泡框显示在节点左侧，垂直居中
 		var is_boss_node := (node.node_type == MapGenerator.NodeType.BOSS)
 		if is_boss_node:
-			tx = btn_global_pos.x - tw - 12
+			tx = btn_global_pos.x + tw - 12
 			ty = btn_global_pos.y + (btn_size.y - th) / 2.0
 			# 如果超出左边界，改为显示在节点右侧
 			if tx < 0:
@@ -564,7 +652,7 @@ func _hide_node_tooltip(_button: Variant) -> void:
 		_tooltip_target_button = null
 
 ## 绘制连接线（加粗虚线，已走路径高亮，其他分支变浅）
-func _draw_connection_line(from_pos: Vector2, to_pos: Vector2, is_visited_edge: bool = false) -> void:
+func _draw_connection_line(from_pos: Vector2, to_pos: Vector2, is_visited_edge: bool = false, is_reachable_edge: bool = false) -> void:
 	# 直接使用像素坐标
 	var actual_from := from_pos
 	var actual_to := to_pos
@@ -576,10 +664,13 @@ func _draw_connection_line(from_pos: Vector2, to_pos: Vector2, is_visited_edge: 
 	var total_length := direction.length()
 	var dir_normalized := direction.normalized()
 	
-	# 已走路径：正常亮度；其他分支：变浅
+	# 可达边：最亮（金黄）；已走边：金色偏暖；其他分支：浅灰半透明
 	var line_color: Color
 	var line_width: float
-	if is_visited_edge:
+	if is_reachable_edge:
+		line_color = Color(0.95, 0.8, 0.25, 1.0)  # 亮金，指引玩家下一步
+		line_width = 4.0
+	elif is_visited_edge:
 		line_color = Color(0.7, 0.65, 0.4, 0.8)  # 金色偏暖，已走路径
 		line_width = 3.5
 	else:
@@ -613,9 +704,46 @@ func _update_reachable_nodes() -> void:
 	var nodes: Array = map_data.get("nodes", [])
 	
 	# 找到最后访问的节点（当前所在位置）
+	var current_node: MapGenerator.MapNode = _compute_current_node(nodes)
+	
+	if current_node == null:
+		return
+	
+	current_node_id = current_node.id
+	
+	# 先将所有节点标记为不可达，并更新按钮外观
+	for node in nodes:
+		node.reachable = false
+		if node_buttons.has(node.id):
+			var btn: Button = node_buttons[node.id]
+			# 按钮本身保持完整不透明（下层圆形底色始终不变）
+			btn.modulate = Color.WHITE
+			# 先恢复上层图片透明度，再根据 visited 状态决定是否降透明
+			_remove_visited_border(btn)
+			if node.visited and node.node_type != MapGenerator.NodeType.START:
+				# 已访问节点：仅降低上层图片透明度
+				_apply_visited_border(btn)
+			# 停止呼吸动画，恢复原始缩放
+			_remove_glow_effect(btn)
+	
+	# 只有当前节点直接连线的、未访问的下一层节点可达
+	for conn_id in current_node.connections:
+		var target := _find_node(nodes, conn_id)
+		if target and not target.visited:
+			target.reachable = true
+			if node_buttons.has(conn_id):
+				var btn: Button = node_buttons[conn_id]
+				btn.modulate = Color.WHITE
+				# 可访问节点不另外降透明（新和未访问节点一致，恢复上层不透明）
+				_remove_visited_border(btn)
+				# 为可访问节点添加缩放呼吸动画
+				_apply_glow_effect(btn)
+
+## 计算当前所在节点（用于高亮连线、可达判定等）
+func _compute_current_node(nodes: Array) -> MapGenerator.MapNode:
 	var current_node: MapGenerator.MapNode = null
 	
-	# 优先使用current_node_id查找
+	# 优先使用 current_node_id 查找
 	if current_node_id > 0:
 		for node in nodes:
 			if node.id == current_node_id and node.visited:
@@ -635,37 +763,9 @@ func _update_reachable_nodes() -> void:
 		for node in nodes:
 			if node.node_type == MapGenerator.NodeType.START:
 				current_node = node
-				current_node_id = node.id
 				break
 	
-	if current_node == null:
-		return
-	
-	current_node_id = current_node.id
-	
-	# 先将所有节点标记为不可达，并更新按钮外观
-	for node in nodes:
-		node.reachable = false
-		if node_buttons.has(node.id):
-			var btn: Button = node_buttons[node.id]
-			# All nodes keep normal color (no gray mask)
-			btn.modulate = Color.WHITE
-			if node.visited and node.node_type != MapGenerator.NodeType.START:
-				# Visited nodes: add black circular border mark
-				_apply_visited_border(btn)
-			# Remove old glow effect
-			_remove_glow_effect(btn)
-	
-	# 只有当前节点直接连线的、未访问的下一层节点可达
-	for conn_id in current_node.connections:
-		var target := _find_node(nodes, conn_id)
-		if target and not target.visited:
-			target.reachable = true
-			if node_buttons.has(conn_id):
-				var btn: Button = node_buttons[conn_id]
-				btn.modulate = Color.WHITE
-				# 为可访问节点添加发光边框和阴影
-				_apply_glow_effect(btn)
+	return current_node
 
 ## 节点点击处理
 func _on_node_clicked(node_id: int) -> void:
@@ -709,6 +809,10 @@ func _enter_node(node: MapGenerator.MapNode) -> void:
 	node.visited = true
 	current_node_id = node.id
 	GameManager.current_node_index = node.id
+	
+	# 保存滚动位置（修复滚动条回到初始位置问题）
+	GameManager.current_map_scroll_x = scroll_container.scroll_horizontal
+	GameManager.current_map_scroll_y = scroll_container.scroll_vertical
 	
 	# 保存地图状态
 	GameManager.current_map_data = _serialize_map(map_data)

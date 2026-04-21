@@ -1,6 +1,9 @@
 ## 全局HUD - 在除了主菜单和角色选择界面外的所有场景中显示状态栏、法宝和设置按钮
 extends CanvasLayer
 
+## RelicTooltip class reference
+const RelicTooltip = preload("res://scripts/relics/RelicTooltip.gd")
+
 ## 不显示HUD的场景列表
 const HIDDEN_SCENES := [
 	"MainMenuScene",
@@ -14,8 +17,6 @@ var _hp_icon: TextureRect = null
 var _hp_label: Label = null
 var _gold_icon: TextureRect = null
 var _gold_label: Label = null
-var _mana_container: HBoxContainer = null
-var _mana_label: Label = null
 var _karma_label: Label = null
 var _relic_container: HBoxContainer = null
 var _consumable_container: HBoxContainer = null
@@ -63,7 +64,6 @@ func _ready() -> void:
 	# 监听数据变化
 	EventBus.health_changed.connect(_on_health_changed)
 	EventBus.gold_changed.connect(_on_gold_changed)
-	EventBus.mana_changed.connect(_on_mana_changed)
 	EventBus.karma_changed.connect(_on_karma_changed)
 	EventBus.consumable_capacity_changed.connect(_on_consumable_changed)
 	EventBus.relic_acquired.connect(_on_relic_acquired)
@@ -218,32 +218,6 @@ func _build_hud() -> void:
 	
 	top_bar.add_child(gold_box)
 	
-	# 法力值（仅战斗场景可见，图标+数值）
-	_mana_container = HBoxContainer.new()
-	_mana_container.add_theme_constant_override("separation", 4)
-	_mana_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_mana_container.visible = false
-	
-	var mana_icon := TextureRect.new()
-	mana_icon.custom_minimum_size = Vector2(16, 16)
-	mana_icon.size = Vector2(16, 16)
-	mana_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	mana_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	mana_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var power_path := "res://ui/images/global/power.png"
-	if ResourceLoader.exists(power_path):
-		mana_icon.texture = load(power_path)
-	_mana_container.add_child(mana_icon)
-	
-	_mana_label = Label.new()
-	_mana_label.text = "%d/%d" % [GameManager.current_mana, GameManager.max_mana]
-	_mana_label.add_theme_font_size_override("font_size", 20)
-	_mana_label.add_theme_color_override("font_color", Color("74B9FF"))
-	_mana_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_mana_container.add_child(_mana_label)
-	
-	top_bar.add_child(_mana_container)
-	
 	# 劫数
 	_karma_label = Label.new()
 	_karma_label.text = "劫: %d [%s]" % [GameManager.current_karma, GameManager.get_tribulation_level()]
@@ -345,15 +319,15 @@ func _build_hud() -> void:
 	# ===== 第二行：法宝栏（透明背景） =====
 	var relic_bg := ColorRect.new()
 	relic_bg.position = Vector2(0, 54)
-	relic_bg.size = Vector2(screen_w, 30)
+	relic_bg.size = Vector2(screen_w, 54)
 	# 透明背景
 	relic_bg.color = Color(0, 0, 0, 0)
 	relic_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_hud_container.add_child(relic_bg)
 	
 	_relic_container = HBoxContainer.new()
-	_relic_container.position = Vector2(10, 56)
-	_relic_container.size = Vector2(screen_w - 20, 26)
+	_relic_container.position = Vector2(10, 57)
+	_relic_container.size = Vector2(screen_w - 20, 48)
 	_relic_container.add_theme_constant_override("separation", 4)
 	_relic_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_hud_container.add_child(_relic_container)
@@ -363,7 +337,6 @@ func _refresh_all() -> void:
 	_is_refreshing = true
 	_update_hp_display()
 	_update_gold_display()
-	_update_mana_display()
 	_update_karma_display()
 	_update_relic_display()
 	_update_consumable_display()
@@ -386,16 +359,6 @@ func _update_hp_display() -> void:
 func _update_gold_display() -> void:
 	if _gold_label:
 		_gold_label.text = "%d" % GameManager.current_gold
-
-## 更新法力值显示（仅战斗场景可见）
-func _update_mana_display() -> void:
-	if _mana_container == null or _mana_label == null:
-		return
-	var current_scene := get_tree().current_scene
-	var in_battle: bool = current_scene != null and current_scene.name == "BattleScene"
-	_mana_container.visible = in_battle
-	if in_battle:
-		_mana_label.text = "%d/%d" % [GameManager.current_mana, GameManager.max_mana]
 
 ## 更新劫数显示
 func _update_karma_display() -> void:
@@ -440,20 +403,36 @@ func _update_relic_display() -> void:
 			continue
 		
 		var relic_btn := ColorRect.new()
-		relic_btn.custom_minimum_size = Vector2(24, 24)
-		relic_btn.color = Color(0.3, 0.25, 0.1, 0.9)
+		relic_btn.custom_minimum_size = Vector2(48, 48)
+		relic_btn.color = Color(0, 0, 0, 0)
 		relic_btn.mouse_filter = Control.MOUSE_FILTER_STOP
 		
-		var relic_label := Label.new()
-		relic_label.text = relic_data.get("relic_name", relic_id).left(1)
-		relic_label.add_theme_font_size_override("font_size", 11)
-		relic_label.add_theme_color_override("font_color", Color("FDCB6E"))
-		relic_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		relic_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		relic_label.position = Vector2.ZERO
-		relic_label.size = Vector2(24, 24)
-		relic_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		relic_btn.add_child(relic_label)
+		# 使用法宝图标代替文字
+		var relic_icon := TextureRect.new()
+		relic_icon.custom_minimum_size = Vector2(44, 44)
+		relic_icon.size = Vector2(44, 44)
+		relic_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		relic_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		relic_icon.position = Vector2(2, 2)
+		relic_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		
+		# 尝试加载法宝图标（按 relic_id 命名）
+		var icon_path := "res://ui/images/global/relic/%s.png" % relic_id
+		if ResourceLoader.exists(icon_path):
+			relic_icon.texture = load(icon_path)
+			relic_btn.add_child(relic_icon)
+		else:
+			# 如果图标不存在，使用文字作为后备
+			var fallback_label := Label.new()
+			fallback_label.text = relic_data.get("relic_name", relic_id).left(1)
+			fallback_label.add_theme_font_size_override("font_size", 18)
+			fallback_label.add_theme_color_override("font_color", Color("FDCB6E"))
+			fallback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			fallback_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			fallback_label.position = Vector2.ZERO
+			fallback_label.size = Vector2(48, 48)
+			fallback_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			relic_btn.add_child(fallback_label)
 		
 		# hover显示法宝详情（统一气泡框）
 		var rd: Dictionary = relic_data
@@ -702,9 +681,6 @@ func _on_health_changed(_hp: int, _max_hp: int) -> void:
 
 func _on_gold_changed(_gold: int) -> void:
 	_update_gold_display()
-
-func _on_mana_changed(_current_mana: int, _max_mana: int) -> void:
-	_update_mana_display()
 
 func _on_karma_changed(_karma: int, _level: String) -> void:
 	_update_karma_display()
@@ -1203,8 +1179,8 @@ func _close_settings_panel() -> void:
 
 ## 获取HUD总高度（供其他场景计算布局用）
 func get_hud_height() -> float:
-	# 第一行54px + 第二行法宝栏30px = 84px
-	return 84.0
+	# 第一行54px + 第二行法宝栏54px = 108px
+	return 108.0
 
 ## 显示富文本tooltip（支持BBCode，默认右侧显示，超出屏幕则自动调整）
 func _show_rich_tooltip_at(target: Control, bbcode: String) -> void:
